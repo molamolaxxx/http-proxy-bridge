@@ -100,7 +100,7 @@ public class ReverseProxyConnectPool {
             return doubleEndChannelMap.get(forwardProxyChannel);
         }
         List<Channel> channels = reverseProxyChannelSet
-                .stream().filter(ch -> !allocatedReverseChannel.contains(ch))
+                .stream().filter(ch -> !allocatedReverseChannel.contains(ch) && ch.isOpen())
                 .collect(Collectors.toList());
 
         if (channels.size() == 0) {

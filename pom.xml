@@ -6,7 +6,7 @@
 
     <groupId>com.mola</groupId>
     <artifactId>http-proxy</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-beta</version>
     <packaging>pom</packaging>
     <modules>
         <module>http-proxy-core</module>
@@ -44,9 +44,33 @@
             <dependency>
                 <groupId>com.mola</groupId>
                 <artifactId>http-proxy-core</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.1-beta</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+
+    <distributionManagement>
+        <repository>
+            <id>rdc-releases</id>
+            <url>https://packages.aliyun.com/maven/repository/2403573-release-gVf1T6/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <snapshotRepository>
+            <id>rdc-snapshots</id>
+            <url>https://packages.aliyun.com/maven/repository/2403573-snapshot-3UzCIM/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

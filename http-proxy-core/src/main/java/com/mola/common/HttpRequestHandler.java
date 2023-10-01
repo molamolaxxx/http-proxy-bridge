@@ -1,16 +1,22 @@
 package com.mola.common;
 
+import com.mola.forward.ForwardProxyChannelManageHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
+
+
+    private static final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
     private final Map<Channel,Channel> channelMap = new HashMap<>();
 
@@ -80,9 +86,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
         ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort()).sync();
         if (!future.isSuccess()) {
-            System.out.println("=========connect failing");
+            log.error("=========connect failing");
         }
         proxy2ServerChannel = future.channel();
+
+        log.info("连接成功！" + proxy2ServerChannel + "，host = " + header.getHost());
 
         // 双端映射
         channelMap.put(client2proxyChannel, proxy2ServerChannel);

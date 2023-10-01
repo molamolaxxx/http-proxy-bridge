@@ -55,6 +55,7 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
                 final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
                 // 连接空闲
                 log.warn("[ForwardProxyChannelManageHandler]: onChannelIdle {" + remoteAddress + "}");
+                RemotingHelper.closeChannel(ctx.channel());
             }
         }
         ctx.fireUserEventTriggered(evt);

@@ -28,7 +28,7 @@ public class ForwardProxyServer {
 
     public void start(int port, int reversePort) {
         try {
-//            // 正向代理
+            // 正向代理
             ChannelFuture channelFuture = startForwardProxyServer(port);
             // 反向代理注册
             ChannelFuture proxyRegisterChannel = startReverseProxyRegisterServer(reversePort);
@@ -60,7 +60,13 @@ public class ForwardProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
+                        HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
+                            log.info("正向代理关闭，http隧道释放 " + ch);
+                            httpRequestHandler.shutdown();
+                        });
                         ch.pipeline().addLast(new WhiteListAccessHandler());
+                        ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
                         ch.pipeline().addLast(new ForwardProxyChannelManageHandler());
                         ch.pipeline().addLast(new DataTransferHandler());
                         ch.pipeline().addLast(new HttpRequestHandler());
