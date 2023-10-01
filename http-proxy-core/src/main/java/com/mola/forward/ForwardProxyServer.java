@@ -89,7 +89,7 @@ public class ForwardProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
-                        ch.pipeline().addLast(new IdleStateHandler(10, 10, 10));
+                        ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
                         ch.pipeline().addLast(new ReverseProxyChannelManageHandler());
                         ch.pipeline().addLast(new DataReceiveHandler());
                     }

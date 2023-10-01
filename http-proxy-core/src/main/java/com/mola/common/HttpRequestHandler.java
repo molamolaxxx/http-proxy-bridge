@@ -21,11 +21,14 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private final Bootstrap httpInvokeBootstrap = new Bootstrap();
 
+    private final EventLoopGroup group;
+
     private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
     @SuppressWarnings("rawtypes")
     public HttpRequestHandler() {
-        httpInvokeBootstrap.group(new NioEventLoopGroup()).channel(NioSocketChannel.class)
+        group = new NioEventLoopGroup();
+        httpInvokeBootstrap.group(group).channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer() {
                     @Override
@@ -96,5 +99,15 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             proxy2ServerChannel.writeAndFlush(msgMap.get(client2proxyChannel));
             clientRequestBuf.release();
         }
+    }
+
+    public void shutdown() {
+        for (Map.Entry<Channel, Channel> entry : channelMap.entrySet()) {
+            entry.getKey().close();
+            entry.getValue().close();
+        }
+        channelMap.clear();
+        msgMap.clear();
+        group.shutdownGracefully();
     }
 }

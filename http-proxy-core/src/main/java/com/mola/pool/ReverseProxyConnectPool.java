@@ -1,5 +1,6 @@
 package com.mola.pool;
 
+import com.mola.reverse.ReverseChannelHandle;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,7 +32,7 @@ public class ReverseProxyConnectPool {
      */
     private final Map<Channel, Channel> doubleEndChannelMap = new ConcurrentHashMap<>();
 
-    private final Map<Channel, NioEventLoopGroup> channel2Group = new ConcurrentHashMap<>();
+    private final Map<Channel, ReverseChannelHandle> handleMap = new ConcurrentHashMap<>();
 
     private final Set<Channel> allocatedReverseChannel = new CopyOnWriteArraySet<>();
 
@@ -78,11 +79,11 @@ public class ReverseProxyConnectPool {
         allocatedReverseChannel.remove(reverseChannel);
 
         // 针对reverse的特殊逻辑
-        if (channel2Group.containsKey(reverseChannel)) {
-            log.info("开始停止group, " + reverseChannel);
-            NioEventLoopGroup group = channel2Group.get(reverseChannel);
-            group.shutdownGracefully();
-            channel2Group.remove(reverseChannel);
+        if (handleMap.containsKey(reverseChannel)) {
+            log.info("开始销毁句柄, " + reverseChannel);
+            ReverseChannelHandle reverseChannelHandle = handleMap.get(reverseChannel);
+            reverseChannelHandle.shutdown();
+            handleMap.remove(reverseChannel);
         }
     }
 
@@ -134,8 +135,8 @@ public class ReverseProxyConnectPool {
         log.info("clearChannels success, cnt = " + cnt);
     }
 
-    public void addChannel2ReverseClientGroup(Channel reverseChannel, NioEventLoopGroup group) {
-        channel2Group.put(reverseChannel, group);
+    public void addReverseChannelHandle(Channel reverseChannel, ReverseChannelHandle handle) {
+        handleMap.put(reverseChannel, handle);
     }
 
 }

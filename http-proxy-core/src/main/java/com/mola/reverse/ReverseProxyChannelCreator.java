@@ -39,6 +39,7 @@ public class ReverseProxyChannelCreator {
     public Channel createChannel() {
         Bootstrap proxyClientBootstrap = new Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup();
+        HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
         try {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
@@ -46,9 +47,9 @@ public class ReverseProxyChannelCreator {
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
-                            ch.pipeline().addLast(new IdleStateHandler(10, 10, 10));
+                            ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
                             ch.pipeline().addLast(new ReverseProxyChannelManageHandler());
-                            ch.pipeline().addLast(new HttpRequestHandler());
+                            ch.pipeline().addLast(httpRequestHandler);
                         }
                     });
 
@@ -57,7 +58,9 @@ public class ReverseProxyChannelCreator {
                 throw new RuntimeException("ReverseProxyServer start failed!");
             }
             ReverseProxyConnectPool.instance()
-                    .addChannel2ReverseClientGroup(future.channel(), group);
+                    .addReverseChannelHandle(future.channel(), new ReverseChannelHandle(
+                            group, httpRequestHandler
+                    ));
             return future.channel();
         } catch (Exception e) {
             log.error("ReverseProxyServer start failed!", e);
