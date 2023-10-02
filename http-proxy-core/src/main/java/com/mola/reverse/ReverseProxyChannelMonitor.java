@@ -17,6 +17,8 @@ public class ReverseProxyChannelMonitor extends Thread {
 
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelMonitor.class);
 
+    private boolean shutdown;
+
     private int maxChannelNum;
 
     private ReverseProxyChannelCreator channelCreator;
@@ -29,6 +31,9 @@ public class ReverseProxyChannelMonitor extends Thread {
     @Override
     public void run() {
         while (true) {
+            if (shutdown) {
+                return;
+            }
             try {
                 ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
                 Set<Channel> reverseProxyChannels = connectPool.getReverseProxyChannels();
@@ -45,5 +50,9 @@ public class ReverseProxyChannelMonitor extends Thread {
             }
 
         }
+    }
+
+    public void shutdown() {
+        this.shutdown = true;
     }
 }

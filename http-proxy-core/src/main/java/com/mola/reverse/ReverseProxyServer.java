@@ -3,6 +3,7 @@ package com.mola.reverse;
 import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
 import com.mola.forward.ForwardProxyServer;
+import com.mola.pool.ReverseProxyConnectPool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -13,24 +14,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReverseProxyServer {
 
     private static final Logger log = LoggerFactory.getLogger(ForwardProxyServer.class);
 
-    public void start(String host, int port, int maxChannelNum) {
-        ReverseProxyChannelCreator reverseProxyChannelCreator = new ReverseProxyChannelCreator(host, port);
+    private ReverseProxyChannelCreator reverseProxyChannelCreator;
+
+    private ReverseProxyChannelMonitor reverseProxyChannelMonitor;
+
+    private AtomicBoolean start = new AtomicBoolean(false);
+
+    public synchronized void start(String host, int port, int maxChannelNum) {
+        if (start.get()) {
+            return;
+        }
+        reverseProxyChannelCreator = new ReverseProxyChannelCreator(host, port);
 
         try {
             for (int i = 0; i < maxChannelNum; i++) {
                 reverseProxyChannelCreator.createChannel();
             }
-            ReverseProxyChannelMonitor reverseProxyChannelMonitor = new ReverseProxyChannelMonitor(
+            reverseProxyChannelMonitor = new ReverseProxyChannelMonitor(
                     maxChannelNum, reverseProxyChannelCreator);
             reverseProxyChannelMonitor.start();
         }
         catch (Exception e) {
             log.error("ReverseProxyServer start failed!", e);
         }
+        start.compareAndSet(false, true);
+    }
+
+    public void shutdown() {
+        reverseProxyChannelMonitor.shutdown();
+        ReverseProxyConnectPool.instance().shutdown();
+        System.gc();
+        log.info("ReverseProxyServer has been shutdown");
+        start.compareAndSet(true, false);
     }
 }

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @Description:
  * @date : 2023-09-30 08:51
  **/
-public class ReverseProxyConnectPool {
+public class ReverseProxyConnectPool extends Thread {
 
     private final Set<Channel> reverseProxyChannelSet = new CopyOnWriteArraySet<>();
 
@@ -49,10 +49,29 @@ public class ReverseProxyConnectPool {
                 return instance;
             }
             instance = new ReverseProxyConnectPool();
+            instance.start();
             return instance;
         }
     }
 
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+            }
+            Set<Channel> channelToRemove = new HashSet<>();
+            for (Channel channel : reverseProxyChannelSet) {
+                if (!channel.isOpen() || !channel.isActive()) {
+                    channel.close();
+                    channelToRemove.add(channel);
+                }
+            }
+            channelToRemove.forEach(this::removeChannel);
+            log.info("scheduled remove channel, size = " + channelToRemove.size());
+        }
+    }
 
     public void addChannel(Channel channel) {
         reverseProxyChannelSet.add(channel);
@@ -80,7 +99,6 @@ public class ReverseProxyConnectPool {
 
         // 针对reverse的特殊逻辑
         if (handleMap.containsKey(reverseChannel)) {
-            log.info("开始销毁句柄, " + reverseChannel);
             ReverseChannelHandle reverseChannelHandle = handleMap.get(reverseChannel);
             reverseChannelHandle.shutdown();
             handleMap.remove(reverseChannel);
@@ -137,6 +155,23 @@ public class ReverseProxyConnectPool {
 
     public void addReverseChannelHandle(Channel reverseChannel, ReverseChannelHandle handle) {
         handleMap.put(reverseChannel, handle);
+    }
+
+    public void shutdown() {
+        reverseProxyChannelSet.forEach(Channel::close);
+        reverseProxyChannelSet.clear();
+        doubleEndChannelMap.forEach((ch1, ch2) -> {
+            ch1.close();
+            ch2.close();
+        });
+        doubleEndChannelMap.clear();
+        handleMap.forEach((ch1, h1) -> {
+            ch1.close();
+            h1.shutdown();
+        });
+        handleMap.clear();
+        allocatedReverseChannel.forEach(Channel::close);
+        allocatedReverseChannel.clear();
     }
 
 }

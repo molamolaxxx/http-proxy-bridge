@@ -25,9 +25,9 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
      */
     private final Map<Channel, ByteBuf> msgMap = new HashMap<>();
 
-    private final Bootstrap httpInvokeBootstrap = new Bootstrap();
+    private Bootstrap httpInvokeBootstrap = new Bootstrap();
 
-    private final EventLoopGroup group;
+    private EventLoopGroup group;
 
     private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
@@ -86,11 +86,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
         ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort()).sync();
         if (!future.isSuccess()) {
-            log.error("=========connect failing");
+            log.error("connect failing " + header.getTargetAddress());
         }
         proxy2ServerChannel = future.channel();
 
-        log.info("连接成功！" + proxy2ServerChannel + "，host = " + header.getHost());
+        log.info("connect success！address = " + header.getTargetAddress());
 
         // 双端映射
         channelMap.put(client2proxyChannel, proxy2ServerChannel);
@@ -117,5 +117,8 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         channelMap.clear();
         msgMap.clear();
         group.shutdownGracefully();
+        // for gc
+        group = null;
+        httpInvokeBootstrap = null;
     }
 }

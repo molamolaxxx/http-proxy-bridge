@@ -6,6 +6,7 @@ import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.reverse.ReverseProxyChannelMonitor;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -20,6 +21,8 @@ import java.util.Set;
  * @Description:
  * @date : 2023-09-30 15:33
  **/
+
+@ChannelHandler.Sharable
 public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(WhiteListAccessHandler.class);

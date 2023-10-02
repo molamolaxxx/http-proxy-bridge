@@ -4,6 +4,7 @@ import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -19,6 +20,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Description: 连接管理器
  * @date : 2020-09-04 10:50
  **/
+
+@ChannelHandler.Sharable
 public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ForwardProxyChannelManageHandler.class);

@@ -2,6 +2,7 @@ package com.mola.forward;
 
 import com.mola.pool.ReverseProxyConnectPool;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -15,6 +16,8 @@ import java.util.Objects;
  * @Description:
  * @date : 2023-09-30 09:10
  **/
+
+@ChannelHandler.Sharable
 public class DataReceiveHandler extends ChannelInboundHandlerAdapter {
 
 

@@ -31,9 +31,12 @@ public class ReverseProxyChannelCreator {
 
     private int port;
 
+    private ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
+
     public ReverseProxyChannelCreator(String host, int port) {
         this.host = host;
         this.port = port;
+        this.reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
     }
 
     public Channel createChannel() {
@@ -48,7 +51,7 @@ public class ReverseProxyChannelCreator {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
                             ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
-                            ch.pipeline().addLast(new ReverseProxyChannelManageHandler());
+                            ch.pipeline().addLast(reverseProxyChannelManageHandler);
                             ch.pipeline().addLast(httpRequestHandler);
                         }
                     });

@@ -15,6 +15,8 @@ import java.util.Objects;
  * @Description:
  * @date : 2023-09-30 09:10
  **/
+
+@ChannelHandler.Sharable
 public class DataTransferHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelMonitor.class);
