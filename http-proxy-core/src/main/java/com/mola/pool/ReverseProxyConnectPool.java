@@ -146,6 +146,9 @@ public class ReverseProxyConnectPool extends Thread {
     public void clearChannels() {
         int cnt = 0;
         for (Channel channel : reverseProxyChannelSet) {
+            if (channel.isOpen() || channel.isActive()) {
+                continue;
+            }
             RemotingHelper.closeChannel(channel);
             cnt++;
         }
@@ -174,4 +177,12 @@ public class ReverseProxyConnectPool extends Thread {
         allocatedReverseChannel.clear();
     }
 
+    public Map<String, Integer> sizeDesc() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("reverseProxyChannelSet", reverseProxyChannelSet.size());
+        map.put("doubleEndChannelMap", doubleEndChannelMap.size());
+        map.put("handleMap", handleMap.size());
+        map.put("allocatedReverseChannel", allocatedReverseChannel.size());
+        return map;
+    }
 }

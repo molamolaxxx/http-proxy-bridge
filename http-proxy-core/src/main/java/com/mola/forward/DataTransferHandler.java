@@ -29,6 +29,10 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
+        if (connectPool.getReverseProxyChannels().size() == 0) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
         Channel reverseChannel = connectPool.allocate(ctx.channel());
         if (Objects.isNull(reverseChannel)) {
             connectPool.clearChannels();

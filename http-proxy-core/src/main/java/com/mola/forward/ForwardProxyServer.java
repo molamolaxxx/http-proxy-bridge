@@ -46,6 +46,8 @@ public class ForwardProxyServer {
             forwardSeverChannelFuture = startForwardProxyServer(port);
             // 反向代理注册
             proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
+            forwardSeverChannelFuture.await();
+            proxyRegisterChannelFuture.await();
             if (!forwardSeverChannelFuture.isSuccess() || !proxyRegisterChannelFuture.isSuccess()) {
                 log.error("ForwardProxyServer start failed!");
                 return;

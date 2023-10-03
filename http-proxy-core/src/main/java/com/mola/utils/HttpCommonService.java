@@ -1,4 +1,4 @@
-package com.mola;
+package com.mola.utils;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -128,7 +128,7 @@ public enum HttpCommonService {
 
     private HttpClientContext buildContext(int timeout) {
         HttpClientContext context = HttpClientContext.create();
-        RequestConfig config = custom()
+        RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
                 .setSocketTimeout(timeout).build();

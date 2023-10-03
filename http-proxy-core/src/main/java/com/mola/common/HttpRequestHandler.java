@@ -1,6 +1,5 @@
 package com.mola.common;
 
-import com.mola.forward.ForwardProxyChannelManageHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -15,10 +14,9 @@ import java.util.Objects;
 
 public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
-
     private static final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
-    private final Map<Channel,Channel> channelMap = new HashMap<>();
+    private final Map<Channel, Channel> channelMap = new HashMap<>();
 
     /**
      * 第一次建立链接，需要缓存数据报，防止数据丢失
@@ -27,19 +25,19 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private Bootstrap httpInvokeBootstrap = new Bootstrap();
 
-    private EventLoopGroup group;
+    private static EventLoopGroup group = new NioEventLoopGroup(1);
 
     private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
+
     @SuppressWarnings("rawtypes")
     public HttpRequestHandler() {
-        group = new NioEventLoopGroup();
         httpInvokeBootstrap.group(group).channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer() {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        ch.pipeline().addLast("toServer handler", new HttpResponseHandler(channelMap));
+                        ch.pipeline().addLast(new HttpResponseHandler(channelMap));
                     }
                 });
     }
@@ -89,6 +87,12 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             log.error("connect failing " + header.getTargetAddress());
         }
         proxy2ServerChannel = future.channel();
+        proxy2ServerChannel.closeFuture().addListener((ChannelFutureListener) future1 -> {
+            if (future1.isSuccess()) {
+                log.info("http channel close! close client channel ");
+                client2proxyChannel.close();
+            }
+        });
 
         log.info("connect success！address = " + header.getTargetAddress());
 
@@ -114,11 +118,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             entry.getKey().close();
             entry.getValue().close();
         }
+        for (Map.Entry<Channel, ByteBuf> entry : msgMap.entrySet()) {
+            entry.getKey().close();
+            entry.getValue().release();
+        }
         channelMap.clear();
         msgMap.clear();
-        group.shutdownGracefully();
-        // for gc
-        group = null;
-        httpInvokeBootstrap = null;
     }
 }
