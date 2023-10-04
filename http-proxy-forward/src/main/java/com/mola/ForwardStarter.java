@@ -1,11 +1,10 @@
 package com.mola;
 
-import com.alibaba.fastjson.JSONObject;
 import com.mola.cmd.proxy.client.conf.CmdProxyConf;
 import com.mola.cmd.proxy.client.provider.CmdReceiver;
+import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
 import com.mola.forward.ForwardProxyServer;
-import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.utils.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,7 @@ public class ForwardStarter {
         UserIpWhiteListExtImpl userIpWhiteListExt = new UserIpWhiteListExtImpl();
         ExtManager.setUserIpWhiteListExt(userIpWhiteListExt);
         userIpWhiteListExt.start();
+        ExtManager.setSocks5AuthExt(new Socks5AuthExtImpl());
 
         ForwardProxyServer forwardProxyServer = new ForwardProxyServer();
 
@@ -35,11 +35,11 @@ public class ForwardStarter {
         });
         CmdReceiver.INSTANCE.register("forwardStart", "1680059511788nQPEXtoolRobot", cmdInvokeParam -> {
             Map<String, String> resultMap = new HashMap<>();
-            forwardProxyServer.start(20432, 10433);
+            forwardProxyServer.start(20432, 10433, ServerTypeEnum.SOCKS5);
             resultMap.put("result", "操作成功");
             return resultMap;
         });
 
-        forwardProxyServer.start(20432, 10433);
+        forwardProxyServer.start(20432, 10433, ServerTypeEnum.SOCKS5);
     }
 }

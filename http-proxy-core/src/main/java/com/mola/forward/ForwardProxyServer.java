@@ -2,12 +2,20 @@ package com.mola.forward;
 
 import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
+import com.mola.enums.ServerTypeEnum;
 import com.mola.pool.ReverseProxyConnectPool;
+import com.mola.socks5.Socks5CommandRequestInboundHandler;
+import com.mola.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.socks5.Socks5PasswordAuthRequestInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +43,7 @@ public class ForwardProxyServer {
 
     private ChannelFuture proxyRegisterChannelFuture;
 
-    public synchronized void start(int port, int reversePort) {
+    public synchronized void start(int port, int reversePort, ServerTypeEnum type) {
         if (start.get()) {
             return;
         }
@@ -43,9 +51,17 @@ public class ForwardProxyServer {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
             // 正向代理
-            forwardSeverChannelFuture = startForwardProxyServer(port);
+            if (ServerTypeEnum.HTTP == type) {
+                forwardSeverChannelFuture = startForwardProxyServer(port);
+            } else if (ServerTypeEnum.SOCKS5 == type) {
+                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port);
+            } else {
+                throw new RuntimeException("unknown type, " + type);
+            }
+
             // 反向代理注册
-            proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
+            proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort, type);
+
             forwardSeverChannelFuture.await();
             proxyRegisterChannelFuture.await();
             if (!forwardSeverChannelFuture.isSuccess() || !proxyRegisterChannelFuture.isSuccess()) {
@@ -120,7 +136,54 @@ public class ForwardProxyServer {
         return future;
     }
 
-    private ChannelFuture startReverseProxyRegisterServer(int port) throws InterruptedException {
+    private ChannelFuture startForwardSocks5ProxyServer(int port) {
+        EventLoopGroup clientWorkGroup = new NioEventLoopGroup();
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        ServerBootstrap bootstrap = new ServerBootstrap();
+
+        // handler
+        WhiteListAccessHandler whiteListAccessHandler = new WhiteListAccessHandler();
+        DataTransferHandler dataTransferHandler = new DataTransferHandler();
+        bootstrap.group(bossGroup, workerGroup)
+                .channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 256)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel ch) throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
+
+                        // 白名单
+                        pipeline.addLast(whiteListAccessHandler);
+
+                        //socks5响应最后一个encode
+                        pipeline.addLast(Socks5ServerEncoder.DEFAULT);
+
+                        //处理socks5初始化请求
+                        pipeline.addLast(new Socks5InitialRequestDecoder());
+                        pipeline.addLast(new Socks5InitialRequestInboundHandler());
+
+                        //处理认证请求
+//                        pipeline.addLast(new Socks5PasswordAuthRequestDecoder());
+//                        pipeline.addLast(new Socks5PasswordAuthRequestInboundHandler());
+
+                        if (needTransfer()) {
+                            // 转发请求到反向代理
+                            pipeline.addLast(dataTransferHandler);
+                        } else {
+                            //处理connection请求
+                            pipeline.addLast(new Socks5CommandRequestDecoder());
+                            pipeline.addLast(new Socks5CommandRequestInboundHandler(clientWorkGroup));
+                        }
+                    }
+                });
+        ChannelFuture future = bootstrap.bind(port);
+        log.info("socks5 netty server has started on port {}", port);
+        return future;
+    }
+
+    private ChannelFuture startReverseProxyRegisterServer(int port, ServerTypeEnum type) throws InterruptedException {
         ReverseProxyChannelManageHandler reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
         DataReceiveHandler dataReceiveHandler = new DataReceiveHandler();
 
@@ -133,6 +196,8 @@ public class ForwardProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
+
+
                         ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
                         ch.pipeline().addLast(reverseProxyChannelManageHandler);
                         ch.pipeline().addLast(dataReceiveHandler);
@@ -148,5 +213,14 @@ public class ForwardProxyServer {
             }
         });
         return future;
+    }
+
+
+    private boolean needTransfer() {
+        ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
+        if (connectPool.getReverseProxyChannels().size() == 0) {
+            return false;
+        }
+        return true;
     }
 }

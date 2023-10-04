@@ -43,6 +43,10 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
         if (userIpWhiteListExt == null) {
             return;
         }
+        if (splitRes[0].startsWith("192.168") || splitRes[0].startsWith("127.0.0.1")) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
         if (userIpWhiteListExt.ipWhiteList() != null && userIpWhiteListExt.ipWhiteList()
                 .contains(splitRes[0])) {
             ctx.fireChannelRead(msg);

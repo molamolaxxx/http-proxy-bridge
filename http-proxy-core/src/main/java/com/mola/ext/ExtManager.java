@@ -10,12 +10,22 @@ public class ExtManager {
 
     private static UserIpWhiteListExt userIpWhiteListExt;
 
+    private static Socks5AuthExt socks5AuthExt;
+
 
     public static void setUserIpWhiteListExt(UserIpWhiteListExt userIpWhiteListExt) {
         ExtManager.userIpWhiteListExt = userIpWhiteListExt;
     }
 
+    public static void setSocks5AuthExt(Socks5AuthExt socks5AuthExt) {
+        ExtManager.socks5AuthExt = socks5AuthExt;
+    }
+
     public static UserIpWhiteListExt getUserIpWhiteListExt() {
         return userIpWhiteListExt;
+    }
+
+    public static Socks5AuthExt getSocks5AuthExt() {
+        return socks5AuthExt;
     }
 }

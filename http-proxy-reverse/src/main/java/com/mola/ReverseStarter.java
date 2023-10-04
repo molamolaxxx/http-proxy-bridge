@@ -2,6 +2,7 @@ package com.mola;
 
 import com.mola.cmd.proxy.client.conf.CmdProxyConf;
 import com.mola.cmd.proxy.client.provider.CmdReceiver;
+import com.mola.enums.ServerTypeEnum;
 import com.mola.forward.ForwardProxyServer;
 import com.mola.reverse.ReverseProxyServer;
 import com.mola.utils.HttpCommonService;
@@ -26,8 +27,9 @@ public class ReverseStarter {
         int channelNum = Integer.parseInt(config.getOrDefault("channelNum", "128"));
 
 
+
         ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
-        reverseProxyServer.start(host, port, channelNum);
+        reverseProxyServer.start(host, port, channelNum, ServerTypeEnum.SOCKS5);
 
         CmdProxyConf.Receiver.INSTANCE.setListenedSenderAddress(CmdProxyConf.REMOTE_ADDRESS);
         CmdReceiver.INSTANCE.register("reverse", "1680059511788nQPEXtoolRobot", cmdInvokeParam -> {
@@ -42,7 +44,7 @@ public class ReverseStarter {
                     reverseProxyServer.shutdown();
                     resultMap.put("result", "关闭http反向代理成功");
                 } else if ("start".equals(op)) {
-                    reverseProxyServer.start(hostNext, portNext, channelNumNext);
+                    reverseProxyServer.start(hostNext, portNext, channelNumNext, ServerTypeEnum.SOCKS5);
                     resultMap.put("result", "开启http反向代理成功");
                 } else {
                     resultMap.put("result", "不合法的操作："+op);
