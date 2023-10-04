@@ -9,21 +9,14 @@ package com.mola.enums;
  **/
 public enum ServerTypeEnum {
 
-    HTTP(1,"http(s)代理"),
-    SOCKS5(10,"socks5代理")
+    HTTP("http(s)代理"),
+    SOCKS5("socks5代理")
     ;
-
-    private Integer code;
 
     private String msg;
 
-    ServerTypeEnum(Integer point , String msg){
-        this.code = point;
+    ServerTypeEnum(String msg){
         this.msg = msg;
-    }
-
-    public Integer getCode() {
-        return code;
     }
 
     public String getMsg() {
