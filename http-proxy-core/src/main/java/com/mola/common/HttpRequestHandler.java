@@ -1,5 +1,7 @@
 package com.mola.common;
 
+import com.mola.ext.ExtManager;
+import com.mola.ext.HostMappingExt;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -82,6 +84,10 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         clientRequestBuf.getBytes(0, clientRequestBytes);
 
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
+
+        // 内网穿透 映射
+        transferHost(header);
+
         ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort()).sync();
         if (!future.isSuccess()) {
             log.error("connect failing " + header.getTargetAddress());
@@ -124,5 +130,27 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         }
         channelMap.clear();
         msgMap.clear();
+    }
+
+    private void transferHost(ProxyHttpHeader header) {
+        HostMappingExt hostMappingExt = ExtManager.getHostMappingExt();
+        if (hostMappingExt == null) {
+            return;
+        }
+        String mappedAddress = hostMappingExt.fetchMappedAddress(header.getHost(), header.getPort());
+        if (mappedAddress == null) {
+            return;
+        }
+        String[] hostAndPort = mappedAddress.split(":");
+        if (hostAndPort.length == 0) {
+            return;
+        }
+        if (hostAndPort.length == 1) {
+            header.setHost(hostAndPort[0]);
+        }
+        if (hostAndPort.length == 2) {
+            header.setHost(hostAndPort[0]);
+            header.setPort(Integer.valueOf(hostAndPort[1]));
+        }
     }
 }

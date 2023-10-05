@@ -3,6 +3,7 @@ package com.mola;
 import com.mola.cmd.proxy.client.conf.CmdProxyConf;
 import com.mola.cmd.proxy.client.provider.CmdReceiver;
 import com.mola.enums.ServerTypeEnum;
+import com.mola.ext.ExtManager;
 import com.mola.reverse.ReverseProxyServer;
 import com.mola.utils.ConfigQueryUtil;
 import com.mola.utils.HttpCommonService;
@@ -23,7 +24,7 @@ public class ReverseStarter {
     public static void main(String[] args) {
         LogUtil.debugReject();
         Map<String, String> config = ConfigQueryUtil.getConfig(args);
-
+        ExtManager.setHostMappingExt(new HostMappingExtImpl(args[0]));
         // 配置
         String host = config.getOrDefault("host", "120.27.230.24");
         int port = Integer.parseInt(config.getOrDefault("port", "10433"));

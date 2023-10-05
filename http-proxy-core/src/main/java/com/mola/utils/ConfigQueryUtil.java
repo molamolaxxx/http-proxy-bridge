@@ -31,4 +31,15 @@ public class ConfigQueryUtil {
         }
         return parseRes;
     }
+
+    public static Map<String, String> getConfig(String configKey) {
+        try {
+            String res = HttpCommonService.INSTANCE
+                    .get("https://molaspace.xyz:8550/chat/kv/" + configKey, 1000);
+            return KeyValueParser.parse(res);
+        } catch (Exception e) {
+            log.error("getConfig failed", e);
+        }
+        return new HashMap<>();
+    }
 }

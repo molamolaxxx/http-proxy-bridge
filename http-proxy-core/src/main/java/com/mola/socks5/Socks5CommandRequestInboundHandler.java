@@ -1,5 +1,7 @@
 package com.mola.socks5;
 
+import com.mola.ext.ExtManager;
+import com.mola.ext.HostMappingExt;
 import com.mola.forward.DataTransferHandler;
 import com.mola.pool.ReverseProxyConnectPool;
 import io.netty.bootstrap.Bootstrap;
@@ -36,7 +38,24 @@ public class Socks5CommandRequestInboundHandler extends SimpleChannelInboundHand
             ctx.fireChannelRead(msg);
             return;
         }
-        log.debug("prepare connect 2 server，ip={},port={}", msg.dstAddr(), msg.dstPort());
+        String host = msg.dstAddr();
+        int port = msg.dstPort();
+        HostMappingExt hostMappingExt = ExtManager.getHostMappingExt();
+        if (hostMappingExt != null) {
+            String mappedAddress = hostMappingExt.fetchMappedAddress(host, port);
+            String[] hostAndPort = mappedAddress.split(":");
+            if (hostAndPort.length == 0) {
+                return;
+            }
+            if (hostAndPort.length == 1) {
+                host = hostAndPort[0];
+            }
+            if (hostAndPort.length == 2) {
+                host = hostAndPort[0];
+                port = Integer.valueOf(hostAndPort[1]);
+            }
+        }
+        log.debug("prepare connect 2 server，ip={},port={}", host, port);
 
         // 连接http服务器
         Bootstrap bootstrap = new Bootstrap();
@@ -50,10 +69,13 @@ public class Socks5CommandRequestInboundHandler extends SimpleChannelInboundHand
                         ch.pipeline().addLast(new HttpServer2ClientInboundHandler(ctx));
                     }
                 });
-        ChannelFuture future = bootstrap.connect(msg.dstAddr(), msg.dstPort());
+        ChannelFuture future = bootstrap.connect(host, port);
+        final String hostFinal = host;
+        final Integer portFinal = port;
+
         future.addListener((ChannelFutureListener) future1 -> {
             if (future1.isSuccess()) {
-                log.info("socks5 connect 2 server success!,address={},port={}", msg.dstAddr(), msg.dstPort());
+                log.info("socks5 connect 2 server success!,address={},port={}", hostFinal, portFinal);
                 //添加客户端转发请求到服务端的Handler
                 ctx.pipeline().addLast(new Client2HttpServerInboundHandler(future1));
 

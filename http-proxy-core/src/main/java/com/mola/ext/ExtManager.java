@@ -12,6 +12,8 @@ public class ExtManager {
 
     private static Socks5AuthExt socks5AuthExt;
 
+    private static HostMappingExt hostMappingExt;
+
 
     public static void setUserIpWhiteListExt(UserIpWhiteListExt userIpWhiteListExt) {
         ExtManager.userIpWhiteListExt = userIpWhiteListExt;
@@ -27,5 +29,13 @@ public class ExtManager {
 
     public static Socks5AuthExt getSocks5AuthExt() {
         return socks5AuthExt;
+    }
+
+    public static void setHostMappingExt(HostMappingExt hostMappingExt) {
+        ExtManager.hostMappingExt = hostMappingExt;
+    }
+
+    public static HostMappingExt getHostMappingExt() {
+        return hostMappingExt;
     }
 }
