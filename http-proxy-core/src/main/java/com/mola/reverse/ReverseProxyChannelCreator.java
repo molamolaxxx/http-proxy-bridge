@@ -48,7 +48,7 @@ public class ReverseProxyChannelCreator {
 
     public Channel createChannel() {
         Bootstrap proxyClientBootstrap = new Bootstrap();
-        NioEventLoopGroup group = new NioEventLoopGroup();
+        NioEventLoopGroup group = new NioEventLoopGroup(1);
         HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
         try {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)

@@ -27,7 +27,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private Bootstrap httpInvokeBootstrap = new Bootstrap();
 
-    private static EventLoopGroup group = new NioEventLoopGroup(1);
+    private static EventLoopGroup group = new NioEventLoopGroup(4);
 
     private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
