@@ -29,7 +29,7 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
             notAccessIps.clear();
             logger.info("清除黑名单访问记录");
             try {
-                Thread.sleep(60000);
+                Thread.sleep(300000);
             } catch (InterruptedException e) {
             }
         }
@@ -58,6 +58,9 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
             String[] split = address.split(":");
             String ip = split[0];
             if (notAccessIps.contains(ip)) {
+                return;
+            }
+            if (ip.startsWith("47.92")) {
                 return;
             }
             synchronized (this) {

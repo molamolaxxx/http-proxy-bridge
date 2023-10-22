@@ -1,5 +1,7 @@
 package com.mola.ext;
 
+import com.mola.ext.def.DefaultClientSslAuthExt;
+
 /**
  * @author : molamola
  * @Project: http-proxy
@@ -13,6 +15,8 @@ public class ExtManager {
     private static Socks5AuthExt socks5AuthExt;
 
     private static HostMappingExt hostMappingExt;
+
+    private static SslAuthExt sslAuthExt;
 
 
     public static void setUserIpWhiteListExt(UserIpWhiteListExt userIpWhiteListExt) {
@@ -37,5 +41,13 @@ public class ExtManager {
 
     public static HostMappingExt getHostMappingExt() {
         return hostMappingExt;
+    }
+
+    public static SslAuthExt getSslAuthExt() {
+        return sslAuthExt;
+    }
+
+    public static void setSslAuthExt(SslAuthExt sslAuthExt) {
+        ExtManager.sslAuthExt = sslAuthExt;
     }
 }

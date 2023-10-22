@@ -1,4 +1,4 @@
-package com.mola;
+package com.mola.ext;
 
 import com.mola.ext.Socks5AuthExt;
 

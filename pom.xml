@@ -12,6 +12,7 @@
         <module>http-proxy-core</module>
         <module>http-proxy-forward</module>
         <module>http-proxy-reverse</module>
+        <module>http-proxy-encryption</module>
     </modules>
 
     <properties>

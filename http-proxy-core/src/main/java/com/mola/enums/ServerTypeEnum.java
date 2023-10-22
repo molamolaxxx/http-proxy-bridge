@@ -10,7 +10,9 @@ package com.mola.enums;
 public enum ServerTypeEnum {
 
     HTTP("http(s)代理"),
-    SOCKS5("socks5代理")
+    SOCKS5("socks5代理"),
+
+    SSL("加密机代理")
     ;
 
     private String msg;

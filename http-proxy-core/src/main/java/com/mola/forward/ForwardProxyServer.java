@@ -3,10 +3,13 @@ package com.mola.forward;
 import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
 import com.mola.enums.ServerTypeEnum;
+import com.mola.ext.ExtManager;
+import com.mola.ext.def.DefaultClientSslAuthExt;
+import com.mola.ext.def.DefaultServerSslAuthExt;
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.socks5.Socks5InitialRequestInboundHandler;
-import com.mola.socks5.Socks5PasswordAuthRequestInboundHandler;
+import com.mola.ssl.SslContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -14,8 +17,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
-import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +55,11 @@ public class ForwardProxyServer {
             workerGroup = new NioEventLoopGroup(8);
             // 正向代理
             if (ServerTypeEnum.HTTP == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port);
+                forwardSeverChannelFuture = startForwardProxyServer(port, false);
             } else if (ServerTypeEnum.SOCKS5 == type) {
                 forwardSeverChannelFuture = startForwardSocks5ProxyServer(port);
+            } else if (ServerTypeEnum.SSL == type) {
+                forwardSeverChannelFuture = startForwardProxyServer(port, true);
             } else {
                 throw new RuntimeException("unknown type, " + type);
             }
@@ -101,7 +106,11 @@ public class ForwardProxyServer {
         start.compareAndSet(true, false);
     }
 
-    private ChannelFuture startForwardProxyServer(int port) throws InterruptedException {
+    private ChannelFuture startForwardProxyServer(int port, boolean useSsl) throws InterruptedException {
+        if (useSsl && ExtManager.getSslAuthExt() == null) {
+            ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
+        }
+
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         WhiteListAccessHandler whiteListAccessHandler = new WhiteListAccessHandler();
         ForwardProxyChannelManageHandler forwardProxyChannelManageHandler = new ForwardProxyChannelManageHandler();
@@ -112,15 +121,20 @@ public class ForwardProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
-                        HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
-                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
-                            httpRequestHandler.shutdown();
-                        });
+                        if (useSsl) {
+                            SslHandler sslHandler = SslContextFactory.createSslHandler(false);
+                            ch.pipeline().addLast(sslHandler);
+                        }
                         ch.pipeline().addLast(whiteListAccessHandler);
                         ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
-                        ch.pipeline().addLast(new HttpRequestHandler());
+
+                        HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
+                            httpRequestHandler.shutdown();
+                        });
+                        ch.pipeline().addLast(httpRequestHandler);
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
@@ -182,6 +196,7 @@ public class ForwardProxyServer {
         log.info("socks5 netty server has started on port {}", port);
         return future;
     }
+
 
     private ChannelFuture startReverseProxyRegisterServer(int port, ServerTypeEnum type) throws InterruptedException {
         ReverseProxyChannelManageHandler reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
