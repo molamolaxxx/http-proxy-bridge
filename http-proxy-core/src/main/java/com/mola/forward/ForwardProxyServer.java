@@ -6,10 +6,13 @@ import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
 import com.mola.ext.def.DefaultClientSslAuthExt;
 import com.mola.ext.def.DefaultServerSslAuthExt;
+import com.mola.forward.group.ProxyGroup;
+import com.mola.forward.group.ProxyGroupRegistry;
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.socks5.Socks5InitialRequestInboundHandler;
 import com.mola.ssl.SslContextFactory;
+import com.mola.utils.RemotingHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -50,6 +53,7 @@ public class ForwardProxyServer {
         if (start.get()) {
             return;
         }
+        ProxyGroupRegistry.instance().register(new ProxyGroup(port, reversePort));
         try {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
@@ -182,7 +186,7 @@ public class ForwardProxyServer {
 //                        pipeline.addLast(new Socks5PasswordAuthRequestDecoder());
 //                        pipeline.addLast(new Socks5PasswordAuthRequestInboundHandler());
 
-                        if (needTransfer()) {
+                        if (needTransfer(ch)) {
                             // 转发请求到反向代理
                             pipeline.addLast(dataTransferHandler);
                         } else {
@@ -231,9 +235,12 @@ public class ForwardProxyServer {
     }
 
 
-    private boolean needTransfer() {
+    private boolean needTransfer(Channel ch) {
+        ProxyGroupRegistry groupRegistry = ProxyGroupRegistry.instance();
+        ProxyGroup proxyGroup = groupRegistry.fetchGroupByForwardPort(RemotingHelper.fetchChannelLocalPort(ch));
+
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
-        if (connectPool.getReverseProxyChannels().size() == 0) {
+        if (connectPool.getReverseProxyChannels(proxyGroup.getReversePort()).size() == 0) {
             return false;
         }
         return true;

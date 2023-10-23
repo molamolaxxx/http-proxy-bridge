@@ -44,6 +44,43 @@ public class RemotingHelper {
         return "";
     }
 
+    public static int fetchChannelRemotePort(final Channel channel) {
+        String address = parseChannelRemoteAddress(channel);
+        String[] split = address.split(":");
+        if (split.length < 2) {
+            return -1;
+        }
+        return Integer.parseInt(split[1]);
+    }
+
+    public static int fetchChannelLocalPort(final Channel channel) {
+        String address = parseChannelLocalAddress(channel);
+        String[] split = address.split(":");
+        if (split.length < 2) {
+            return -1;
+        }
+        return Integer.parseInt(split[1]);
+    }
+
+    public static String parseChannelLocalAddress(final Channel channel) {
+        if (channel == null) {
+            return "";
+        }
+        final SocketAddress localAddress = channel.localAddress();
+        final String addr = (localAddress != null ? localAddress.toString() : "");
+
+        if (addr.length() > 0) {
+            int index = addr.lastIndexOf("/");
+            if (index >= 0) {
+                return addr.substring(index + 1);
+            }
+
+            return addr;
+        }
+
+        return "";
+    }
+
 
     public static void closeChannel(Channel channel) {
         final String addrRemote = RemotingHelper.parseChannelRemoteAddress(channel);

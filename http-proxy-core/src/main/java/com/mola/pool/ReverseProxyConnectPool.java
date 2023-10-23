@@ -113,12 +113,13 @@ public class ReverseProxyConnectPool extends Thread {
         return doubleEndChannelMap.get(reverseChannel);
     }
 
-    public synchronized Channel allocate(Channel forwardProxyChannel) {
+    public synchronized Channel allocate(Channel forwardProxyChannel, int reversePort) {
         if (doubleEndChannelMap.containsKey(forwardProxyChannel)) {
             return doubleEndChannelMap.get(forwardProxyChannel);
         }
         List<Channel> channels = reverseProxyChannelSet
                 .stream().filter(ch -> !allocatedReverseChannel.contains(ch) && ch.isOpen())
+                .filter(ch -> RemotingHelper.fetchChannelLocalPort(ch) == reversePort)
                 .collect(Collectors.toList());
 
         if (channels.size() == 0) {
@@ -143,10 +144,17 @@ public class ReverseProxyConnectPool extends Thread {
         return reverseProxyChannelSet;
     }
 
-    public void clearChannels() {
+    public Set<Channel> getReverseProxyChannels(int reversePort) {
+        return reverseProxyChannelSet.stream().filter(
+                channel -> RemotingHelper.fetchChannelLocalPort(channel) ==  reversePort
+        ).collect(Collectors.toSet());
+    }
+
+    public void clearChannels(int reversePort) {
         int cnt = 0;
         for (Channel channel : reverseProxyChannelSet) {
-            if (channel.isOpen() || channel.isActive()) {
+            if (channel.isOpen() || channel.isActive()
+                    || RemotingHelper.fetchChannelLocalPort(channel) != reversePort) {
                 continue;
             }
             RemotingHelper.closeChannel(channel);
