@@ -21,7 +21,9 @@ public class LogUtil {
         loggerContext.getTurboFilterList().add(new TurboFilter() {
             @Override
             public FilterReply decide(Marker marker, Logger logger, Level level, String s, Object[] objects, Throwable throwable) {
-                return level.levelStr.equalsIgnoreCase("debug") ? FilterReply.DENY : FilterReply.ACCEPT;
+                return level.levelStr.equalsIgnoreCase("debug")
+                        || level.levelStr.equalsIgnoreCase("trace")
+                        ? FilterReply.DENY : FilterReply.ACCEPT;
             }
         });
     }
