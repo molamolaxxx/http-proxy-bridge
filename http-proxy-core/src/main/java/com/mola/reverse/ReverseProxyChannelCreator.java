@@ -57,7 +57,8 @@ public class ReverseProxyChannelCreator {
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
-                            ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
+                            ch.pipeline().addLast(new IdleStateHandler(
+                                    60, 60, 60));
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);
                             if (type == ServerTypeEnum.HTTP) {
                                 ch.pipeline().addLast(httpRequestHandler);

@@ -51,7 +51,6 @@ public class ReverseProxyServer {
     public void shutdown() {
         reverseProxyChannelMonitor.shutdown();
         ReverseProxyConnectPool.instance().shutdown();
-        System.gc();
         log.info("ReverseProxyServer has been shutdown");
         start.compareAndSet(true, false);
     }

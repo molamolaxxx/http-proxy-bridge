@@ -33,7 +33,7 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         String address = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
         String[] splitRes = address.split(":");
         if (splitRes.length != 2) {

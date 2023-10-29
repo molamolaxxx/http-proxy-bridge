@@ -1,15 +1,7 @@
 package com.mola.ssl;
 
-import com.mola.common.HttpRequestHandler;
 import com.mola.ext.ExtManager;
 import com.mola.ext.def.DefaultClientSslAuthExt;
-import com.mola.forward.DataTransferHandler;
-import com.mola.forward.ForwardProxyChannelManageHandler;
-import com.mola.forward.WhiteListAccessHandler;
-import com.mola.pool.ReverseProxyConnectPool;
-import com.mola.pool.SslEncryptionChannelPool;
-import com.mola.reverse.ReverseChannelHandle;
-import com.mola.utils.ResourceUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -20,9 +12,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

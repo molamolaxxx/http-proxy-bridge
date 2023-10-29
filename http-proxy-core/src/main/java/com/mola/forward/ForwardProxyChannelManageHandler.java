@@ -36,7 +36,7 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
         super.channelActive(ctx);
         // 连接成功
-        log.info("[ForwardProxyChannelManageHandler]: onChannelConnect {" + remoteAddress + "}");
+        log.debug("[ForwardProxyChannelManageHandler]: onChannelConnect {" + remoteAddress + "}");
         // 提前分配
         ProxyGroupRegistry groupRegistry = ProxyGroupRegistry.instance();
         int port = RemotingHelper.fetchChannelLocalPort(ctx.channel());
@@ -50,7 +50,7 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
         super.channelInactive(ctx);
         // 连接关闭
-        log.warn("[ForwardProxyChannelManageHandler]: onChannelClose {" + remoteAddress + "}");
+        log.debug("[ForwardProxyChannelManageHandler]: onChannelClose {" + remoteAddress + "}");
         closeReverseChannel(ctx.channel());
     }
 
@@ -75,7 +75,7 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
         // 连接异常
         RemotingHelper.closeChannel(ctx.channel());
-        log.warn("[ForwardProxyChannelManageHandler]: onChannelException {" + remoteAddress + "}");
+        log.error("[ForwardProxyChannelManageHandler]: onChannelException {" + remoteAddress + "}");
         closeReverseChannel(ctx.channel());
     }
 
@@ -86,7 +86,7 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
             return;
         }
         if (!channel.isOpen()) {
-            log.info("[ForwardProxyChannelManageHandler]: reverse channel {" + channel + "} has been closed");
+            log.warn("[ForwardProxyChannelManageHandler]: reverse channel {" + channel + "} has been closed");
             return;
         }
         RemotingHelper.closeChannel(channel);

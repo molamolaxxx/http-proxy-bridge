@@ -69,7 +69,7 @@ public class ForwardProxyServer {
             }
 
             // 反向代理注册
-            proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort, type);
+            proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
 
             forwardSeverChannelFuture.await();
             proxyRegisterChannelFuture.await();
@@ -182,10 +182,6 @@ public class ForwardProxyServer {
                         pipeline.addLast(new Socks5InitialRequestDecoder());
                         pipeline.addLast(new Socks5InitialRequestInboundHandler());
 
-                        //处理认证请求
-//                        pipeline.addLast(new Socks5PasswordAuthRequestDecoder());
-//                        pipeline.addLast(new Socks5PasswordAuthRequestInboundHandler());
-
                         if (needTransfer(ch)) {
                             // 转发请求到反向代理
                             pipeline.addLast(dataTransferHandler);
@@ -202,7 +198,7 @@ public class ForwardProxyServer {
     }
 
 
-    private ChannelFuture startReverseProxyRegisterServer(int port, ServerTypeEnum type) throws InterruptedException {
+    private ChannelFuture startReverseProxyRegisterServer(int port) {
         ReverseProxyChannelManageHandler reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
         DataReceiveHandler dataReceiveHandler = new DataReceiveHandler();
 
@@ -215,9 +211,8 @@ public class ForwardProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
-
-
-                        ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
+                        ch.pipeline().addLast(new IdleStateHandler(
+                                30, 30, 30));
                         ch.pipeline().addLast(reverseProxyChannelManageHandler);
                         ch.pipeline().addLast(dataReceiveHandler);
                     }

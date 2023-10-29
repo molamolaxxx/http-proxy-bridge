@@ -26,7 +26,7 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
         // 连接成功
-        log.info("[ReverseProxyChannelManageHandler]: onChannelConnect {" + ctx.channel() + "}");
+        log.debug("[ReverseProxyChannelManageHandler]: onChannelConnect {" + ctx.channel() + "}");
         ReverseProxyConnectPool.instance().addChannel(ctx.channel());
     }
 
@@ -35,7 +35,7 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
         // 连接关闭
-        log.warn("[ReverseProxyChannelManageHandler]: onChannelClose {" + ctx.channel() + "}");
+        log.debug("[ReverseProxyChannelManageHandler]: onChannelClose {" + ctx.channel() + "}");
         ReverseProxyConnectPool.instance().removeChannel(ctx.channel());
     }
 
@@ -47,7 +47,7 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
             if (event.state().equals(IdleState.ALL_IDLE)) {
                 final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());
                 // 连接空闲
-                log.warn("[ReverseProxyChannelManageHandler]: onChannelIdle {" + remoteAddress + "}");
+                log.debug("[ReverseProxyChannelManageHandler]: onChannelIdle {" + remoteAddress + "}");
                 ReverseProxyConnectPool.instance().removeChannel(ctx.channel());
             }
         }

@@ -5,7 +5,6 @@ import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
@@ -15,15 +14,6 @@ public class RemotingHelper {
 
 
     private static final Logger logger = LoggerFactory.getLogger(RemotingHelper.class);
-
-    /**
-     * IP:PORT
-     */
-    public static SocketAddress string2SocketAddress(final String addr) {
-        String[] s = addr.split(":");
-        InetSocketAddress isa = new InetSocketAddress(s[0], Integer.valueOf(s[1]));
-        return isa;
-    }
 
     public static String parseChannelRemoteAddress(final Channel channel) {
         if (channel == null) {
@@ -42,15 +32,6 @@ public class RemotingHelper {
         }
 
         return "";
-    }
-
-    public static int fetchChannelRemotePort(final Channel channel) {
-        String address = parseChannelRemoteAddress(channel);
-        String[] split = address.split(":");
-        if (split.length < 2) {
-            return -1;
-        }
-        return Integer.parseInt(split[1]);
     }
 
     public static int fetchChannelLocalPort(final Channel channel) {
@@ -83,7 +64,6 @@ public class RemotingHelper {
 
 
     public static void closeChannel(Channel channel) {
-        final String addrRemote = RemotingHelper.parseChannelRemoteAddress(channel);
         channel.close().addListener((ChannelFutureListener) future ->
                 logger.info("closeChannel: close the connection to channel[" + channel.toString() + "] result: {" + future.isSuccess() + "}"));
     }

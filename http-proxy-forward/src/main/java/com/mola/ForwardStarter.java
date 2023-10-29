@@ -6,15 +6,11 @@ import com.mola.ext.Socks5AuthExtImpl;
 import com.mola.forward.ForwardProxyServer;
 import com.mola.utils.ConfigQueryUtil;
 import com.mola.utils.LogUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
 
 public class ForwardStarter {
-
-    private static final Logger log = LoggerFactory.getLogger(ForwardStarter.class);
 
     public static void main(String[] args) {
         LogUtil.debugReject();

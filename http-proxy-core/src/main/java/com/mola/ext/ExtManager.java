@@ -1,7 +1,5 @@
 package com.mola.ext;
 
-import com.mola.ext.def.DefaultClientSslAuthExt;
-
 /**
  * @author : molamola
  * @Project: http-proxy

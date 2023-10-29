@@ -1,17 +1,15 @@
 package com.mola.ssl;
 
-import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.pool.SslEncryptionChannelPool;
 import com.mola.reverse.ReverseProxyChannelMonitor;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * @author : molamola
@@ -34,8 +32,6 @@ public class SslDataTransferHandler extends ChannelInboundHandlerAdapter {
                 throw new RuntimeException("ReverseProxyServer start failed!");
             }
             channel = future.channel();
-//            SslEncryptionChannelPool encryptionChannelPool = SslEncryptionChannelPool.instance();
-//            encryptionChannelPool.mapping(channel, client2EncrytionChannel);
             SslHandler sslHandler = channel.pipeline().get(SslHandler.class);
             sslHandler.handshakeFuture().addListener(future1 -> {
                 channel.pipeline().addLast(new SslResponseHandler(client2EncrytionChannel));

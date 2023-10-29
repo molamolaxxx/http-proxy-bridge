@@ -184,13 +184,4 @@ public class ReverseProxyConnectPool extends Thread {
         allocatedReverseChannel.forEach(Channel::close);
         allocatedReverseChannel.clear();
     }
-
-    public Map<String, Integer> sizeDesc() {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("reverseProxyChannelSet", reverseProxyChannelSet.size());
-        map.put("doubleEndChannelMap", doubleEndChannelMap.size());
-        map.put("handleMap", handleMap.size());
-        map.put("allocatedReverseChannel", allocatedReverseChannel.size());
-        return map;
-    }
 }

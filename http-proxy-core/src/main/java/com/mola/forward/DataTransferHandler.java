@@ -48,7 +48,7 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (Objects.isNull(reverseChannel)) {
-            log.warn("allocate reverseChannel failed, no available channel");
+            log.debug("allocate reverseChannel failed, no available channel");
             ctx.fireChannelRead(msg);
             return;
         }
