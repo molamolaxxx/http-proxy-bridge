@@ -123,13 +123,13 @@ public class ForwardProxyServer {
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel ch)
-                            throws Exception {
+                    public void initChannel(SocketChannel ch) {
                         if (useSsl) {
                             SslHandler sslHandler = SslContextFactory.createSslHandler(false);
                             ch.pipeline().addLast(sslHandler);
+                        } else { // 客户端使用加密机不需要白名单验证
+                            ch.pipeline().addLast(whiteListAccessHandler);
                         }
-                        ch.pipeline().addLast(whiteListAccessHandler);
                         ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
