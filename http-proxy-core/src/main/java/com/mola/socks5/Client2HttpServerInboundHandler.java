@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Client2HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(Socks5CommandRequestInboundHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(Client2HttpServerInboundHandler.class);
 
     private final ChannelFuture httpChannelFuture;
 
@@ -21,12 +21,12 @@ public class Client2HttpServerInboundHandler extends ChannelInboundHandlerAdapte
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         httpChannelFuture.channel().writeAndFlush(msg);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         httpChannelFuture.channel().close();
     }
 

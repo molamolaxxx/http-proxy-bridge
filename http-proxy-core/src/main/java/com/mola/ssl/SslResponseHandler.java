@@ -25,14 +25,13 @@ public class SslResponseHandler extends ChannelInboundHandlerAdapter {
         SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
     }
 
-
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         encryptionServerChannel.writeAndFlush(msg);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         encryptionServerChannel.close();
         SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
     }

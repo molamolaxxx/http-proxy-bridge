@@ -16,7 +16,6 @@ public class ReverseChannelHandle {
 
     private HttpRequestHandler httpRequestHandler;
 
-
     public ReverseChannelHandle(EventLoopGroup group, HttpRequestHandler httpRequestHandler) {
         this.group = group;
         this.httpRequestHandler = httpRequestHandler;

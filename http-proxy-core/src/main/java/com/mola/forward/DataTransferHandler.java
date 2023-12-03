@@ -22,7 +22,7 @@ import java.util.Objects;
 @ChannelHandler.Sharable
 public class DataTransferHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelMonitor.class);
+    private static final Logger log = LoggerFactory.getLogger(DataTransferHandler.class);
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

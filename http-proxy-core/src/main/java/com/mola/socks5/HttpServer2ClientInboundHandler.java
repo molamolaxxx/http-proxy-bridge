@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpServer2ClientInboundHandler extends ChannelInboundHandlerAdapter {
 
-
     private static final Logger log = LoggerFactory.getLogger(HttpServer2ClientInboundHandler.class);
 
     private final ChannelHandlerContext clientChannelHandlerContext;
@@ -21,12 +20,12 @@ public class HttpServer2ClientInboundHandler extends ChannelInboundHandlerAdapte
     }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         clientChannelHandlerContext.writeAndFlush(msg);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         clientChannelHandlerContext.channel().close();
     }
 

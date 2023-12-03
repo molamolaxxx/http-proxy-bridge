@@ -15,9 +15,8 @@ public class Socks5InitialRequestInboundHandler extends SimpleChannelInboundHand
 
     private static final Logger log = LoggerFactory.getLogger(Socks5InitialRequestInboundHandler.class);
 
-
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5InitialRequest msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5InitialRequest msg) {
         boolean failure = msg.decoderResult().isFailure();
         if (failure) {
             log.error("init socks5 failed，please check!");

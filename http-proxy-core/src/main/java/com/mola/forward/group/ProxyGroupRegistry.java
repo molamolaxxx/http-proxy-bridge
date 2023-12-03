@@ -37,8 +37,11 @@ public class ProxyGroupRegistry {
         if (groups.contains(proxyGroup)) {
             throw new RuntimeException("proxyGroup already exist");
         }
-        List<ProxyGroup> same = groups.stream().filter(group -> proxyGroup.getPort() == group.getPort()
-                        || proxyGroup.getReversePort() == group.getReversePort())
+        List<ProxyGroup> same = groups.stream().filter(
+                group ->
+                        proxyGroup.getPort() == group.getPort() ||
+                                proxyGroup.getReversePort() == group.getReversePort()
+                )
                 .collect(Collectors.toList());
         if (same.size() > 0) {
             throw new RuntimeException("proxyGroup already exist");

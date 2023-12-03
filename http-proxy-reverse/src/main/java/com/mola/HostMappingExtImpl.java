@@ -13,7 +13,7 @@ import java.util.Map;
  **/
 public class HostMappingExtImpl implements HostMappingExt {
 
-    private String configKey;
+    private final String configKey;
 
     public HostMappingExtImpl(String configKey) {
         this.configKey = configKey;

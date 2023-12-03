@@ -16,7 +16,7 @@ public class SslEncryptionChannelPool {
 
     private static SslEncryptionChannelPool instance;
 
-    private Map<Channel, Channel> channelMap = new ConcurrentHashMap<>(16);
+    private final Map<Channel, Channel> channelMap = new ConcurrentHashMap<>(16);
 
     private SslEncryptionChannelPool(){}
 

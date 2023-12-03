@@ -30,6 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  **/
 public class SslEncryptionProxyServer {
 
+    private static final Logger log = LoggerFactory.getLogger(SslEncryptionProxyServer.class);
+
     private EventLoopGroup bossGroup;
 
     private EventLoopGroup workerGroup;
@@ -40,9 +42,7 @@ public class SslEncryptionProxyServer {
 
     private int remotePort;
 
-    private static final Logger log = LoggerFactory.getLogger(SslEncryptionProxyServer.class);
-
-    private AtomicBoolean start = new AtomicBoolean(false);
+    private final AtomicBoolean start = new AtomicBoolean(false);
 
     public synchronized void start(int port, String remoteHost,
                                    int remotePort, EncryptionTypeEnum encryptionType) {
@@ -106,6 +106,7 @@ public class SslEncryptionProxyServer {
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
+
         ChannelFuture future = serverBootstrap.bind(port);
         // 给future添加监听器，监听关心的事件
         future.addListener((ChannelFutureListener) future1 -> {
@@ -131,7 +132,7 @@ public class SslEncryptionProxyServer {
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(new ChannelInitializer() {
                         @Override
-                        protected void initChannel(Channel ch) throws Exception {
+                        protected void initChannel(Channel ch) {
                             SslHandler sslHandler = SslContextFactory.createSslHandler(true);
                             ch.pipeline().addLast(sslHandler);
                         }

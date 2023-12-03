@@ -1,7 +1,6 @@
 package com.mola;
 
 import com.mola.enums.EncryptionTypeEnum;
-import com.mola.enums.ServerTypeEnum;
 import com.mola.ssl.SslEncryptionProxyServer;
 import com.mola.utils.ConfigQueryUtil;
 import com.mola.utils.LogUtil;

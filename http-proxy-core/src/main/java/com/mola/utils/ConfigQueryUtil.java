@@ -16,7 +16,6 @@ public class ConfigQueryUtil {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigQueryUtil.class);
 
-
     public static Map<String, String> getConfig(String[] args) {
         Map<String, String> parseRes = new HashMap<>();
         if (args != null && args.length != 0) {

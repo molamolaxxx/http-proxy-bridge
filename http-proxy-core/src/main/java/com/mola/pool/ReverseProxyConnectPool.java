@@ -22,7 +22,6 @@ public class ReverseProxyConnectPool extends Thread {
 
     private final Set<Channel> reverseProxyChannelSet = new CopyOnWriteArraySet<>();
 
-
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyConnectPool.class);
 
     /**

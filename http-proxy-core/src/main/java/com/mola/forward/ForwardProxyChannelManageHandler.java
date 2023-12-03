@@ -30,7 +30,6 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
 
     private ReverseProxyConnectPool reverseProxyConnectPool = ReverseProxyConnectPool.instance();
 
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         final String remoteAddress = RemotingHelper.parseChannelRemoteAddress(ctx.channel());

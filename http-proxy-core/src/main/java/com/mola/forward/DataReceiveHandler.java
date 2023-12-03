@@ -20,7 +20,6 @@ import java.util.Objects;
 @ChannelHandler.Sharable
 public class DataReceiveHandler extends ChannelInboundHandlerAdapter {
 
-
     private static final Logger log = LoggerFactory.getLogger(DataReceiveHandler.class);
 
     @Override

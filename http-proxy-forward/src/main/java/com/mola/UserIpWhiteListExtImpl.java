@@ -18,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  **/
 public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt {
 
-
     private Logger logger = LoggerFactory.getLogger(UserIpWhiteListExtImpl.class);
 
     private Set<String> notAccessIps = new CopyOnWriteArraySet<>();

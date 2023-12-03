@@ -110,7 +110,7 @@ public class ForwardProxyServer {
         start.compareAndSet(true, false);
     }
 
-    private ChannelFuture startForwardProxyServer(int port, boolean useSsl) throws InterruptedException {
+    private ChannelFuture startForwardProxyServer(int port, boolean useSsl) {
         if (useSsl && ExtManager.getSslAuthExt() == null) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }

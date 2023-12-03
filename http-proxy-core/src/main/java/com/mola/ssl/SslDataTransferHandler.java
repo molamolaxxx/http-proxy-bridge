@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 
 public class SslDataTransferHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelMonitor.class);
+    private static final Logger log = LoggerFactory.getLogger(SslDataTransferHandler.class);
 
-    private Channel channel;
+    private final Channel channel;
 
     public SslDataTransferHandler(Channel client2EncrytionChannel, Bootstrap bootstrap,
                                   String host, int port) {

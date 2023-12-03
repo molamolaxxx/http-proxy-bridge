@@ -37,15 +37,15 @@ public enum HttpCommonService {
 
     INSTANCE;
 
-    private Logger logger = LoggerFactory.getLogger(HttpCommonService.class);
+    private final Logger logger = LoggerFactory.getLogger(HttpCommonService.class);
 
-    private AtomicBoolean monitorThreadStart = new AtomicBoolean(false);
+    private final AtomicBoolean monitorThreadStart = new AtomicBoolean(false);
 
-    private HttpClientConnectionManager connectionManager = buildConnectionManager();
+    private final HttpClientConnectionManager connectionManager = buildConnectionManager();
 
-    private Thread monitorThread = new IdleConnectionMonitorThread(connectionManager);
+    private final Thread monitorThread = new IdleConnectionMonitorThread(connectionManager);
 
-    private volatile HttpClient httpClient;
+    private HttpClient httpClient;
 
     HttpCommonService() {
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
@@ -164,7 +164,7 @@ public enum HttpCommonService {
         return statusCode >= 200 && statusCode < 300;
     }
 
-    private class IdleConnectionMonitorThread extends Thread {
+    private static class IdleConnectionMonitorThread extends Thread {
         private final HttpClientConnectionManager connMgr;
         private volatile boolean shutdown = false;
 
