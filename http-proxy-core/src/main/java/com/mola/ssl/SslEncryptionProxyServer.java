@@ -1,7 +1,10 @@
 package com.mola.ssl;
 
+import com.mola.enums.EncryptionTypeEnum;
+import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
 import com.mola.ext.def.DefaultClientSslAuthExt;
+import com.mola.socks5.Socks5InitialRequestInboundHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -9,6 +12,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
@@ -39,7 +44,8 @@ public class SslEncryptionProxyServer {
 
     private AtomicBoolean start = new AtomicBoolean(false);
 
-    public synchronized void start(int port, String remoteHost, int remotePort) {
+    public synchronized void start(int port, String remoteHost,
+                                   int remotePort, EncryptionTypeEnum encryptionType) {
         if (start.get()) {
             return;
         }
@@ -57,7 +63,7 @@ public class SslEncryptionProxyServer {
             this.remotePort = remotePort;
 
             // 浏览器直接连接的代理服务器
-            ChannelFuture channelFuture = startEncryptionProxyServer(port);
+            ChannelFuture channelFuture = startEncryptionProxyServer(port, encryptionType);
             channelFuture.await();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
@@ -75,7 +81,7 @@ public class SslEncryptionProxyServer {
      * @return
      * @throws InterruptedException
      */
-    private ChannelFuture startEncryptionProxyServer(int port) {
+    private ChannelFuture startEncryptionProxyServer(int port, EncryptionTypeEnum encryptionType) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
@@ -83,7 +89,18 @@ public class SslEncryptionProxyServer {
                     @Override
                     public void initChannel(SocketChannel ch)
                             throws Exception {
-                        ch.pipeline().addLast(new SslDataTransferHandler(
+                        ChannelPipeline pipeline = ch.pipeline();
+
+                        if (EncryptionTypeEnum.SOCKS5_SSL == encryptionType) {
+                            //socks5响应最后一个encode
+                            pipeline.addLast(Socks5ServerEncoder.DEFAULT);
+
+                            //处理socks5初始化请求
+                            pipeline.addLast(new Socks5InitialRequestDecoder());
+                            pipeline.addLast(new Socks5InitialRequestInboundHandler());
+                        }
+
+                        pipeline.addLast(new SslDataTransferHandler(
                                 ch, encryptionClientBootstrap,
                                 remoteHost, remotePort));
                     }
@@ -95,7 +112,7 @@ public class SslEncryptionProxyServer {
             if (future.isSuccess()) {
                 log.info("listening port " + port + " success");
             } else {
-                log.info("listening port" + port + " failed");
+                log.info("listening port " + port + " failed");
             }
         });
         return future;

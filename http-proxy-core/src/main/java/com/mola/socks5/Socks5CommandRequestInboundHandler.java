@@ -41,8 +41,9 @@ public class Socks5CommandRequestInboundHandler extends SimpleChannelInboundHand
         String host = msg.dstAddr();
         int port = msg.dstPort();
         HostMappingExt hostMappingExt = ExtManager.getHostMappingExt();
-        if (hostMappingExt != null) {
-            String mappedAddress = hostMappingExt.fetchMappedAddress(host, port);
+        String mappedAddress = null;
+        if (hostMappingExt != null &&
+                (mappedAddress = hostMappingExt.fetchMappedAddress(host, port)) != null) {
             String[] hostAndPort = mappedAddress.split(":");
             if (hostAndPort.length == 0) {
                 return;
