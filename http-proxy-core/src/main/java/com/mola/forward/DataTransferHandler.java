@@ -1,11 +1,9 @@
 package com.mola.forward;
 
-import com.mola.forward.group.ProxyGroup;
-import com.mola.forward.group.ProxyGroupRegistry;
+import com.mola.bridge.ProxyBridge;
+import com.mola.bridge.ProxyBridgeRegistry;
 import com.mola.pool.ReverseProxyConnectPool;
-import com.mola.reverse.ReverseProxyChannelMonitor;
 import com.mola.utils.RemotingHelper;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,19 +30,19 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
-        ProxyGroupRegistry groupRegistry = ProxyGroupRegistry.instance();
+        ProxyBridgeRegistry bridgeRegistry = ProxyBridgeRegistry.instance();
 
         int port = RemotingHelper.fetchChannelLocalPort(ctx.channel());
-        ProxyGroup proxyGroup = groupRegistry.fetchGroupByForwardPort(port);
+        ProxyBridge proxyBridge = bridgeRegistry.fetchBridgeByForwardPort(port);
 
-        if (connectPool.getReverseProxyChannels(proxyGroup.getReversePort()).size() == 0) {
+        if (connectPool.getReverseProxyChannels(proxyBridge.getReversePort()).size() == 0) {
             ctx.fireChannelRead(msg);
             return;
         }
-        Channel reverseChannel = connectPool.allocate(ctx.channel(), proxyGroup.getReversePort());
+        Channel reverseChannel = connectPool.allocate(ctx.channel(), proxyBridge.getReversePort());
         if (Objects.isNull(reverseChannel)) {
-            connectPool.clearChannels(proxyGroup.getReversePort());
-            reverseChannel = connectPool.allocate(ctx.channel(), proxyGroup.getReversePort());
+            connectPool.clearChannels(proxyBridge.getReversePort());
+            reverseChannel = connectPool.allocate(ctx.channel(), proxyBridge.getReversePort());
         }
 
         if (Objects.isNull(reverseChannel)) {

@@ -1,6 +1,4 @@
-package com.mola.forward.group;
-
-import com.mola.enums.ServerTypeEnum;
+package com.mola.bridge;
 
 import java.util.Objects;
 
@@ -11,7 +9,7 @@ import java.util.Objects;
  * @date : 2023-10-23 22:10
  **/
 
-public class ProxyGroup {
+public class ProxyBridge {
 
     /**
      * 正向代理端口
@@ -23,7 +21,7 @@ public class ProxyGroup {
      */
     private int reversePort;
 
-    public ProxyGroup(int port, int reversePort) {
+    public ProxyBridge(int port, int reversePort) {
         this.port = port;
         this.reversePort = reversePort;
     }
@@ -48,7 +46,7 @@ public class ProxyGroup {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProxyGroup that = (ProxyGroup) o;
+        ProxyBridge that = (ProxyBridge) o;
         return port == that.port && reversePort == that.reversePort;
     }
 

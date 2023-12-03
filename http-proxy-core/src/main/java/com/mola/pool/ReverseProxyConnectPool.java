@@ -3,7 +3,6 @@ package com.mola.pool;
 import com.mola.reverse.ReverseChannelHandle;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
-import io.netty.channel.nio.NioEventLoopGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

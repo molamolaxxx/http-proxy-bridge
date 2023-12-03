@@ -1,7 +1,7 @@
 package com.mola.forward;
 
-import com.mola.forward.group.ProxyGroup;
-import com.mola.forward.group.ProxyGroupRegistry;
+import com.mola.bridge.ProxyBridge;
+import com.mola.bridge.ProxyBridgeRegistry;
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author : molamola
@@ -37,10 +36,10 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         // 连接成功
         log.debug("[ForwardProxyChannelManageHandler]: onChannelConnect {" + remoteAddress + "}");
         // 提前分配
-        ProxyGroupRegistry groupRegistry = ProxyGroupRegistry.instance();
+        ProxyBridgeRegistry bridgeRegistry = ProxyBridgeRegistry.instance();
         int port = RemotingHelper.fetchChannelLocalPort(ctx.channel());
-        ProxyGroup proxyGroup = groupRegistry.fetchGroupByForwardPort(port);
-        reverseProxyConnectPool.allocate(ctx.channel(), proxyGroup.getReversePort());
+        ProxyBridge proxyBridge = bridgeRegistry.fetchBridgeByForwardPort(port);
+        reverseProxyConnectPool.allocate(ctx.channel(), proxyBridge.getReversePort());
     }
 
 

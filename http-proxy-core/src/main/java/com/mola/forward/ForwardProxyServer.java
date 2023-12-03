@@ -4,10 +4,9 @@ import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
 import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
-import com.mola.ext.def.DefaultClientSslAuthExt;
 import com.mola.ext.def.DefaultServerSslAuthExt;
-import com.mola.forward.group.ProxyGroup;
-import com.mola.forward.group.ProxyGroupRegistry;
+import com.mola.bridge.ProxyBridge;
+import com.mola.bridge.ProxyBridgeRegistry;
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.socks5.Socks5InitialRequestInboundHandler;
@@ -53,7 +52,7 @@ public class ForwardProxyServer {
         if (start.get()) {
             return;
         }
-        ProxyGroupRegistry.instance().register(new ProxyGroup(port, reversePort));
+        ProxyBridgeRegistry.instance().register(new ProxyBridge(port, reversePort));
         try {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
@@ -231,11 +230,11 @@ public class ForwardProxyServer {
 
 
     private boolean needTransfer(Channel ch) {
-        ProxyGroupRegistry groupRegistry = ProxyGroupRegistry.instance();
-        ProxyGroup proxyGroup = groupRegistry.fetchGroupByForwardPort(RemotingHelper.fetchChannelLocalPort(ch));
+        ProxyBridgeRegistry bridgeRegistry = ProxyBridgeRegistry.instance();
+        ProxyBridge proxyBridge = bridgeRegistry.fetchBridgeByForwardPort(RemotingHelper.fetchChannelLocalPort(ch));
 
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
-        if (connectPool.getReverseProxyChannels(proxyGroup.getReversePort()).size() == 0) {
+        if (connectPool.getReverseProxyChannels(proxyBridge.getReversePort()).size() == 0) {
             return false;
         }
         return true;
