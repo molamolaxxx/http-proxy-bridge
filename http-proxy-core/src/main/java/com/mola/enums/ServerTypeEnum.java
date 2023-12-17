@@ -12,7 +12,11 @@ public enum ServerTypeEnum {
     HTTP("http(s)代理"),
     SOCKS5("socks5代理"),
 
-    SSL("加密机代理")
+    SSL_HTTP("加密机代理"),
+
+    SSL_SOCKS5("ssl+socks5代理"),
+
+    SSL_TRANSFER("ssl转发到反向代理"),
     ;
 
     private String msg;

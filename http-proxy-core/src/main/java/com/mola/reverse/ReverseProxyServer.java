@@ -2,6 +2,7 @@ package com.mola.reverse;
 
 import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
+import com.mola.enums.ReverseTypeEnum;
 import com.mola.enums.ServerTypeEnum;
 import com.mola.forward.ForwardProxyServer;
 import com.mola.pool.ReverseProxyConnectPool;
@@ -28,7 +29,7 @@ public class ReverseProxyServer {
 
     private AtomicBoolean start = new AtomicBoolean(false);
 
-    public synchronized void start(String host, int port, int maxChannelNum, ServerTypeEnum type) {
+    public synchronized void start(String host, int port, int maxChannelNum, ReverseTypeEnum type) {
         if (start.get()) {
             return;
         }

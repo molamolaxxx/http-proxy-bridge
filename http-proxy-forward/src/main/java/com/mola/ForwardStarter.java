@@ -20,18 +20,23 @@ public class ForwardStarter {
         userIpWhiteListExt.start();
         ExtManager.setSocks5AuthExt(new Socks5AuthExtImpl());
 
-        Map<String, String> config = ConfigQueryUtil.getConfig(args);
-        // 配置
-        int port = Integer.parseInt(config.getOrDefault("port", "20432"));
-        int reversePort = Integer.parseInt(config.getOrDefault("reversePort", "10433"));
-        ServerTypeEnum serverTypeEnum = ServerTypeEnum.valueOf(config.getOrDefault("type", "HTTP").toUpperCase(Locale.ROOT));
-
         // 启动加密服务
         new Thread(() -> {
             ForwardProxyServer encryptionProxyServer = new ForwardProxyServer();
-            encryptionProxyServer.start(20434, 10434, ServerTypeEnum.SSL);
+            encryptionProxyServer.start(20434, 10434, ServerTypeEnum.SSL_HTTP);
         }).start();
 
+        // 启动ssl纯转发代理
+        new Thread(() -> {
+            ForwardProxyServer encryptionProxyServer = new ForwardProxyServer();
+            encryptionProxyServer.start(20435, 10435, ServerTypeEnum.SSL_TRANSFER);
+        }).start();
+
+        // 启动普通http代理
+        Map<String, String> config = ConfigQueryUtil.getConfig(args);
+        int port = Integer.parseInt(config.getOrDefault("port", "20432"));
+        int reversePort = Integer.parseInt(config.getOrDefault("reversePort", "10433"));
+        ServerTypeEnum serverTypeEnum = ServerTypeEnum.valueOf(config.getOrDefault("type", "HTTP").toUpperCase(Locale.ROOT));
         ForwardProxyServer forwardProxyServer = new ForwardProxyServer();
         forwardProxyServer.start(port, reversePort, serverTypeEnum);
     }

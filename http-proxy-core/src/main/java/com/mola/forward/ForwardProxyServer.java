@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author : molamola
  * @Project: http-proxy
  * @Description: 正向代理服务器
+ * 1、SSL（客户端）+
  * @date : 2023-09-30 00:41
  **/
 public class ForwardProxyServer {
@@ -52,22 +53,26 @@ public class ForwardProxyServer {
         if (start.get()) {
             return;
         }
-        ProxyBridgeRegistry.instance().register(new ProxyBridge(port, reversePort));
+        ProxyBridgeRegistry.instance().register(ProxyBridge.of(port, reversePort));
         try {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
-            // 正向代理
+            // 正向代理服务启动
             if (ServerTypeEnum.HTTP == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port, false);
+                forwardSeverChannelFuture = startForwardProxyServer(port, false, false);
             } else if (ServerTypeEnum.SOCKS5 == type) {
-                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port);
-            } else if (ServerTypeEnum.SSL == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port, true);
+                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port, false);
+            } else if (ServerTypeEnum.SSL_HTTP == type) {
+                forwardSeverChannelFuture = startForwardProxyServer(port, true, false);
+            } else if (ServerTypeEnum.SSL_SOCKS5 == type) {
+                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port, true);
+            } else if (ServerTypeEnum.SSL_TRANSFER == type) {
+                forwardSeverChannelFuture = startForwardProxyServer(port, true, true);
             } else {
                 throw new RuntimeException("unknown type, " + type);
             }
 
-            // 反向代理注册
+            // 反向代理服务启动
             proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
 
             forwardSeverChannelFuture.await();
@@ -109,7 +114,7 @@ public class ForwardProxyServer {
         start.compareAndSet(true, false);
     }
 
-    private ChannelFuture startForwardProxyServer(int port, boolean useSsl) {
+    private ChannelFuture startForwardProxyServer(int port, boolean useSsl, boolean pureTransfer) {
         if (useSsl && ExtManager.getSslAuthExt() == null) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
@@ -133,6 +138,11 @@ public class ForwardProxyServer {
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
 
+                        // 纯转发，不配置代理服务
+                        if (pureTransfer) {
+                            return;
+                        }
+
                         HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
                         ch.closeFuture().addListener((ChannelFutureListener) future -> {
                             httpRequestHandler.shutdown();
@@ -153,7 +163,11 @@ public class ForwardProxyServer {
         return future;
     }
 
-    private ChannelFuture startForwardSocks5ProxyServer(int port) {
+    private ChannelFuture startForwardSocks5ProxyServer(int port, boolean useSsl) {
+        if (useSsl && ExtManager.getSslAuthExt() == null) {
+            ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
+        }
+
         EventLoopGroup clientWorkGroup = new NioEventLoopGroup();
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -171,20 +185,25 @@ public class ForwardProxyServer {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
 
-                        // 白名单
-                        pipeline.addLast(whiteListAccessHandler);
-
-                        //socks5响应最后一个encode
-                        pipeline.addLast(Socks5ServerEncoder.DEFAULT);
-
-                        //处理socks5初始化请求
-                        pipeline.addLast(new Socks5InitialRequestDecoder());
-                        pipeline.addLast(new Socks5InitialRequestInboundHandler());
+                        // 白名单，ssl连接不需要白名单校验
+                        if (useSsl) {
+                            SslHandler sslHandler = SslContextFactory.createSslHandler(false);
+                            ch.pipeline().addLast(sslHandler);
+                        } else { // 客户端使用加密机不需要白名单验证
+                            ch.pipeline().addLast(whiteListAccessHandler);
+                        }
 
                         if (needTransfer(ch)) {
                             // 转发请求到反向代理
                             pipeline.addLast(dataTransferHandler);
                         } else {
+                            //socks5响应最后一个encode
+                            pipeline.addLast(Socks5ServerEncoder.DEFAULT);
+
+                            //处理socks5初始化请求
+                            pipeline.addLast(new Socks5InitialRequestDecoder());
+                            pipeline.addLast(new Socks5InitialRequestInboundHandler());
+
                             //处理connection请求
                             pipeline.addLast(new Socks5CommandRequestDecoder());
                             pipeline.addLast(new Socks5CommandRequestInboundHandler(clientWorkGroup));

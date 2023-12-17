@@ -4,18 +4,16 @@ package com.mola.enums;
  * @author : molamola
  * @Project: http-proxy
  * @Description:
- * @date : 2023-12-03 14:48
+ * @date : 2023-12-17 20:06
  **/
-public enum EncryptionTypeEnum {
+public enum ReverseTypeEnum {
 
-    SOCKS5_SSL("socks5+ssl加密"),
-
-    SSL("ssl加密")
-    ;
+    HTTP("http(s)代理"),
+    SOCKS5("socks5代理"),;
 
     private String msg;
 
-    EncryptionTypeEnum(String msg){
+    ReverseTypeEnum(String msg){
         this.msg = msg;
     }
 

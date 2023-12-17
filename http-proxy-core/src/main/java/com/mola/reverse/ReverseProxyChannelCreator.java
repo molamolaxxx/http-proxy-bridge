@@ -2,10 +2,12 @@ package com.mola.reverse;
 
 import com.mola.common.HttpRequestHandler;
 import com.mola.common.ReverseProxyChannelManageHandler;
+import com.mola.enums.ReverseTypeEnum;
 import com.mola.enums.ServerTypeEnum;
 import com.mola.forward.ForwardProxyServer;
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.socks5.Socks5CommandRequestInboundHandler;
+import com.mola.socks5.Socks5InitialRequestInboundHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -14,6 +16,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -35,11 +38,11 @@ public class ReverseProxyChannelCreator {
 
     private int port;
 
-    private ServerTypeEnum type;
+    private ReverseTypeEnum type;
 
     private ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
 
-    public ReverseProxyChannelCreator(String host, int port, ServerTypeEnum type) {
+    public ReverseProxyChannelCreator(String host, int port, ReverseTypeEnum type) {
         this.host = host;
         this.port = port;
         this.reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
@@ -60,12 +63,15 @@ public class ReverseProxyChannelCreator {
                             ch.pipeline().addLast(new IdleStateHandler(
                                     60, 60, 60));
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);
-                            if (type == ServerTypeEnum.HTTP) {
+                            if (type == ReverseTypeEnum.HTTP) {
                                 ch.pipeline().addLast(httpRequestHandler);
-                            } else if (type == ServerTypeEnum.SOCKS5) {
-
+                            } else if (type == ReverseTypeEnum.SOCKS5) {
                                 //socks5响应最后一个encode
                                 ch.pipeline().addLast(Socks5ServerEncoder.DEFAULT);
+
+                                //处理socks5初始化请求
+                                ch.pipeline().addLast(new Socks5InitialRequestDecoder());
+                                ch.pipeline().addLast(new Socks5InitialRequestInboundHandler());
 
                                 //处理connection请求
                                 ch.pipeline().addLast(new Socks5CommandRequestDecoder());
