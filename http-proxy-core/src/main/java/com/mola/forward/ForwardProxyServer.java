@@ -25,6 +25,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -37,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ForwardProxyServer {
 
 
-    private AtomicBoolean start = new AtomicBoolean(false);
+    private final AtomicBoolean start = new AtomicBoolean(false);
 
     private static final Logger log = LoggerFactory.getLogger(ForwardProxyServer.class);
 
@@ -49,6 +52,8 @@ public class ForwardProxyServer {
 
     private ChannelFuture proxyRegisterChannelFuture;
 
+    private static final Map<Integer, ChannelFuture> reverseChannelFutureCacheMap = new ConcurrentHashMap<>();
+
     public synchronized void start(int port, int reversePort, ServerTypeEnum type) {
         if (start.get()) {
             return;
@@ -58,19 +63,7 @@ public class ForwardProxyServer {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
             // 正向代理服务启动
-            if (ServerTypeEnum.HTTP == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port, false, false);
-            } else if (ServerTypeEnum.SOCKS5 == type) {
-                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port, false);
-            } else if (ServerTypeEnum.SSL_HTTP == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port, true, false);
-            } else if (ServerTypeEnum.SSL_SOCKS5 == type) {
-                forwardSeverChannelFuture = startForwardSocks5ProxyServer(port, true);
-            } else if (ServerTypeEnum.SSL_TRANSFER == type) {
-                forwardSeverChannelFuture = startForwardProxyServer(port, true, true);
-            } else {
-                throw new RuntimeException("unknown type, " + type);
-            }
+            forwardSeverChannelFuture = startForwardProxyServer(port, reversePort, type);
 
             // 反向代理服务启动
             proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
@@ -82,8 +75,6 @@ public class ForwardProxyServer {
                 return;
             }
             log.info("ForwardProxyServer start success!");
-            log.info("forwardProxyServer channel is " + forwardSeverChannelFuture.channel().toString());
-            log.info("proxyRegisterChannel channel is " + proxyRegisterChannelFuture.channel().toString());
             start.compareAndSet(false, true);
             forwardSeverChannelFuture.channel().closeFuture().sync();
             proxyRegisterChannelFuture.channel().closeFuture().sync();
@@ -94,6 +85,21 @@ public class ForwardProxyServer {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    private ChannelFuture startForwardProxyServer(int port, int reversePort, ServerTypeEnum type) {
+        if (ServerTypeEnum.HTTP == type) {
+            return startForwardHttpProxyServer(port, false, false);
+        } else if (ServerTypeEnum.SOCKS5 == type) {
+            return startForwardSocks5ProxyServer(port, false);
+        } else if (ServerTypeEnum.SSL_HTTP == type) {
+            return startForwardHttpProxyServer(port, true, false);
+        } else if (ServerTypeEnum.SSL_SOCKS5 == type) {
+            return startForwardSocks5ProxyServer(port, true);
+        } else if (ServerTypeEnum.SSL_TRANSFER == type) {
+            return startForwardHttpProxyServer(port, true, true);
+        }
+        throw new RuntimeException("unknown type, " + type);
     }
 
     public void shutdown() {
@@ -114,7 +120,7 @@ public class ForwardProxyServer {
         start.compareAndSet(true, false);
     }
 
-    private ChannelFuture startForwardProxyServer(int port, boolean useSsl, boolean pureTransfer) {
+    private ChannelFuture startForwardHttpProxyServer(int port, boolean useSsl, boolean pureTransfer) {
         if (useSsl && ExtManager.getSslAuthExt() == null) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
@@ -155,9 +161,9 @@ public class ForwardProxyServer {
         // 给future添加监听器，监听关心的事件
         future.addListener((ChannelFutureListener) future1 -> {
             if (future.isSuccess()) {
-                log.info("listening port " + port + " success");
+                log.info("[http-forward] listening port " + port + " success");
             } else {
-                log.info("listening port" + port + " failed");
+                log.info("[http-forward] listening port " + port + " failed");
             }
         });
         return future;
@@ -215,8 +221,18 @@ public class ForwardProxyServer {
         return future;
     }
 
-
     private ChannelFuture startReverseProxyRegisterServer(int port) {
+        synchronized (ForwardProxyServer.class) {
+            return startReverseProxyRegisterServerInner(port);
+        }
+    }
+
+
+    private ChannelFuture startReverseProxyRegisterServerInner(int port) {
+        // 缓存反向启动服务，有可能多个bridge关联相同reverse
+        if (reverseChannelFutureCacheMap.containsKey(port)) {
+            return reverseChannelFutureCacheMap.get(port);
+        }
         ReverseProxyChannelManageHandler reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
         DataReceiveHandler dataReceiveHandler = new DataReceiveHandler();
 
@@ -239,11 +255,12 @@ public class ForwardProxyServer {
         // 给future添加监听器，监听关心的事件
         future.addListener((ChannelFutureListener) f -> {
             if (future.isSuccess()) {
-                log.info("listening port " + port + " success");
+                log.info("[reverse-receiver] listening port " + port + " success");
             } else {
-                log.info("listening port" + port + " failed");
+                log.info("[reverse-receiver] listening port " + port + " failed");
             }
         });
+        reverseChannelFutureCacheMap.put(port, future);
         return future;
     }
 

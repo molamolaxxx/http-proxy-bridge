@@ -29,7 +29,7 @@ public class ForwardStarter {
         // 启动ssl纯转发代理
         new Thread(() -> {
             ForwardProxyServer encryptionProxyServer = new ForwardProxyServer();
-            encryptionProxyServer.start(20435, 10435, ServerTypeEnum.SSL_TRANSFER);
+            encryptionProxyServer.start(20435, 10433, ServerTypeEnum.SSL_TRANSFER);
         }).start();
 
         // 启动普通http代理

@@ -35,15 +35,6 @@ public class ProxyBridgeRegistry {
         if (bridges.contains(proxyBridge)) {
             throw new RuntimeException("proxy bridge already exist");
         }
-        List<ProxyBridge> same = bridges.stream().filter(
-                bridge ->
-                        proxyBridge.getPort() == bridge.getPort() ||
-                                proxyBridge.getReversePort() == bridge.getReversePort()
-                )
-                .collect(Collectors.toList());
-        if (same.size() > 0) {
-            throw new RuntimeException("proxy bridge already exist");
-        }
         bridges.add(proxyBridge);
     }
 
