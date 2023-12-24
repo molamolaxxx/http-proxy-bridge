@@ -1,6 +1,6 @@
 package com.mola;
 
-import com.mola.ssl.SslEncryptionProxyServer;
+import com.mola.server.encryption.SslEncryptionProxyServer;
 import com.mola.utils.ConfigQueryUtil;
 import com.mola.utils.LogUtil;
 

@@ -3,7 +3,7 @@ package com.mola;
 import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
 import com.mola.ext.Socks5AuthExtImpl;
-import com.mola.forward.ForwardProxyServer;
+import com.mola.server.forward.ForwardProxyServer;
 import com.mola.utils.ConfigQueryUtil;
 import com.mola.utils.LogUtil;
 

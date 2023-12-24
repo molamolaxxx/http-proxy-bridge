@@ -1,4 +1,4 @@
-package com.mola.socks5;
+package com.mola.handlers.socks5;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author kdyzm
- * @date 2021-04-23
- */
+ * @author : molamola
+ * @Project: http-proxy
+ * @Description:
+ * @date : 2023-09-30 11:42
+ **/
 public class Socks5InitialRequestInboundHandler extends SimpleChannelInboundHandler<DefaultSocks5InitialRequest> {
 
     private static final Logger log = LoggerFactory.getLogger(Socks5InitialRequestInboundHandler.class);

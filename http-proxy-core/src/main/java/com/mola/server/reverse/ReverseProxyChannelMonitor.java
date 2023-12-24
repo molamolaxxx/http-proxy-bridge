@@ -1,4 +1,4 @@
-package com.mola.reverse;
+package com.mola.server.reverse;
 
 import com.mola.pool.ReverseProxyConnectPool;
 import io.netty.channel.Channel;

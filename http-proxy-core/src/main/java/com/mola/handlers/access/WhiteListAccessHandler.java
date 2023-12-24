@@ -1,24 +1,18 @@
-package com.mola.forward;
+package com.mola.handlers.access;
 
 import com.mola.ext.ExtManager;
 import com.mola.ext.UserIpWhiteListExt;
-import com.mola.pool.ReverseProxyConnectPool;
-import com.mola.reverse.ReverseProxyChannelMonitor;
 import com.mola.utils.RemotingHelper;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-import java.util.Set;
-
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: 白名单拦截器
  * @date : 2023-09-30 15:33
  **/
 

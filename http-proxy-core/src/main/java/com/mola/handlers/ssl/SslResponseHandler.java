@@ -1,4 +1,4 @@
-package com.mola.ssl;
+package com.mola.handlers.ssl;
 
 import com.mola.pool.SslEncryptionChannelPool;
 import io.netty.channel.Channel;
@@ -8,7 +8,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: ssl响应处理
  * @date : 2023-10-22 20:47
  **/
 public class SslResponseHandler extends ChannelInboundHandlerAdapter {

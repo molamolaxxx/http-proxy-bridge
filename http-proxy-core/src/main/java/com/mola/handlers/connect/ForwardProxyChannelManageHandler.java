@@ -1,4 +1,4 @@
-package com.mola.forward;
+package com.mola.handlers.connect;
 
 import com.mola.bridge.ProxyBridge;
 import com.mola.bridge.ProxyBridgeRegistry;

@@ -1,6 +1,6 @@
 package com.mola.pool;
 
-import com.mola.reverse.ReverseChannelHandle;
+import com.mola.entity.ReverseChannelHandle;
 import com.mola.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;

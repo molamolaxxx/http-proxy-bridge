@@ -1,19 +1,22 @@
 package com.mola.bridge;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.stream.Collectors;
 
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: 正向代理和反向代理的绑定关系注册
  * @date : 2023-10-22 08:18
  **/
 public class ProxyBridgeRegistry {
 
     private static ProxyBridgeRegistry instance;
+
+    /**
+     * 底层存储，使用线程安全的set
+     */
+    private Set<ProxyBridge> bridges = new CopyOnWriteArraySet<>();
 
     private ProxyBridgeRegistry(){}
 
@@ -29,7 +32,6 @@ public class ProxyBridgeRegistry {
             return instance;
         }
     }
-    private Set<ProxyBridge> bridges = new CopyOnWriteArraySet<>();
 
     public void register(ProxyBridge proxyBridge) {
         if (bridges.contains(proxyBridge)) {

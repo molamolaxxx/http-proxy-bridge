@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: 正向代理和反向代理的绑定关系
  * @date : 2023-10-23 22:10
  **/
 

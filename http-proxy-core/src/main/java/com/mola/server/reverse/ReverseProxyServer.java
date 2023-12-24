@@ -1,23 +1,12 @@
-package com.mola.reverse;
+package com.mola.server.reverse;
 
-import com.mola.common.HttpRequestHandler;
-import com.mola.common.ReverseProxyChannelManageHandler;
 import com.mola.enums.ReverseTypeEnum;
-import com.mola.enums.ServerTypeEnum;
-import com.mola.forward.ForwardProxyServer;
+import com.mola.server.forward.ForwardProxyServer;
 import com.mola.pool.ReverseProxyConnectPool;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ReverseProxyServer {
 

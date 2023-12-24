@@ -1,13 +1,12 @@
-package com.mola.reverse;
+package com.mola.server.reverse;
 
-import com.mola.common.HttpRequestHandler;
-import com.mola.common.ReverseProxyChannelManageHandler;
+import com.mola.entity.ReverseChannelHandle;
+import com.mola.handlers.http.HttpRequestHandler;
+import com.mola.handlers.connect.ReverseProxyChannelManageHandler;
 import com.mola.enums.ReverseTypeEnum;
-import com.mola.enums.ServerTypeEnum;
-import com.mola.forward.ForwardProxyServer;
 import com.mola.pool.ReverseProxyConnectPool;
-import com.mola.socks5.Socks5CommandRequestInboundHandler;
-import com.mola.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.handlers.socks5.Socks5CommandRequestInboundHandler;
+import com.mola.handlers.socks5.Socks5InitialRequestInboundHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

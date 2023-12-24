@@ -1,4 +1,4 @@
-package com.mola.forward;
+package com.mola.handlers.transfer;
 
 import com.mola.pool.ReverseProxyConnectPool;
 import io.netty.channel.Channel;
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: 接收反向代理流量发送到正向代理的channel
  * @date : 2023-09-30 09:10
  **/
 

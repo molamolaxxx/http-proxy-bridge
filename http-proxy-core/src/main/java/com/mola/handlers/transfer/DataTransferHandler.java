@@ -1,4 +1,4 @@
-package com.mola.forward;
+package com.mola.handlers.transfer;
 
 import com.mola.bridge.ProxyBridge;
 import com.mola.bridge.ProxyBridgeRegistry;
@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * @author : molamola
  * @Project: http-proxy
- * @Description:
+ * @Description: 正向代理的流量转发到反向代理的channel
  * @date : 2023-09-30 09:10
  **/
 

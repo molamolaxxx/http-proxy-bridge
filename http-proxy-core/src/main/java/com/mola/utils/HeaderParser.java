@@ -1,6 +1,19 @@
-package com.mola.common;
+package com.mola.utils;
+
+import com.mola.entity.ProxyHttpHeader;
+
+/**
+ * @author : molamola
+ * @Project: http-proxy
+ * @Description: 解析http代理明文的请求头
+ * @date : 2023-10-23 22:10
+ **/
 
 public class HeaderParser {
+
+    private static final String CONNECT_METHOD_NAME = "CONNECT";
+
+    private static final String HOST = "host";
 
     public static ProxyHttpHeader parse(String header) {
         String[] lines = header.split("\\n");
@@ -10,11 +23,11 @@ public class HeaderParser {
             if (line == null) {
                 continue;
             }
-            if (line.split(" ")[0].equalsIgnoreCase("CONNECT")) {
+            if (line.split(" ")[0].equalsIgnoreCase(CONNECT_METHOD_NAME)) {
                 isConnectMethod = true;
             }
             String[] hostLine = line.split(": ");
-            if (hostLine[0].equalsIgnoreCase("host")) {
+            if (hostLine[0].equalsIgnoreCase(HOST)) {
                 hostTemp = hostLine[1];
             }
         }

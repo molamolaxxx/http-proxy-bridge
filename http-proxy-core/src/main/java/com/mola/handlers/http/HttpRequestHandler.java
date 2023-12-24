@@ -1,5 +1,7 @@
-package com.mola.common;
+package com.mola.handlers.http;
 
+import com.mola.utils.HeaderParser;
+import com.mola.entity.ProxyHttpHeader;
 import com.mola.ext.ExtManager;
 import com.mola.ext.HostMappingExt;
 import io.netty.bootstrap.Bootstrap;
@@ -14,6 +16,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * @author : molamola
+ * @Project: http-proxy
+ * @Description: http处理器，负责连接站点&发送数据
+ * @date : 2020-09-04 10:50
+ **/
 public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);

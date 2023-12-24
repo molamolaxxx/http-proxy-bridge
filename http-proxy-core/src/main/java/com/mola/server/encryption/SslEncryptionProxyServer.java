@@ -1,7 +1,8 @@
-package com.mola.ssl;
+package com.mola.server.encryption;
 
 import com.mola.ext.ExtManager;
 import com.mola.ext.def.DefaultClientSslAuthExt;
+import com.mola.handlers.ssl.SslRequestHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -86,7 +87,7 @@ public class SslEncryptionProxyServer {
                         ChannelPipeline pipeline = ch.pipeline();
 
                         pipeline.addLast(
-                                new SslDataTransferHandler(
+                                new SslRequestHandler(
                                         ch,
                                         encryptionClientBootstrap,
                                         remoteHost,

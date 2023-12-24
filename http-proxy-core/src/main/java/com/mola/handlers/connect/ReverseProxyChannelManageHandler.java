@@ -1,4 +1,4 @@
-package com.mola.common;
+package com.mola.handlers.connect;
 
 import com.mola.pool.ReverseProxyConnectPool;
 import com.mola.utils.RemotingHelper;

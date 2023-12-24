@@ -1,4 +1,4 @@
-package com.mola.common;
+package com.mola.entity;
 
 public class ProxyHttpHeader {
 

@@ -1,8 +1,7 @@
-package com.mola.reverse;
+package com.mola.entity;
 
-import com.mola.common.HttpRequestHandler;
+import com.mola.handlers.http.HttpRequestHandler;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 
 /**
  * @author : molamola

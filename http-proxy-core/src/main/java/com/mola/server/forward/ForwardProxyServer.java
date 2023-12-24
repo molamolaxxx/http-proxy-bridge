@@ -1,16 +1,20 @@
-package com.mola.forward;
+package com.mola.server.forward;
 
-import com.mola.common.HttpRequestHandler;
-import com.mola.common.ReverseProxyChannelManageHandler;
+import com.mola.bridge.ProxyBridge;
+import com.mola.bridge.ProxyBridgeRegistry;
 import com.mola.enums.ServerTypeEnum;
 import com.mola.ext.ExtManager;
 import com.mola.ext.def.DefaultServerSslAuthExt;
-import com.mola.bridge.ProxyBridge;
-import com.mola.bridge.ProxyBridgeRegistry;
+import com.mola.handlers.access.WhiteListAccessHandler;
+import com.mola.handlers.connect.ForwardProxyChannelManageHandler;
+import com.mola.handlers.connect.ReverseProxyChannelManageHandler;
+import com.mola.handlers.http.HttpRequestHandler;
+import com.mola.handlers.transfer.DataReceiveHandler;
+import com.mola.handlers.transfer.DataTransferHandler;
 import com.mola.pool.ReverseProxyConnectPool;
-import com.mola.socks5.Socks5CommandRequestInboundHandler;
-import com.mola.socks5.Socks5InitialRequestInboundHandler;
-import com.mola.ssl.SslContextFactory;
+import com.mola.handlers.socks5.Socks5CommandRequestInboundHandler;
+import com.mola.handlers.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.server.encryption.SslContextFactory;
 import com.mola.utils.RemotingHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -25,7 +29,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date : 2023-09-30 00:41
  **/
 public class ForwardProxyServer {
-
 
     private final AtomicBoolean start = new AtomicBoolean(false);
 
@@ -54,6 +56,12 @@ public class ForwardProxyServer {
 
     private static final Map<Integer, ChannelFuture> reverseChannelFutureCacheMap = new ConcurrentHashMap<>();
 
+    /**
+     * 启动代理服务器，包括正向代理，反向接收服务
+     * @param port
+     * @param reversePort
+     * @param type
+     */
     public synchronized void start(int port, int reversePort, ServerTypeEnum type) {
         if (start.get()) {
             return;
@@ -65,7 +73,7 @@ public class ForwardProxyServer {
             // 正向代理服务启动
             forwardSeverChannelFuture = startForwardProxyServer(port, reversePort, type);
 
-            // 反向代理服务启动
+            // 反向代理接收服务启动
             proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
 
             forwardSeverChannelFuture.await();

@@ -1,4 +1,4 @@
-package com.mola.ssl;
+package com.mola.server.encryption;
 
 import com.mola.ext.ExtManager;
 import com.mola.ext.SslAuthExt;

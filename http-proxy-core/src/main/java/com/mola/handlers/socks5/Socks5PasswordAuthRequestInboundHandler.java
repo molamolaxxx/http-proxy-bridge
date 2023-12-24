@@ -1,4 +1,4 @@
-package com.mola.socks5;
+package com.mola.handlers.socks5;
 
 import com.mola.ext.ExtManager;
 import com.mola.ext.Socks5AuthExt;
@@ -8,9 +8,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socksx.v5.*;
 
 /**
- * @author kdyzm
- * @date 2021/4/25
- */
+ * @author : molamola
+ * @Project: http-proxy
+ * @Description:
+ * @date : 2023-09-30 11:42
+ **/
 public class Socks5PasswordAuthRequestInboundHandler extends SimpleChannelInboundHandler<DefaultSocks5PasswordAuthRequest> {
 
     @Override
