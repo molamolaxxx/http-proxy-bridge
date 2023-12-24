@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mola.ReverseStarter</mainClass>
+                            <mainClass>com.mola.proxy.reverse.ReverseStarter</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

@@ -41,7 +41,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mola.ForwardStarter</mainClass>
+                            <mainClass>com.mola.proxy.forward.ForwardStarter</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

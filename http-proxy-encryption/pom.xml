@@ -36,7 +36,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.mola.EncryptionStarter</mainClass>
+                            <mainClass>com.mola.proxy.encryption.EncryptionStarter</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
