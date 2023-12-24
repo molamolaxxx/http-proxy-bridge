@@ -22,11 +22,6 @@
             <groupId>com.mola</groupId>
             <artifactId>http-proxy-core</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.mola</groupId>
-            <artifactId>cmd-proxy-client</artifactId>
-        </dependency>
     </dependencies>
 
 
