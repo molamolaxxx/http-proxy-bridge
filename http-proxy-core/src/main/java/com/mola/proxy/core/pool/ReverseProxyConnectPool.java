@@ -111,31 +111,37 @@ public class ReverseProxyConnectPool extends Thread {
         return doubleEndChannelMap.get(reverseChannel);
     }
 
-    public synchronized Channel allocate(Channel forwardProxyChannel, int reversePort) {
+    public Channel allocate(Channel forwardProxyChannel, int reversePort) {
         if (doubleEndChannelMap.containsKey(forwardProxyChannel)) {
             return doubleEndChannelMap.get(forwardProxyChannel);
         }
-        List<Channel> channels = reverseProxyChannelSet
-                .stream().filter(ch -> !allocatedReverseChannel.contains(ch) && ch.isOpen())
-                .filter(ch -> RemotingHelper.fetchChannelLocalPort(ch) == reversePort)
-                .collect(Collectors.toList());
+        synchronized (this) {
+            if (doubleEndChannelMap.containsKey(forwardProxyChannel)) {
+                return doubleEndChannelMap.get(forwardProxyChannel);
+            }
+            List<Channel> channels = reverseProxyChannelSet
+                    .stream().filter(ch -> !allocatedReverseChannel.contains(ch) && ch.isOpen())
+                    .filter(ch -> RemotingHelper.fetchChannelLocalPort(ch) == reversePort)
+                    .collect(Collectors.toList());
 
-        if (channels.size() == 0) {
-            return null;
+            if (channels.size() == 0) {
+                return null;
+            }
+            Random random = new Random();
+            Channel reverseChannel =  channels.get(random.nextInt(channels.size()));
+            if (reverseChannel == null) {
+                log.info("reverseChannel allocate failed, channel is null" +
+                        "forward = " + forwardProxyChannel);
+                return null;
+            }
+            // 分配reverseChannel成功
+            log.info("reverseChannel allocate success, " +
+                    "forward = " + forwardProxyChannel + ", reverse = " + reverseChannel);
+            doubleEndChannelMap.put(forwardProxyChannel, reverseChannel);
+            doubleEndChannelMap.put(reverseChannel, forwardProxyChannel);
+            allocatedReverseChannel.add(reverseChannel);
+            return reverseChannel;
         }
-        Random random = new Random();
-        int pos = random.nextInt(channels.size());
-        while (pos >= channels.size()) {
-            pos = random.nextInt(channels.size());
-        }
-        // 分配reverseChannel成功
-        Channel reverseChannel =  channels.get(pos);
-        log.info("reverseChannel allocate success, " +
-                "forward = " + forwardProxyChannel + ", reverse = " + reverseChannel);
-        doubleEndChannelMap.put(forwardProxyChannel, reverseChannel);
-        doubleEndChannelMap.put(reverseChannel, forwardProxyChannel);
-        allocatedReverseChannel.add(reverseChannel);
-        return reverseChannel;
     }
 
     public Set<Channel> getReverseProxyChannels() {
