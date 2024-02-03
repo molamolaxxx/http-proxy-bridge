@@ -22,7 +22,7 @@ public class ConfigQueryUtil {
             String configKey = args[0];
             try {
                 String res = HttpCommonService.INSTANCE
-                        .get("https://molaspace.xyz:8550/chat/kv/" + configKey, 1000);
+                        .get("https://molaspace.xyz:8550/chat/kv/" + configKey, 10000);
                 parseRes = KeyValueParser.parse(res);
             } catch (Exception e) {
                 log.error("getConfig failed", e);
@@ -34,7 +34,7 @@ public class ConfigQueryUtil {
     public static Map<String, String> getConfig(String configKey) {
         try {
             String res = HttpCommonService.INSTANCE
-                    .get("https://molaspace.xyz:8550/chat/kv/" + configKey, 1000);
+                    .get("https://molaspace.xyz:8550/chat/kv/" + configKey, 10000);
             return KeyValueParser.parse(res);
         } catch (Exception e) {
             log.error("getConfig failed", e);
