@@ -19,7 +19,7 @@ public class ReverseStarter {
     public static void main(String[] args) {
         LogUtil.debugReject();
         Map<String, String> config = ConfigQueryUtil.getConfig(args);
-        ExtManager.setHostMappingExt(new HostMappingExtImpl(args[0]));
+        ExtManager.setHostMappingExt(new HostMappingExtImpl(config));
         // 配置
         String host = config.getOrDefault("host", "120.27.230.24");
         int port = Integer.parseInt(config.getOrDefault("port", "10433"));

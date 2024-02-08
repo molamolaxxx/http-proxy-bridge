@@ -14,19 +14,14 @@ import java.util.Map;
  **/
 public class HostMappingExtImpl implements HostMappingExt {
 
-    private final String configKey;
-
-    public HostMappingExtImpl(String configKey) {
-        this.configKey = configKey;
-    }
-
     private volatile Map<String, String> cachedMapping;
+
+    public HostMappingExtImpl(Map<String, String> config) {
+        this.cachedMapping = config;
+    }
 
     @Override
     public String fetchMappedAddress(String host, int port) {
-        if (cachedMapping == null) {
-            cachedMapping = ConfigQueryUtil.getConfig(configKey);
-        }
         String hosts = cachedMapping.get("map2Localhost");
         if (hosts != null && hosts.contains(host)) {
             return "localhost:80";
