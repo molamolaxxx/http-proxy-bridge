@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mola</groupId>
-    <artifactId>http-proxy</artifactId>
+    <artifactId>http-proxy-bridge</artifactId>
     <version>1.0.1-beta</version>
     <packaging>pom</packaging>
     <modules>
-        <module>http-proxy-core</module>
-        <module>http-proxy-forward</module>
-        <module>http-proxy-reverse</module>
-        <module>http-proxy-encryption</module>
+        <module>http-proxy-bridge-core</module>
+        <module>http-proxy-bridge-forward</module>
+        <module>http-proxy-bridge-reverse</module>
+        <module>http-proxy-bridge-encryption</module>
     </modules>
 
     <properties>
@@ -44,7 +44,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.mola</groupId>
-                <artifactId>http-proxy-core</artifactId>
+                <artifactId>http-proxy-bridge-core</artifactId>
                 <version>1.0.1-beta</version>
             </dependency>
         </dependencies>

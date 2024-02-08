@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="57982f11-f0cc-4fa3-a034-c532209871bc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/bridge/ProxyBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/entity/ProxyBridge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/bridge/ProxyBridgeRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/registry/ProxyBridgeRegistry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/entity/ProxyHttpHeader.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/entity/ProxyHttpHeader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/entity/ReverseChannelHandle.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/entity/ReverseChannelHandle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/enums/ReverseTypeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/enums/ReverseTypeEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/enums/ServerTypeEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/enums/ServerTypeEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/ExtManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/ExtManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/HostMappingExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/HostMappingExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/Socks5AuthExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/Socks5AuthExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/SslAuthExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/SslAuthExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/UserIpWhiteListExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/UserIpWhiteListExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/def/DefaultClientSslAuthExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/def/DefaultClientSslAuthExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/ext/def/DefaultServerSslAuthExt.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/ext/def/DefaultServerSslAuthExt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/access/WhiteListAccessHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/access/WhiteListAccessHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/connect/ForwardProxyChannelManageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/connect/ForwardProxyChannelManageHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/connect/ReverseProxyChannelManageHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/connect/ReverseProxyChannelManageHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/http/HttpRequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/http/HttpRequestHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/http/HttpResponseHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/http/HttpResponseHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/socks5/Client2HttpServerInboundHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/socks5/Client2HttpServerInboundHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/socks5/HttpServer2ClientInboundHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/socks5/HttpServer2ClientInboundHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/socks5/Socks5CommandRequestInboundHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/socks5/Socks5CommandRequestInboundHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/socks5/Socks5InitialRequestInboundHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/socks5/Socks5InitialRequestInboundHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/socks5/Socks5PasswordAuthRequestInboundHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/socks5/Socks5PasswordAuthRequestInboundHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/ssl/SslRequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/ssl/SslRequestHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/ssl/SslResponseHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/ssl/SslResponseHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/transfer/DataReceiveHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/transfer/DataReceiveHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/handlers/transfer/DataTransferHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/handlers/transfer/DataTransferHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/pool/ReverseProxyConnectPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/pool/ReverseProxyConnectPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/pool/SslEncryptionChannelPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/pool/SslEncryptionChannelPool.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/encryption/SslContextFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/encryption/SslContextFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/encryption/SslEncryptionProxyServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/encryption/SslEncryptionProxyServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/forward/ForwardProxyServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/forward/ForwardProxyServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/reverse/ReverseProxyChannelCreator.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/reverse/ReverseProxyChannelCreator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/reverse/ReverseProxyChannelMonitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/reverse/ReverseProxyChannelMonitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/server/reverse/ReverseProxyServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/server/reverse/ReverseProxyServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/ConfigQueryUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/ConfigQueryUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/HeaderParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/HeaderParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/HttpCommonService.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/HttpCommonService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/KeyValueParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/KeyValueParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/LogUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/LogUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/proxy/core/utils/RemotingHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-core/src/main/java/com/mola/proxy/bridge/core/utils/RemotingHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-encryption/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-encryption/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-encryption/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-encryption/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-encryption/src/main/java/com/mola/proxy/encryption/EncryptionStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-encryption/src/main/java/com/mola/proxy/bridge/encryption/EncryptionStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-forward/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-forward/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-forward/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-forward/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-forward/src/main/java/com/mola/proxy/forward/ForwardStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-forward/src/main/java/com/mola/proxy/bridge/forward/ForwardStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-forward/src/main/java/com/mola/proxy/forward/UserIpWhiteListExtImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-forward/src/main/java/com/mola/proxy/bridge/forward/UserIpWhiteListExtImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-forward/src/main/java/com/mola/proxy/forward/ext/Socks5AuthExtImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-forward/src/main/java/com/mola/proxy/bridge/forward/ext/Socks5AuthExtImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-reverse/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-reverse/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-reverse/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-reverse/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-reverse/src/main/java/com/mola/proxy/reverse/HostMappingExtImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-reverse/src/main/java/com/mola/proxy/bridge/reverse/HostMappingExtImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/http-proxy-reverse/src/main/java/com/mola/proxy/reverse/ReverseStarter.java" beforeDir="false" afterPath="$PROJECT_DIR$/http-proxy-bridge-reverse/src/main/java/com/mola/proxy/bridge/reverse/ReverseStarter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2W152fSB4EADQLFkSKZ1IcZ8F9U" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;1.8&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/mola/IdeaProjects/http-proxy-bridge&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.appearance&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/http-proxy-core/src/main/java/com/mola/socks5" />
+      <recent name="D:\IdeaProjects\http-proxy\src\main\java\com\mola" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/http-proxy-core/src/main/resources" />
+      <recent name="$PROJECT_DIR$/http-proxy-core" />
+    </key>
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="com.mola.utils" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.mola.ext.def" />
+      <recent name="com.mola.ssl" />
+      <recent name="com.mola.enums" />
+      <recent name="com.mola.socks5" />
+      <recent name="com.mola.forward" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.ForwardStarter">
+    <configuration name="EncryptionStarter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.mola.proxy.encryption.EncryptionStarter" />
+      <module name="http-proxy-encryption" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.mola.ext.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ForwardStarter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.mola.proxy.forward.ForwardStarter" />
+      <module name="http-proxy-forward" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.mola.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ProxyServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.mola.ProxyServer" />
+      <module name="http-proxy" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.mola.handlers.transfer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ReverseStarter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.mola.proxy.reverse.ReverseStarter" />
+      <module name="http-proxy-reverse" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.mola.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.mola.Test" />
+      <module name="http-proxy-forward" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.mola.utils.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="http-proxy-core" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="http-proxy-core" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="local" type="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="192.168.31.233" />
+      <option name="PORT" value="8000" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="8000" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.EncryptionStarter" />
+      <item itemvalue="Application.ForwardStarter" />
+      <item itemvalue="Application.ProxyServer" />
+      <item itemvalue="Application.ReverseStarter" />
+      <item itemvalue="Application.Test" />
+      <item itemvalue="Remote JVM Debug.local" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.ForwardStarter" />
+        <item itemvalue="Application.EncryptionStarter" />
+        <item itemvalue="Application.ReverseStarter" />
+        <item itemvalue="Application.Test" />
+        <item itemvalue="Application.ProxyServer" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="57982f11-f0cc-4fa3-a034-c532209871bc" name="Changes" comment="" />
+      <created>1695887041878</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1695887041878</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints-defaults>
+        <breakpoint suspend="THREAD" type="java-line" />
+      </breakpoints-defaults>
+    </breakpoint-manager>
+  </component>
+</project>
