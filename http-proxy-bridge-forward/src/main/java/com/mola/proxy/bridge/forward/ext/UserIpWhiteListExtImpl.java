@@ -1,4 +1,4 @@
-package com.mola.proxy.bridge.forward;
+package com.mola.proxy.bridge.forward.ext;
 
 import com.mola.proxy.bridge.core.ext.UserIpWhiteListExt;
 import com.mola.proxy.bridge.core.utils.HttpCommonService;

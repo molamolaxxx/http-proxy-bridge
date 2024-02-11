@@ -1,0 +1,25 @@
+encrypt:
+  remoteHost: 120.27.230.24
+  remotePort: 20434
+  port: 22222
+
+forward:
+  servers:
+    - port: 20434
+      reversePort: 10434
+      type: SSL_HTTP
+    - port: 20435
+      reversePort: 10433
+      type: SSL_TRANSFER
+    - port: 20432
+      reversePort: 10433
+      type: HTTP
+
+reverse:
+  remoteHost: 120.27.230.24
+  remotePort: 10434
+  channelNum: 128
+  type: HTTP
+  hostMapping:
+    molaLocal.com:80: localhost:80
+

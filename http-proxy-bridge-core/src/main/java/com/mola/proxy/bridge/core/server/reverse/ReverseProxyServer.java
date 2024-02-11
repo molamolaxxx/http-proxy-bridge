@@ -18,11 +18,11 @@ public class ReverseProxyServer {
 
     private AtomicBoolean start = new AtomicBoolean(false);
 
-    public synchronized void start(String host, int port, int maxChannelNum, ReverseTypeEnum type) {
+    public synchronized void start(String remoteHost, int remotePort, int maxChannelNum, ReverseTypeEnum type) {
         if (start.get()) {
             return;
         }
-        reverseProxyChannelCreator = new ReverseProxyChannelCreator(host, port, type);
+        reverseProxyChannelCreator = new ReverseProxyChannelCreator(remoteHost, remotePort, type);
 
         try {
             for (int i = 0; i < maxChannelNum; i++) {

@@ -10,6 +10,7 @@ package com.mola.proxy.bridge.core.enums;
 public enum ServerTypeEnum {
 
     HTTP("http(s)代理"),
+
     SOCKS5("socks5代理"),
 
     SSL_HTTP("加密机代理"),
