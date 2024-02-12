@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.encryption;
 
 import com.mola.proxy.bridge.core.config.EncryptionProxyConfig;
+import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.server.encryption.SslEncryptionProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
@@ -11,10 +12,26 @@ public class EncryptionStarter {
 
         // 读取配置
         ProxyConfig.load();
-        EncryptionProxyConfig config = ProxyConfig.fetchEncryptionProxyConfig();
+        EncryptionProxyConfig encryptionProxyConfig = ProxyConfig.fetchEncryptionProxyConfig();
 
         // 启动服务
-        SslEncryptionProxyServer server = new SslEncryptionProxyServer();
-        server.start(config.getPort(), config.getRemoteHost(), config.getRemotePort());
+        Thread serverThread = null;
+        for (EncryptionServerItemConfig config : encryptionProxyConfig.getServers()) {
+            serverThread = new Thread(() -> {
+                SslEncryptionProxyServer proxyServer = new SslEncryptionProxyServer();
+                proxyServer.start(config.getPort(), config.getRemoteHost(), config.getRemotePort());
+            });
+            serverThread.start();
+        }
+
+        if (serverThread == null) {
+            return;
+        }
+
+        try {
+            serverThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
