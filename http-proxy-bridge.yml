@@ -8,7 +8,7 @@ forward:
   servers:
     - port: 20434
       reversePort: 10434
-      type: SSL_HTTP
+      type: HTTP
 
 reverse:
   remoteHost: 120.27.230.24

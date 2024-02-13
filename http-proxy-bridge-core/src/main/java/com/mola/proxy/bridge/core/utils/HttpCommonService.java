@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author : molamola
- * @Project: InvincibleSchedulerEngine
+ * @Project: http-proxy-bridge
  * @Description:
  * @date : 2020-09-22 18:07
  **/

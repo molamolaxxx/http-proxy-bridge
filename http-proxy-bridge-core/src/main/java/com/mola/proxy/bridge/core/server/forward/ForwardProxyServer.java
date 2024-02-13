@@ -37,7 +37,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author : molamola
  * @Project: http-proxy-bridge
  * @Description: 正向代理服务器
- * 1、SSL（客户端）+
  * @date : 2023-09-30 00:41
  **/
 public class ForwardProxyServer {
@@ -66,7 +65,7 @@ public class ForwardProxyServer {
         if (start.get()) {
             return;
         }
-        ProxyBridgeRegistry.instance().register(ProxyBridge.of(port, reversePort));
+        ProxyBridgeRegistry.instance().register(ProxyBridge.build(port, reversePort));
         try {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);

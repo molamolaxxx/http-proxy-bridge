@@ -39,7 +39,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
-
     @SuppressWarnings("rawtypes")
     public HttpRequestHandler() {
         httpInvokeBootstrap.group(group).channel(NioSocketChannel.class)

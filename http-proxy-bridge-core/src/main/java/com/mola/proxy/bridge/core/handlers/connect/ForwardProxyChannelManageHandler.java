@@ -21,7 +21,6 @@ import java.util.Objects;
  * @Description: 连接管理器
  * @date : 2020-09-04 10:50
  **/
-
 @ChannelHandler.Sharable
 public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
 
@@ -52,7 +51,6 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         closeReverseChannel(ctx.channel());
     }
 
-
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         if (evt instanceof IdleStateEvent) {
@@ -66,7 +64,6 @@ public class ForwardProxyChannelManageHandler extends ChannelDuplexHandler {
         }
         ctx.fireUserEventTriggered(evt);
     }
-
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

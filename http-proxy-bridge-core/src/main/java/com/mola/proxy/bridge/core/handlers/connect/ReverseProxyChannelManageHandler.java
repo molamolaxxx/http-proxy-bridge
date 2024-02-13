@@ -30,7 +30,6 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
         ReverseProxyConnectPool.instance().addChannel(ctx.channel());
     }
 
-
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
@@ -38,7 +37,6 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
         log.debug("[ReverseProxyChannelManageHandler]: onChannelClose {" + ctx.channel() + "}");
         ReverseProxyConnectPool.instance().removeChannel(ctx.channel());
     }
-
 
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -53,7 +51,6 @@ public class ReverseProxyChannelManageHandler extends ChannelDuplexHandler {
         }
         ctx.fireUserEventTriggered(evt);
     }
-
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

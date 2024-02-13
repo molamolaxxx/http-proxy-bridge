@@ -2,8 +2,8 @@ package com.mola.proxy.bridge.core.utils;
 
 /**
  * @author : molamola
- * @Project: my-rpc
- * @Description: http-proxy-bridge
+ * @Project: http-proxy-bridge
+ * @Description:
  * @date : 2023-08-06 16:21
  **/
 public class AssertUtil {

@@ -26,7 +26,7 @@ public class ProxyBridge {
         this.reversePort = reversePort;
     }
 
-    public static ProxyBridge of(int port, int reversePort) {
+    public static ProxyBridge build(int port, int reversePort) {
         return new ProxyBridge(port, reversePort);
     }
 

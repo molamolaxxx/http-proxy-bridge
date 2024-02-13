@@ -8,8 +8,11 @@ import org.slf4j.LoggerFactory;
 import java.net.SocketAddress;
 
 /**
- * 通信层一些辅助方法
- */
+ * @author : molamola
+ * @Project: http-proxy-bridge
+ * @Description:
+ * @date : 2023-10-03 22:39
+ **/
 public class RemotingHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(RemotingHelper.class);

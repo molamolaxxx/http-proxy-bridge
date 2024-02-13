@@ -21,7 +21,6 @@ public class EncryptionServerItemConfig {
         AssertUtil.notNull(remotePort, "encryption.remotePort must has value");
     }
 
-
     public String getRemoteHost() {
         return remoteHost;
     }
