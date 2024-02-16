@@ -12,9 +12,10 @@ forward:
 
 reverse:
   remoteHost: 120.27.230.24
-  remotePort: 10434
+  remotePort: 10435
   channelNum: 128
   type: HTTP
   hostMapping:
     molalocal.com:80: localhost:80
+    molalocal.com:6080: localhost:6080
 

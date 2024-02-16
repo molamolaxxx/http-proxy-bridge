@@ -133,7 +133,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         }
         for (Map.Entry<Channel, ByteBuf> entry : msgMap.entrySet()) {
             entry.getKey().close();
-            entry.getValue().release();
+            try {
+                entry.getValue().release();
+            } catch (Exception e) {
+                log.warn("channel ByteBuf release failed, channel = " + entry.getKey(), e);
+            }
         }
         channelMap.clear();
         msgMap.clear();
@@ -157,7 +161,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         }
         if (hostAndPort.length == 2) {
             header.setHost(hostAndPort[0]);
-            header.setPort(Integer.valueOf(hostAndPort[1]));
+            header.setPort(Integer.parseInt(hostAndPort[1]));
         }
     }
 }
