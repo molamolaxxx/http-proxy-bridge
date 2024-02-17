@@ -9,12 +9,14 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author : molamola
@@ -26,22 +28,22 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
-    private final Map<Channel, Channel> channelMap = new HashMap<>();
+    private static final EventLoopGroup HTTP_REQUEST_GROUP = new NioEventLoopGroup(4);
+
+    private static final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
+
+    private final Map<Channel, Channel> channelMap = new ConcurrentHashMap<>(32);
 
     /**
      * 第一次建立链接，需要缓存数据报，防止数据丢失
      */
-    private final Map<Channel, ByteBuf> msgMap = new HashMap<>();
+    private final Map<Channel, ByteBuf> msgMap = new ConcurrentHashMap<>(32);
 
-    private Bootstrap httpInvokeBootstrap = new Bootstrap();
-
-    private static EventLoopGroup group = new NioEventLoopGroup(4);
-
-    private final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
+    private final Bootstrap httpInvokeBootstrap = new Bootstrap();
 
     @SuppressWarnings("rawtypes")
     public HttpRequestHandler() {
-        httpInvokeBootstrap.group(group).channel(NioSocketChannel.class)
+        httpInvokeBootstrap.group(HTTP_REQUEST_GROUP).channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .handler(new ChannelInitializer() {
                     @Override
@@ -77,8 +79,8 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         final Channel client2proxyChannel = ctx.channel();
-        Channel proxy2ServerChannel = channelMap.get(client2proxyChannel);
-        if (Objects.nonNull(proxy2ServerChannel)) {
+        Channel existProxy2ServerChannel = channelMap.get(client2proxyChannel);
+        if (Objects.nonNull(existProxy2ServerChannel)) {
             return;
         }
 
@@ -89,41 +91,45 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
         byte[] clientRequestBytes = new byte[clientRequestBuf.readableBytes()];
         clientRequestBuf.getBytes(0, clientRequestBytes);
+        clientRequestBuf.release();
 
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
 
         // 内网穿透 映射
         transferHost(header);
 
-        ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort()).sync();
-        if (!future.isSuccess()) {
-            log.error("connect failing " + header.getTargetAddress());
-        }
-        proxy2ServerChannel = future.channel();
-        proxy2ServerChannel.closeFuture().addListener((ChannelFutureListener) future1 -> {
-            if (future1.isSuccess()) {
-                log.info("http channel close! close client channel ");
-                client2proxyChannel.close();
+        // 连接目标host，异步回调
+        ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort());
+        future.addListener((ChannelFutureListener) completedFuture -> {
+            if (!completedFuture.isSuccess()) {
+                log.error("connect failing " + header.getTargetAddress());
+                return;
+            }
+
+            Channel proxy2ServerChannel = completedFuture.channel();
+            proxy2ServerChannel.closeFuture().addListener((ChannelFutureListener) chCloseFuture -> {
+                if (chCloseFuture.isSuccess()) {
+                    log.info("http channel close! close client channel, channel = " + client2proxyChannel);
+                    client2proxyChannel.close();
+                }
+            });
+
+            log.info("connect success！address = " + header.getTargetAddress());
+
+            // 双端映射
+            channelMap.put(client2proxyChannel, proxy2ServerChannel);
+            channelMap.put(proxy2ServerChannel, client2proxyChannel);
+
+            // connect方法，直接返回
+            if(header.isConnectMethod()) {
+                ByteBuf buffer = client2proxyChannel.alloc()
+                        .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);
+                buffer.writeBytes(CONNECTION_ESTABLISHED_RESP.getBytes());
+                client2proxyChannel.writeAndFlush(buffer);
+            } else {
+                proxy2ServerChannel.writeAndFlush(msgMap.get(client2proxyChannel));
             }
         });
-
-        log.info("connect success！address = " + header.getTargetAddress());
-
-        // 双端映射
-        channelMap.put(client2proxyChannel, proxy2ServerChannel);
-        channelMap.put(proxy2ServerChannel, client2proxyChannel);
-
-        // connect方法，直接返回
-        if(header.isConnectMethod()) {
-            ByteBuf buffer = client2proxyChannel.alloc()
-                    .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);
-            buffer.writeBytes(CONNECTION_ESTABLISHED_RESP.getBytes());
-            client2proxyChannel.writeAndFlush(buffer);
-            clientRequestBuf.release();
-        } else {
-            proxy2ServerChannel.writeAndFlush(msgMap.get(client2proxyChannel));
-            clientRequestBuf.release();
-        }
     }
 
     public void shutdown() {
@@ -136,7 +142,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             try {
                 entry.getValue().release();
             } catch (Exception e) {
-                log.warn("channel ByteBuf release failed, channel = " + entry.getKey(), e);
+                if (e instanceof IllegalReferenceCountException) {
+                    log.warn("channel ByteBuf has been release, channel = " + entry.getKey());
+                } else {
+                    log.error("channel ByteBuf release failed, channel = " + entry.getKey(), e);
+                }
             }
         }
         channelMap.clear();
