@@ -126,8 +126,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
                         .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);
                 buffer.writeBytes(CONNECTION_ESTABLISHED_RESP.getBytes());
                 client2proxyChannel.writeAndFlush(buffer);
-            } else {
-                proxy2ServerChannel.writeAndFlush(msgMap.get(client2proxyChannel));
             }
         });
     }
