@@ -4,6 +4,7 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.HostMappingExt;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
+import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -91,7 +92,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
         byte[] clientRequestBytes = new byte[clientRequestBuf.readableBytes()];
         clientRequestBuf.getBytes(0, clientRequestBytes);
-        clientRequestBuf.release();
 
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
 
@@ -126,7 +126,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
                         .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);
                 buffer.writeBytes(CONNECTION_ESTABLISHED_RESP.getBytes());
                 client2proxyChannel.writeAndFlush(buffer);
+            } else {
+                proxy2ServerChannel.writeAndFlush(clientRequestBuf);
             }
+
+            RemotingHelper.releaseBuf(clientRequestBuf);
         });
     }
 
@@ -137,15 +141,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         }
         for (Map.Entry<Channel, ByteBuf> entry : msgMap.entrySet()) {
             entry.getKey().close();
-            try {
-                entry.getValue().release();
-            } catch (Exception e) {
-                if (e instanceof IllegalReferenceCountException) {
-                    log.warn("channel ByteBuf has been release, channel = " + entry.getKey());
-                } else {
-                    log.error("channel ByteBuf release failed, channel = " + entry.getKey(), e);
-                }
-            }
+            RemotingHelper.releaseBuf(entry.getValue());
         }
         channelMap.clear();
         msgMap.clear();

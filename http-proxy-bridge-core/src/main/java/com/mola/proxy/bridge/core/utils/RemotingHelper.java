@@ -1,7 +1,9 @@
 package com.mola.proxy.bridge.core.utils;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,4 +72,13 @@ public class RemotingHelper {
                 logger.info("closeChannel: close the connection to channel[" + channel + "] result: {" + future.isSuccess() + "}"));
     }
 
+    public static void releaseBuf(ByteBuf byteBuf) {
+        try {
+            byteBuf.release();
+        } catch (IllegalReferenceCountException e) {
+            logger.warn("channel ByteBuf has been release");
+        } catch (Exception e) {
+            logger.error("channel ByteBuf release failed", e);
+        }
+    }
 }
