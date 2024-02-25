@@ -20,5 +20,5 @@ public interface UserIpWhiteListExt {
      * 未授权登录的通知
      * @param address
      */
-    void notifyNotAccess(String address);
+    void interceptNotify(String address);
 }

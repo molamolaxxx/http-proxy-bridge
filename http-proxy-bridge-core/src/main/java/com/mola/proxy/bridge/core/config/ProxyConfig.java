@@ -27,6 +27,9 @@ public class ProxyConfig {
     private ProxyConfig(){}
 
     public static void load() {
+        if (proxyConfig != null) {
+            return;
+        }
         Properties properties = System.getProperties();
         String filePath = (String) properties.getOrDefault("configFilePath", DEFAULT_YML_FILE_PATH);
         try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
@@ -55,6 +58,10 @@ public class ProxyConfig {
         AssertUtil.notNull(proxyConfig, "proxyConfig is null");
         proxyConfig.reverse.validate();
         return proxyConfig.reverse;
+    }
+
+    public static ProxyConfig fetch() {
+        return proxyConfig;
     }
 
     private EncryptionProxyConfig encrypt;

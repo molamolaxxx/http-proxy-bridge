@@ -14,12 +14,32 @@ public class ForwardProxyConfig {
 
     private List<ForwardServerItemConfig> servers;
 
+    private String ipWhiteListQueryUrl;
+
+    private String ipInterceptNotifyUrl;
+
     public List<ForwardServerItemConfig> getServers() {
         return servers;
     }
 
     public void setServers(List<ForwardServerItemConfig> servers) {
         this.servers = servers;
+    }
+
+    public String getIpWhiteListQueryUrl() {
+        return ipWhiteListQueryUrl;
+    }
+
+    public void setIpWhiteListQueryUrl(String ipWhiteListQueryUrl) {
+        this.ipWhiteListQueryUrl = ipWhiteListQueryUrl;
+    }
+
+    public String getIpInterceptNotifyUrl() {
+        return ipInterceptNotifyUrl;
+    }
+
+    public void setIpInterceptNotifyUrl(String ipInterceptNotifyUrl) {
+        this.ipInterceptNotifyUrl = ipInterceptNotifyUrl;
     }
 
     public void validate() {

@@ -35,6 +35,7 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
         }
         UserIpWhiteListExt userIpWhiteListExt = ExtManager.getUserIpWhiteListExt();
         if (userIpWhiteListExt == null) {
+            ctx.fireChannelRead(msg);
             return;
         }
         if (splitRes[0].startsWith("192.168") || splitRes[0].startsWith("127.0.0.1")) {
@@ -46,6 +47,7 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
             ctx.fireChannelRead(msg);
             return;
         }
-        userIpWhiteListExt.notifyNotAccess(address);
+        log.info("http proxy request has been intercept! address = " + address);
+        userIpWhiteListExt.interceptNotify(address);
     }
 }
