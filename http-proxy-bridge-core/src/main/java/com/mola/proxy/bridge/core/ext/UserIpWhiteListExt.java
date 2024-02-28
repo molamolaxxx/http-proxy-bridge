@@ -17,6 +17,12 @@ public interface UserIpWhiteListExt {
     Set<String> ipWhiteList();
 
     /**
+     * 是否打开白名单校验
+     * @return
+     */
+    boolean openWhiteListsVerify();
+
+    /**
      * 未授权登录的通知
      * @param address
      */

@@ -26,7 +26,7 @@ public class ProxyConfig {
 
     private ProxyConfig(){}
 
-    public static void load() {
+    private static void load() {
         if (proxyConfig != null) {
             return;
         }
@@ -42,12 +42,14 @@ public class ProxyConfig {
     }
 
     public static EncryptionProxyConfig fetchEncryptionProxyConfig() {
+        ProxyConfig.load();
         AssertUtil.notNull(proxyConfig, "proxyConfig is null");
         proxyConfig.encrypt.validate();
         return proxyConfig.encrypt;
     }
 
     public static ForwardProxyConfig fetchForwardProxyConfig() {
+        ProxyConfig.load();
         AssertUtil.notNull(proxyConfig, "proxyConfig is null");
         proxyConfig.forward.validate();
         return proxyConfig.forward;
@@ -55,14 +57,12 @@ public class ProxyConfig {
 
 
     public static ReverseProxyConfig fetchReverseProxyConfig() {
+        ProxyConfig.load();
         AssertUtil.notNull(proxyConfig, "proxyConfig is null");
         proxyConfig.reverse.validate();
         return proxyConfig.reverse;
     }
 
-    public static ProxyConfig fetch() {
-        return proxyConfig;
-    }
 
     private EncryptionProxyConfig encrypt;
 

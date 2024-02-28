@@ -19,7 +19,6 @@ public class ForwardStarter {
         userIpWhiteListExt.start();
 
         // 加载配置
-        ProxyConfig.load();
         ForwardProxyConfig config = ProxyConfig.fetchForwardProxyConfig();
 
         // 异步启动服务

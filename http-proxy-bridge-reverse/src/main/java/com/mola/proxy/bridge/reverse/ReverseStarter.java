@@ -14,7 +14,6 @@ public class ReverseStarter {
         LogUtil.debugReject();
 
         // 加载配置
-        ProxyConfig.load();
         ReverseProxyConfig config = ProxyConfig.fetchReverseProxyConfig();
 
         // 设置代理域名映射

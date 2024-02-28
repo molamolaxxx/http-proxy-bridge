@@ -27,6 +27,9 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
 
     @Override
     public void run() {
+        if (!this.openWhiteListsVerify()) {
+            return;
+        }
         while (!this.isInterrupted()) {
             notAccessIps.clear();
             logger.info("finish clear notAccessIps");
@@ -37,6 +40,11 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
         }
 
         logger.warn("notAccessIps task exist");
+    }
+
+    @Override
+    public boolean openWhiteListsVerify() {
+        return ProxyConfig.fetchForwardProxyConfig().isOpenWhiteListsVerify();
     }
 
     @Override

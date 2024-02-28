@@ -11,7 +11,6 @@ public class EncryptionStarter {
         LogUtil.debugReject();
 
         // 读取配置
-        ProxyConfig.load();
         EncryptionProxyConfig encryptionProxyConfig = ProxyConfig.fetchEncryptionProxyConfig();
 
         // 启动服务

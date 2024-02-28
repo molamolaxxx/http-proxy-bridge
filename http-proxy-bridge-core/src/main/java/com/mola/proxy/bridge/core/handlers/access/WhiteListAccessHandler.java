@@ -34,11 +34,12 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         UserIpWhiteListExt userIpWhiteListExt = ExtManager.getUserIpWhiteListExt();
-        if (userIpWhiteListExt == null) {
+        if (userIpWhiteListExt == null
+                || splitRes[0].startsWith("192.168") || splitRes[0].startsWith("127.0.0.1")) {
             ctx.fireChannelRead(msg);
             return;
         }
-        if (splitRes[0].startsWith("192.168") || splitRes[0].startsWith("127.0.0.1")) {
+        if (!userIpWhiteListExt.openWhiteListsVerify()) {
             ctx.fireChannelRead(msg);
             return;
         }
