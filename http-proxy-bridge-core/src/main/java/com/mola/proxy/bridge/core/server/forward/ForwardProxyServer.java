@@ -70,7 +70,7 @@ public class ForwardProxyServer {
             bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup(8);
             // 正向代理服务启动
-            forwardSeverChannelFuture = startForwardProxyServer(port, reversePort, type);
+            forwardSeverChannelFuture = startForwardProxyServer(port, type);
 
             // 反向代理接收服务启动
             proxyRegisterChannelFuture = startReverseProxyRegisterServer(reversePort);
@@ -94,7 +94,7 @@ public class ForwardProxyServer {
         }
     }
 
-    private ChannelFuture startForwardProxyServer(int port, int reversePort, ServerTypeEnum type) {
+    private ChannelFuture startForwardProxyServer(int port, ServerTypeEnum type) {
         if (ServerTypeEnum.HTTP == type) {
             return startForwardHttpProxyServer(port, false, false);
         } else if (ServerTypeEnum.SOCKS5 == type) {
@@ -105,6 +105,8 @@ public class ForwardProxyServer {
             return startForwardSocks5ProxyServer(port, true);
         } else if (ServerTypeEnum.SSL_TRANSFER == type) {
             return startForwardHttpProxyServer(port, true, true);
+        } else if (ServerTypeEnum.DIRECT_TRANSFER == type) {
+            return startForwardHttpProxyServer(port, false, true);
         }
         throw new RuntimeException("unknown type, " + type);
     }
@@ -127,7 +129,7 @@ public class ForwardProxyServer {
         start.compareAndSet(true, false);
     }
 
-    private ChannelFuture startForwardHttpProxyServer(int port, boolean useSsl, boolean pureTransfer) {
+    private ChannelFuture startForwardHttpProxyServer(int port, boolean useSsl, boolean directTransfer) {
         if (useSsl && ExtManager.getSslAuthExt() == null) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
@@ -141,18 +143,20 @@ public class ForwardProxyServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) {
+                        // ssl加解密
                         if (useSsl) {
                             SslHandler sslHandler = SslContextFactory.createSslHandler(false);
                             ch.pipeline().addLast(sslHandler);
-                        } else { // 客户端使用加密机不需要白名单验证
-                            ch.pipeline().addLast(whiteListAccessHandler);
                         }
+
+                        // 白名单验证
+                        ch.pipeline().addLast(whiteListAccessHandler);
                         ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
 
-                        // 纯转发，不配置代理服务
-                        if (pureTransfer) {
+                        // 直接转发，不配置代理服务
+                        if (directTransfer) {
                             return;
                         }
 

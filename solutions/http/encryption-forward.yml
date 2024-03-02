@@ -1,3 +1,4 @@
+# 客户端（浏览器） ---http--->  加密机 -----ssl加密---->  正向代理 <------不加密------反向代理
 encrypt:
   servers:
     - remoteHost: 120.27.230.24
@@ -8,15 +9,11 @@ forward:
   servers:
     - port: 20434
       reversePort: 10434
-      type: HTTP
-      openWhiteListsVerify: true
+      type: SSL_HTTP # 如果不需要正向代理可配置 SSL_TRANSFER
 
 reverse:
   remoteHost: 120.27.230.24
-  remotePort: 10435
+  remotePort: 10434
   channelNum: 128
   type: HTTP
-  hostMapping:
-    molalocal.com:80: localhost:80
-    molalocal.com:6080: localhost:6080
 

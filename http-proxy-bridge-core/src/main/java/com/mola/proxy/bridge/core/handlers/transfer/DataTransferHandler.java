@@ -32,8 +32,9 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
         ProxyBridgeRegistry bridgeRegistry = ProxyBridgeRegistry.instance();
 
-        int port = RemotingHelper.fetchChannelLocalPort(ctx.channel());
-        ProxyBridge proxyBridge = bridgeRegistry.fetchBridgeByForwardPort(port);
+        ProxyBridge proxyBridge = bridgeRegistry.fetchBridgeByForwardPort(
+                RemotingHelper.fetchChannelLocalPort(ctx.channel())
+        );
 
         if (connectPool.getReverseProxyChannels(proxyBridge.getReversePort()).size() == 0) {
             ctx.fireChannelRead(msg);
@@ -46,7 +47,7 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (Objects.isNull(reverseChannel)) {
-            log.debug("allocate reverseChannel failed, no available channel");
+            log.debug("allocate reverseChannel failed, no available channel, forward = " + ctx.channel());
             ctx.fireChannelRead(msg);
             return;
         }

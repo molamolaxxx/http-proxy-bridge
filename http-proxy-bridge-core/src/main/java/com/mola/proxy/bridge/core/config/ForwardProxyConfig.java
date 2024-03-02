@@ -14,8 +14,6 @@ public class ForwardProxyConfig {
 
     private List<ForwardServerItemConfig> servers;
 
-    private boolean openWhiteListsVerify;
-
     private String ipWhiteListQueryUrl;
 
     private String ipInterceptNotifyUrl;
@@ -42,14 +40,6 @@ public class ForwardProxyConfig {
 
     public void setIpInterceptNotifyUrl(String ipInterceptNotifyUrl) {
         this.ipInterceptNotifyUrl = ipInterceptNotifyUrl;
-    }
-
-    public boolean isOpenWhiteListsVerify() {
-        return openWhiteListsVerify;
-    }
-
-    public void setOpenWhiteListsVerify(boolean openWhiteListsVerify) {
-        this.openWhiteListsVerify = openWhiteListsVerify;
     }
 
     public void validate() {

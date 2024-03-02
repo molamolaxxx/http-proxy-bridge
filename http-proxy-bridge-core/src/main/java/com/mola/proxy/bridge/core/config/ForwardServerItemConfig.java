@@ -17,6 +17,8 @@ public class ForwardServerItemConfig {
 
     private String type = ServerTypeEnum.HTTP.name();
 
+    private boolean openWhiteListsVerify;
+
     public void validate() {
         AssertUtil.notNull(port, "forward.server.[].port must has value");
         AssertUtil.notNull(reversePort, "forward.server.[].reversePort must has value");
@@ -44,5 +46,13 @@ public class ForwardServerItemConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public boolean isOpenWhiteListsVerify() {
+        return openWhiteListsVerify;
+    }
+
+    public void setOpenWhiteListsVerify(boolean openWhiteListsVerify) {
+        this.openWhiteListsVerify = openWhiteListsVerify;
     }
 }

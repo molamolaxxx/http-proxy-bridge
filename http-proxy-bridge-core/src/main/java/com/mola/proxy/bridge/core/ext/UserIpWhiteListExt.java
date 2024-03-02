@@ -20,7 +20,7 @@ public interface UserIpWhiteListExt {
      * 是否打开白名单校验
      * @return
      */
-    boolean openWhiteListsVerify();
+    boolean requireWhiteListsVerify(Integer port);
 
     /**
      * 未授权登录的通知

@@ -20,7 +20,7 @@ public class ProxyConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ProxyConfig.class);
 
-    private static ProxyConfig proxyConfig;
+    private volatile static ProxyConfig proxyConfig;
 
     private static final String DEFAULT_YML_FILE_PATH = "http-proxy-bridge.yml";
 
@@ -30,14 +30,19 @@ public class ProxyConfig {
         if (proxyConfig != null) {
             return;
         }
-        Properties properties = System.getProperties();
-        String filePath = (String) properties.getOrDefault("configFilePath", DEFAULT_YML_FILE_PATH);
-        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
-            Yaml yaml = new Yaml();
-            proxyConfig = yaml.loadAs(inputStream, ProxyConfig.class);
-        } catch (Exception e) {
-            log.error("ProxyConfig load exception!", e);
-            throw new RuntimeException(e);
+        synchronized (ProxyConfig.class) {
+            if (proxyConfig != null) {
+                return;
+            }
+            Properties properties = System.getProperties();
+            String filePath = (String) properties.getOrDefault("configFilePath", DEFAULT_YML_FILE_PATH);
+            try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+                Yaml yaml = new Yaml();
+                proxyConfig = yaml.loadAs(inputStream, ProxyConfig.class);
+            } catch (Exception e) {
+                log.error("ProxyConfig load exception!", e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -54,7 +59,6 @@ public class ProxyConfig {
         proxyConfig.forward.validate();
         return proxyConfig.forward;
     }
-
 
     public static ReverseProxyConfig fetchReverseProxyConfig() {
         ProxyConfig.load();

@@ -1,0 +1,7 @@
+# 客户端（浏览器） ---http--->  正向代理
+forward:
+  servers:
+    - port: 20434
+      reversePort: 10434
+      type: HTTP
+

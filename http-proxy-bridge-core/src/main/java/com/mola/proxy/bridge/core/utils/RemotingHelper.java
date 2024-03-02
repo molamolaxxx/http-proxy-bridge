@@ -47,6 +47,15 @@ public class RemotingHelper {
         return Integer.parseInt(split[1]);
     }
 
+    public static IpAndPort fetchChannelLocalIpAndPort(final Channel channel) {
+        String address = parseChannelLocalAddress(channel);
+        String[] split = address.split(":");
+        if (split.length < 2) {
+            return null;
+        }
+        return new IpAndPort(split[0], Integer.parseInt(split[1]));
+    }
+
     public static String parseChannelLocalAddress(final Channel channel) {
         if (channel == null) {
             return "";
@@ -79,6 +88,24 @@ public class RemotingHelper {
             logger.warn("channel ByteBuf has been release");
         } catch (Exception e) {
             logger.error("channel ByteBuf release failed", e);
+        }
+    }
+
+    public static class IpAndPort {
+        public String ip;
+        public int port;
+
+        public IpAndPort(String ip, int port) {
+            this.ip = ip;
+            this.port = port;
+        }
+
+        public boolean isEffective() {
+            return ip != null && ip.length() > 0 && port > 0;
+        }
+
+        public boolean isLAN() {
+            return ip.startsWith("192.168") || ip.startsWith("127.0.0.1");
         }
     }
 }

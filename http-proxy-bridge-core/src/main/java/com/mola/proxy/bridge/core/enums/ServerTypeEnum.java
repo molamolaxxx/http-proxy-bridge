@@ -18,6 +18,8 @@ public enum ServerTypeEnum {
     SSL_SOCKS5("ssl+socks5代理"),
 
     SSL_TRANSFER("ssl转发到反向代理"),
+
+    DIRECT_TRANSFER("直接转发到反向代理"),
     ;
 
     private String msg;

@@ -85,7 +85,6 @@ public class SslEncryptionProxyServer {
                     public void initChannel(SocketChannel ch)
                             throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-
                         pipeline.addLast(
                                 new SslRequestHandler(
                                         ch,

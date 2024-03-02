@@ -9,6 +9,9 @@ package com.mola.proxy.bridge.core.enums;
 public enum ReverseTypeEnum {
 
     HTTP("http(s)代理"),
+
+    SSL_HTTP("ssl加密http(s)代理"),
+
     SOCKS5("socks5代理"),;
 
     private String msg;
@@ -19,5 +22,13 @@ public enum ReverseTypeEnum {
 
     public String getMsg() {
         return msg;
+    }
+
+    public boolean isHttpProxy() {
+        return this == HTTP || this == SSL_HTTP;
+    }
+
+    public boolean requireEncryption() {
+        return this == SSL_HTTP;
     }
 }

@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.forward.ext;
 
 import com.mola.proxy.bridge.core.config.ForwardProxyConfig;
+import com.mola.proxy.bridge.core.config.ForwardServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.ext.UserIpWhiteListExt;
 import com.mola.proxy.bridge.core.utils.HttpCommonService;
@@ -8,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -21,15 +20,21 @@ import java.util.concurrent.CopyOnWriteArraySet;
  **/
 public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt {
 
-    private Logger logger = LoggerFactory.getLogger(UserIpWhiteListExtImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(UserIpWhiteListExtImpl.class);
 
-    private Set<String> notAccessIps = new CopyOnWriteArraySet<>();
+    private final Set<String> notAccessIps = new CopyOnWriteArraySet<>();
+
+    private final Map<Integer, Boolean> localPortRequireVerify = new HashMap<>();
+
+    public UserIpWhiteListExtImpl() {
+        ForwardProxyConfig config = ProxyConfig.fetchForwardProxyConfig();
+        for (ForwardServerItemConfig server : config.getServers()) {
+            localPortRequireVerify.put(server.getPort(), server.isOpenWhiteListsVerify());
+        }
+    }
 
     @Override
     public void run() {
-        if (!this.openWhiteListsVerify()) {
-            return;
-        }
         while (!this.isInterrupted()) {
             notAccessIps.clear();
             logger.info("finish clear notAccessIps");
@@ -43,8 +48,8 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
     }
 
     @Override
-    public boolean openWhiteListsVerify() {
-        return ProxyConfig.fetchForwardProxyConfig().isOpenWhiteListsVerify();
+    public boolean requireWhiteListsVerify(Integer port) {
+        return localPortRequireVerify.getOrDefault(port, false);
     }
 
     @Override
