@@ -28,12 +28,12 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        RemotingHelper.IpAndPort ipAndPort = RemotingHelper.fetchChannelLocalIpAndPort(ctx.channel());
+        RemotingHelper.IpAndPort ipAndPort = RemotingHelper.fetchChannelIpAndPort(ctx.channel());
         if (ipAndPort == null || !ipAndPort.isEffective()) {
             return;
         }
         UserIpWhiteListExt userIpWhiteListExt = ExtManager.getUserIpWhiteListExt();
-        if (userIpWhiteListExt == null || !userIpWhiteListExt.requireWhiteListsVerify(ipAndPort.port)) {
+        if (userIpWhiteListExt == null || !userIpWhiteListExt.requireWhiteListsVerify(ipAndPort.localPort)) {
             ctx.fireChannelRead(msg);
             return;
         }
@@ -44,11 +44,11 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
         }
 
         if (userIpWhiteListExt.ipWhiteList() != null && userIpWhiteListExt.ipWhiteList()
-                .contains(ipAndPort.ip)) {
+                .contains(ipAndPort.remoteIp)) {
             ctx.fireChannelRead(msg);
             return;
         }
-        log.info("http proxy request has been intercept! address = " + ipAndPort.ip);
-        userIpWhiteListExt.interceptNotify(ipAndPort.ip);
+        log.info("http proxy request has been intercept! address = " + ipAndPort.remoteIp);
+        userIpWhiteListExt.interceptNotify(ipAndPort.remoteIp);
     }
 }

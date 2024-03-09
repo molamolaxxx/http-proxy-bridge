@@ -47,13 +47,21 @@ public class RemotingHelper {
         return Integer.parseInt(split[1]);
     }
 
-    public static IpAndPort fetchChannelLocalIpAndPort(final Channel channel) {
-        String address = parseChannelLocalAddress(channel);
-        String[] split = address.split(":");
+    public static IpAndPort fetchChannelIpAndPort(final Channel channel) {
+        String localAddress = parseChannelLocalAddress(channel);
+        String[] split = localAddress.split(":");
         if (split.length < 2) {
             return null;
         }
-        return new IpAndPort(split[0], Integer.parseInt(split[1]));
+        int localPort = Integer.parseInt(split[1]);
+
+        String remoteAddress = parseChannelRemoteAddress(channel);
+        split = remoteAddress.split(":");
+        if (split.length < 2) {
+            return null;
+        }
+        String remoteIp = split[0];
+        return new IpAndPort(remoteIp, localPort);
     }
 
     public static String parseChannelLocalAddress(final Channel channel) {
@@ -92,20 +100,20 @@ public class RemotingHelper {
     }
 
     public static class IpAndPort {
-        public String ip;
-        public int port;
+        public String remoteIp;
+        public int localPort;
 
-        public IpAndPort(String ip, int port) {
-            this.ip = ip;
-            this.port = port;
+        public IpAndPort(String remoteIp, int localPort) {
+            this.remoteIp = remoteIp;
+            this.localPort = localPort;
         }
 
         public boolean isEffective() {
-            return ip != null && ip.length() > 0 && port > 0;
+            return remoteIp != null && remoteIp.length() > 0 && localPort > 0;
         }
 
         public boolean isLAN() {
-            return ip.startsWith("192.168") || ip.startsWith("127.0.0.1");
+            return remoteIp.startsWith("192.168") || remoteIp.startsWith("127.0.0.1");
         }
     }
 }

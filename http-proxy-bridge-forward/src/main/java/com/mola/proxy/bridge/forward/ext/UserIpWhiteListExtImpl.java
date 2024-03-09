@@ -20,9 +20,15 @@ import java.util.concurrent.CopyOnWriteArraySet;
  **/
 public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt {
 
+    private static final int REFRESH_DURING = 1000;
+    private static final int REFRESH_NOT_ACCESS_IP_DURING = 5 * 60 * 1000;
+    private static final int REFRESH_WHITE_LIST_DURING = 10 * 1000;
+
     private final Logger logger = LoggerFactory.getLogger(UserIpWhiteListExtImpl.class);
 
     private final Set<String> notAccessIps = new CopyOnWriteArraySet<>();
+
+    private final Set<String> ipWhiteList = new CopyOnWriteArraySet<>();
 
     private final Map<Integer, Boolean> localPortRequireVerify = new HashMap<>();
 
@@ -35,12 +41,26 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
 
     @Override
     public void run() {
+        int tick = 0;
         while (!this.isInterrupted()) {
-            notAccessIps.clear();
-            logger.info("finish clear notAccessIps");
+            if (tick * REFRESH_DURING % REFRESH_NOT_ACCESS_IP_DURING == 0) {
+                notAccessIps.clear();
+                logger.info("finish clear notAccessIps");
+            }
+            if (tick * REFRESH_DURING % REFRESH_WHITE_LIST_DURING == 0) {
+                ipWhiteList.clear();
+                ipWhiteList.addAll(fetchIpWhiteList());
+                logger.info("finish refresh ipWhiteList");
+            }
+
             try {
-                Thread.sleep(5 * 60 * 1000);
+                Thread.sleep(REFRESH_DURING);
             } catch (InterruptedException e) {
+            }
+
+            tick ++;
+            if (tick >= 3600) {
+                tick = 0;
             }
         }
 
@@ -54,6 +74,14 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
 
     @Override
     public Set<String> ipWhiteList() {
+        return ipWhiteList;
+    }
+
+    /**
+     * 获取ip白名单
+     * @return
+     */
+    private Set<String> fetchIpWhiteList() {
         ForwardProxyConfig config = ProxyConfig.fetchForwardProxyConfig();
         if (config.getIpWhiteListQueryUrl() == null) {
             return new HashSet<>();
