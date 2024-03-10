@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.core.pool;
 
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
+import com.mola.proxy.bridge.core.utils.ConcurrentHashSetBuilder;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  **/
 public class ReverseProxyConnectPool extends Thread {
 
-    private final Set<Channel> reverseProxyChannelSet = new CopyOnWriteArraySet<>();
+    private final Set<Channel> reverseProxyChannelSet = ConcurrentHashSetBuilder.build(128);
 
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyConnectPool.class);
 
@@ -32,7 +32,7 @@ public class ReverseProxyConnectPool extends Thread {
 
     private final Map<Channel, ReverseChannelHandle> handleMap = new ConcurrentHashMap<>();
 
-    private final Set<Channel> allocatedReverseChannel = new CopyOnWriteArraySet<>();
+    private final Set<Channel> allocatedReverseChannel = ConcurrentHashSetBuilder.build(128);
 
     private static ReverseProxyConnectPool instance;
 
