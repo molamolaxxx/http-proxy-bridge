@@ -92,7 +92,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
         byte[] clientRequestBytes = new byte[clientRequestBuf.readableBytes()];
         clientRequestBuf.getBytes(0, clientRequestBytes);
+        // 清除buf
+        msgMap.remove(client2proxyChannel);
+        RemotingHelper.releaseBuf(clientRequestBuf);
 
+        // 解析proxy头信息
         ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
 
         // 内网穿透 映射
@@ -122,15 +126,18 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
             // connect方法，直接返回
             if(header.isConnectMethod()) {
-                ByteBuf buffer = client2proxyChannel.alloc()
+                ByteBuf buffer = client2proxyChannel
+                        .alloc()
                         .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);
                 buffer.writeBytes(CONNECTION_ESTABLISHED_RESP.getBytes());
                 client2proxyChannel.writeAndFlush(buffer);
             } else {
-                proxy2ServerChannel.writeAndFlush(clientRequestBuf);
+                ByteBuf buffer = proxy2ServerChannel
+                        .alloc()
+                        .buffer(clientRequestBytes.length);
+                buffer.writeBytes(clientRequestBytes);
+                proxy2ServerChannel.writeAndFlush(buffer);
             }
-
-            RemotingHelper.releaseBuf(clientRequestBuf);
         });
     }
 
