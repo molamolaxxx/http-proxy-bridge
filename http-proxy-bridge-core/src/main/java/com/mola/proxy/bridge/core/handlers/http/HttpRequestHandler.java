@@ -73,7 +73,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
                 buffer = ctx.alloc().buffer(1024 * 2);
             }
             buffer.writeBytes((ByteBuf) msg);
-            buffer.retain();
             msgMap.put(channel, buffer);
         }
     }
