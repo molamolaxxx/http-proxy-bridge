@@ -64,7 +64,7 @@ reverse:
   servers:
     - remoteHost: 127.0.0.1 # forward server public ip
       remotePort: 10434 # forward server public reversePort
-      channelNum: 128  # max tcp channels num 
+      channelNum: 256  # max tcp channels num, this param will effect network speed
       type: HTTP # default
   hostMapping: # If I visit molalocal.com, it maps it to localhost for me and accesses it through the reverse proxy server
     molalocal.com:80: localhost:80

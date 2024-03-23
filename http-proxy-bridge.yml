@@ -18,7 +18,7 @@ reverse:
   servers:
     - remoteHost: 127.0.0.1
       remotePort: 10434
-      channelNum: 128
+      channelNum: 256
       type: HTTP
   hostMapping:
     molalocal.com:80: localhost:80
