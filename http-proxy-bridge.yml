@@ -1,6 +1,6 @@
 encrypt:
   servers:
-    - remoteHost: 120.27.230.24
+    - remoteHost: 127.0.0.1
       remotePort: 20434
       port: 22222
 
@@ -8,12 +8,15 @@ forward:
   servers:
     - port: 20434
       reversePort: 10434
+      type: SSL_HTTP
+    - port: 20435
+      reversePort: 10434
       type: HTTP
       openWhiteListsVerify: true
 
 reverse:
-  remoteHost: 120.27.230.24
-  remotePort: 10435
+  remoteHost: 127.0.0.1
+  remotePort: 10434
   channelNum: 128
   type: HTTP
   hostMapping:

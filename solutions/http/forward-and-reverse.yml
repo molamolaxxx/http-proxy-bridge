@@ -6,7 +6,7 @@ forward:
       type: HTTP  # 如果不需要正向代理可配置 DIRECT_TRANSFER
 
 reverse:
-  remoteHost: 120.27.230.24
+  remoteHost: 127.0.0.1
   remotePort: 10434
   channelNum: 128
   type: HTTP

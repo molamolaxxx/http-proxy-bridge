@@ -1,7 +1,7 @@
 # 客户端（浏览器） ---http--->  加密机 -----ssl加密---->  正向代理 <------ssl加密------反向代理
 encrypt:
   servers:
-    - remoteHost: 120.27.230.24
+    - remoteHost: 127.0.0.1
       remotePort: 20434
       port: 22222
 
@@ -12,7 +12,7 @@ forward:
       type: DIRECT_TRANSFER
 
 reverse:
-  remoteHost: 120.27.230.24
+  remoteHost: 127.0.0.1
   remotePort: 10434
   channelNum: 128
   type: SSL_HTTP
