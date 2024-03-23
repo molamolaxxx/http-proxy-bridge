@@ -43,7 +43,7 @@ forward:
       reversePort: 10434 # The reverse proxy will provide tcp connections to the forward proxy through this port
       type: SSL_HTTP # You need to start an http-proxy-encryption to connect 20434 port within this type
     - port: 20435
-      reversePort: 10434
+      reversePort: 10435
       type: HTTP # You can access the 20435 port directly
       openWhiteListsVerify: false # if this config is true,API will be called for whitelist verification
 ```
@@ -57,14 +57,15 @@ cd build
 sh start_reverse.sh
 ```
 
-You need to modify the yml file and change the configuration to your private configuration
+You need to modify the yml file and change the configuration to your private configuration\- 
 
 ```yml
 reverse:
-  remoteHost: 127.0.0.1 # forward server public ip
-  remotePort: 10434 # forward server public reversePort
-  channelNum: 128  # max tcp channels num 
-  type: HTTP # default
+  servers:
+    - remoteHost: 127.0.0.1 # forward server public ip
+    - remotePort: 10434 # forward server public reversePort
+    - channelNum: 128  # max tcp channels num 
+    - type: HTTP # default
   hostMapping: # If I visit molalocal.com, it maps it to localhost for me and accesses it through the reverse proxy server
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080

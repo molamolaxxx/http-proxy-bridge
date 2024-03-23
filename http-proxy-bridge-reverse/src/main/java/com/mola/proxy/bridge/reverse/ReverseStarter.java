@@ -2,6 +2,7 @@ package com.mola.proxy.bridge.reverse;
 
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.config.ReverseProxyConfig;
+import com.mola.proxy.bridge.core.config.ReverseServerItemConfig;
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.server.reverse.ReverseProxyServer;
@@ -19,9 +20,25 @@ public class ReverseStarter {
         // 设置代理域名映射
         ExtManager.setHostMappingExt(new HostMappingExtImpl(config.getHostMapping()));
 
-        // 启动服务
-        ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
-        reverseProxyServer.start(config.getRemoteHost(), config.getRemotePort(),
-                config.getChannelNum(), ReverseTypeEnum.valueOf(config.getType()));
+        // 异步启动服务
+        Thread serverThread = null;
+        for (ReverseServerItemConfig server : config.getServers()) {
+            serverThread = new Thread(() -> {
+                ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
+                reverseProxyServer.start(server.getRemoteHost(), server.getRemotePort(),
+                        server.getChannelNum(), ReverseTypeEnum.valueOf(server.getType()));
+            });
+            serverThread.start();
+        }
+
+        if (serverThread == null) {
+            return;
+        }
+
+        try {
+            serverThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

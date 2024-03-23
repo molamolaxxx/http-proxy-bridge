@@ -1,8 +1,8 @@
 package com.mola.proxy.bridge.core.config;
 
-import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,51 +13,25 @@ import java.util.Map;
  **/
 public class ReverseProxyConfig {
 
-    private String remoteHost;
-
-    private Integer remotePort;
-
-    private Integer channelNum = 128;
-
-    private String type = ReverseTypeEnum.HTTP.name();
+    private List<ReverseServerItemConfig> servers;
 
     public void validate() {
-        AssertUtil.notNull(remoteHost, "reverse.remoteHost must has value");
-        AssertUtil.notNull(remotePort, "reverse.remotePort must has value");
+        AssertUtil.notNull(servers, "reverse.servers must has value");
+        AssertUtil.isTrue(servers.size() > 0, "reverse.servers must has value");
+        for (ReverseServerItemConfig server : servers) {
+            AssertUtil.notNull(server, "encryption.server must has value");
+            server.validate();
+        }
     }
 
     private Map<String, String> hostMapping;
 
-    public String getRemoteHost() {
-        return remoteHost;
+    public List<ReverseServerItemConfig> getServers() {
+        return servers;
     }
 
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public Integer getRemotePort() {
-        return remotePort;
-    }
-
-    public void setRemotePort(Integer remotePort) {
-        this.remotePort = remotePort;
-    }
-
-    public Integer getChannelNum() {
-        return channelNum;
-    }
-
-    public void setChannelNum(Integer channelNum) {
-        this.channelNum = channelNum;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public void setServers(List<ReverseServerItemConfig> servers) {
+        this.servers = servers;
     }
 
     public Map<String, String> getHostMapping() {

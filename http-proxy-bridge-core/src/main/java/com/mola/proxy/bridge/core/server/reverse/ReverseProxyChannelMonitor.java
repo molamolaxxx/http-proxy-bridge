@@ -1,11 +1,14 @@
 package com.mola.proxy.bridge.core.server.reverse;
 
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
+import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author : molamola
@@ -36,7 +39,17 @@ public class ReverseProxyChannelMonitor extends Thread {
             }
             try {
                 ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
-                Set<Channel> reverseProxyChannels = connectPool.getReverseProxyChannels();
+                Set<Channel> reverseProxyChannels = connectPool.getReverseProxyChannels()
+                        .stream().filter(ch -> {
+                            RemotingHelper.HostAndPort hostAndPort = RemotingHelper.fetchRemoteChannelIpAndPort(ch);
+                            if (hostAndPort != null
+                                    && Objects.equals(hostAndPort.host, channelCreator.getHost())
+                                    && Objects.equals(hostAndPort.port, channelCreator.getPort())) {
+                                return true;
+                            }
+                            return false;
+                        }).collect(Collectors.toSet());
+
                 log.info("[ReverseProxyChannelMonitor] activate reverse channel :" + reverseProxyChannels.size());
                 if (reverseProxyChannels.size() < maxChannelNum) {
                     for (int i = 0; i < maxChannelNum - reverseProxyChannels.size(); i++) {

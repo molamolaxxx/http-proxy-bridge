@@ -31,6 +31,7 @@ public class ReverseProxyServer {
             reverseProxyChannelMonitor = new ReverseProxyChannelMonitor(
                     maxChannelNum, reverseProxyChannelCreator);
             reverseProxyChannelMonitor.start();
+            log.info("ReverseProxyServer start success! remoteHost = {}, remotePort = {}", remoteHost, remotePort);
         }
         catch (Exception e) {
             log.error("ReverseProxyServer start failed!", e);

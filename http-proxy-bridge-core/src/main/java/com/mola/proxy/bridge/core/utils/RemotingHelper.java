@@ -47,7 +47,7 @@ public class RemotingHelper {
         return Integer.parseInt(split[1]);
     }
 
-    public static IpAndPort fetchChannelIpAndPort(final Channel channel) {
+    public static HostAndPort fetchChannelIpAndPort(final Channel channel) {
         String localAddress = parseChannelLocalAddress(channel);
         String[] split = localAddress.split(":");
         if (split.length < 2) {
@@ -60,8 +60,20 @@ public class RemotingHelper {
         if (split.length < 2) {
             return null;
         }
-        String remoteIp = split[0];
-        return new IpAndPort(remoteIp, localPort);
+        String remoteHost = split[0];
+        return new HostAndPort(remoteHost, localPort);
+    }
+
+
+    public static HostAndPort fetchRemoteChannelIpAndPort(final Channel channel) {
+        String remoteAddress = parseChannelRemoteAddress(channel);
+        String[] split = remoteAddress.split(":");
+        if (split.length < 2) {
+            return null;
+        }
+        String remoteHost = split[0];
+        int remotePort = Integer.parseInt(split[1]);
+        return new HostAndPort(remoteHost, remotePort);
     }
 
     public static String parseChannelLocalAddress(final Channel channel) {
@@ -99,21 +111,21 @@ public class RemotingHelper {
         }
     }
 
-    public static class IpAndPort {
-        public String remoteIp;
-        public int localPort;
+    public static class HostAndPort {
+        public String host;
+        public int port;
 
-        public IpAndPort(String remoteIp, int localPort) {
-            this.remoteIp = remoteIp;
-            this.localPort = localPort;
+        public HostAndPort(String host, int port) {
+            this.host = host;
+            this.port = port;
         }
 
         public boolean isEffective() {
-            return remoteIp != null && remoteIp.length() > 0 && localPort > 0;
+            return host != null && host.length() > 0 && port > 0;
         }
 
         public boolean isLAN() {
-            return remoteIp.startsWith("192.168") || remoteIp.startsWith("127.0.0.1");
+            return host.startsWith("192.168") || host.startsWith("127.0.0.1");
         }
     }
 }

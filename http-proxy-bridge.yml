@@ -10,15 +10,16 @@ forward:
       reversePort: 10434
       type: SSL_HTTP
     - port: 20435
-      reversePort: 10434
+      reversePort: 10435
       type: HTTP
       openWhiteListsVerify: false
 
 reverse:
-  remoteHost: 127.0.0.1
-  remotePort: 10434
-  channelNum: 128
-  type: HTTP
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 10434
+      channelNum: 128
+      type: HTTP
   hostMapping:
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080

@@ -12,7 +12,8 @@ forward:
       type: DIRECT_TRANSFER
 
 reverse:
-  remoteHost: 127.0.0.1
-  remotePort: 10434
-  channelNum: 128
-  type: SSL_HTTP
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 10434
+      channelNum: 128
+      type: SSL_HTTP
