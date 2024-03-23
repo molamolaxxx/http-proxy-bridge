@@ -12,7 +12,7 @@ forward:
     - port: 20435
       reversePort: 10434
       type: HTTP
-      openWhiteListsVerify: true
+      openWhiteListsVerify: false
 
 reverse:
   remoteHost: 127.0.0.1
