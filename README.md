@@ -63,9 +63,9 @@ You need to modify the yml file and change the configuration to your private con
 reverse:
   servers:
     - remoteHost: 127.0.0.1 # forward server public ip
-    - remotePort: 10434 # forward server public reversePort
-    - channelNum: 128  # max tcp channels num 
-    - type: HTTP # default
+      remotePort: 10434 # forward server public reversePort
+      channelNum: 128  # max tcp channels num 
+      type: HTTP # default
   hostMapping: # If I visit molalocal.com, it maps it to localhost for me and accesses it through the reverse proxy server
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080
