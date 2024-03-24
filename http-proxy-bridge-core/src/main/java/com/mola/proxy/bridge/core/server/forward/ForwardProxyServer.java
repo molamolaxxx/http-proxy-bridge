@@ -151,7 +151,7 @@ public class ForwardProxyServer {
 
                         // 白名单验证
                         ch.pipeline().addLast(whiteListAccessHandler);
-                        ch.pipeline().addLast(new IdleStateHandler(30, 30, 30));
+                        ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
 

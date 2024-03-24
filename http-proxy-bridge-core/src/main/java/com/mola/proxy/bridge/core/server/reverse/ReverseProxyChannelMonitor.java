@@ -6,8 +6,11 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -51,12 +54,19 @@ public class ReverseProxyChannelMonitor extends Thread {
                         }).collect(Collectors.toSet());
 
                 log.info("[ReverseProxyChannelMonitor] activate reverse channel :" + reverseProxyChannels.size());
+
                 if (reverseProxyChannels.size() < maxChannelNum) {
+                    List<Future<Channel>> futureList = new ArrayList<>();
                     for (int i = 0; i < maxChannelNum - reverseProxyChannels.size(); i++) {
-                        channelCreator.createChannel();
+                        Future<Channel> future = channelCreator.createChannelAsync();
+                        futureList.add(future);
+                    }
+                    for (Future<Channel> future : futureList) {
+                        future.get();
                     }
                     log.info("[ReverseProxyChannelMonitor] create channel num :" + (maxChannelNum - reverseProxyChannels.size()));
                 }
+
                 Thread.sleep(5000);
             } catch (Exception e) {
                 log.error("createChannel exception", e);

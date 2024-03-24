@@ -28,6 +28,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author : molamola
  * @Project: http-proxy-bridge
@@ -40,11 +43,13 @@ public class ReverseProxyChannelCreator {
 
     private String host;
 
-    private int port;
+    private final int port;
 
-    private ReverseTypeEnum type;
+    private final ReverseTypeEnum type;
 
-    private ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
+    private final ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
+
+    private final ThreadPoolExecutor channelCreateExecutor;
 
     public ReverseProxyChannelCreator(String host, int port, ReverseTypeEnum type) {
         this.host = host;
@@ -55,6 +60,18 @@ public class ReverseProxyChannelCreator {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
         this.type = type;
+        this.channelCreateExecutor = new ThreadPoolExecutor(10, 10
+                ,200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
+            private final AtomicInteger threadIndex = new AtomicInteger(0);
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, String.format("channel-create-thread-%d", this.threadIndex.incrementAndGet()));
+            }
+        }, new ThreadPoolExecutor.CallerRunsPolicy());
+    }
+
+    public Future<Channel> createChannelAsync() {
+        return channelCreateExecutor.submit(this::createChannel);
     }
 
     public Channel createChannel() {
