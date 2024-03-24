@@ -41,7 +41,7 @@ public class ReverseProxyChannelCreator {
 
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelCreator.class);
 
-    private String host;
+    private final String host;
 
     private final int port;
 
