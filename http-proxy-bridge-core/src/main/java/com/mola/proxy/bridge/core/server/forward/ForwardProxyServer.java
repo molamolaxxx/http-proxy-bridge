@@ -1,20 +1,20 @@
 package com.mola.proxy.bridge.core.server.forward;
 
 import com.mola.proxy.bridge.core.entity.ProxyBridge;
-import com.mola.proxy.bridge.core.server.encryption.SslContextFactory;
 import com.mola.proxy.bridge.core.enums.ServerTypeEnum;
-import com.mola.proxy.bridge.core.handlers.access.WhiteListAccessHandler;
-import com.mola.proxy.bridge.core.handlers.connect.ForwardProxyChannelManageHandler;
-import com.mola.proxy.bridge.core.handlers.transfer.DataReceiveHandler;
-import com.mola.proxy.bridge.core.registry.ProxyBridgeRegistry;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
+import com.mola.proxy.bridge.core.handlers.access.WhiteListAccessHandler;
+import com.mola.proxy.bridge.core.handlers.connect.ForwardProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
-import com.mola.proxy.bridge.core.handlers.transfer.DataTransferHandler;
-import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler;
+import com.mola.proxy.bridge.core.handlers.transfer.DataReceiveHandler;
+import com.mola.proxy.bridge.core.handlers.transfer.DataTransferHandler;
+import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
+import com.mola.proxy.bridge.core.registry.ProxyBridgeRegistry;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -24,7 +24,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
-import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,8 +144,7 @@ public class ForwardProxyServer {
                     public void initChannel(SocketChannel ch) {
                         // ssl加解密
                         if (useSsl) {
-                            SslHandler sslHandler = SslContextFactory.createSslHandler(false);
-                            ch.pipeline().addLast(sslHandler);
+                            ch.pipeline().addLast(SslServerHandler.create());
                         }
 
                         // 白名单验证
@@ -204,8 +202,7 @@ public class ForwardProxyServer {
 
                         // 白名单，ssl连接不需要白名单校验
                         if (useSsl) {
-                            SslHandler sslHandler = SslContextFactory.createSslHandler(false);
-                            ch.pipeline().addLast(sslHandler);
+                            ch.pipeline().addLast(SslServerHandler.create());
                         } else { // 客户端使用加密机不需要白名单验证
                             ch.pipeline().addLast(whiteListAccessHandler);
                         }

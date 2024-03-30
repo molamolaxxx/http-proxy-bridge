@@ -2,16 +2,14 @@ package com.mola.proxy.bridge.core.server.encryption;
 
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.SslAuthExt;
-import io.netty.handler.ssl.SslHandler;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.io.InputStream;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyStore;
+import java.security.cert.X509Certificate;
 
 /**
  * @author : molamola
@@ -21,7 +19,7 @@ import java.security.KeyStore;
  **/
 public class SslContextFactory {
 
-    private static SSLContext createSSLContext()  {
+    public static SSLContext createSSLContext()  {
         SslAuthExt sslAuthExt = ExtManager.getSslAuthExt();
         if (sslAuthExt == null) {
             throw new RuntimeException("sslAuthExt can not be null");
@@ -45,22 +43,43 @@ public class SslContextFactory {
             trustManagerFactory.init(trustStore);
 
             sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+            sslContext.init(keyManagerFactory.getKeyManagers(),
+                    new TrustManager[]{new EmptyTrustManager()}, null);
         }catch (Exception e){
             throw new RuntimeException(e);
         }
         return sslContext;
     }
 
-    public static SslHandler createSslHandler(boolean isClient) {
-        SSLContext sslContext = createSSLContext();
-        SSLEngine engine = sslContext.createSSLEngine();
-        if (isClient) {
-            engine.setUseClientMode(true);
-        } else {
-            engine.setUseClientMode(false);
-            engine.setNeedClientAuth(true);
+    public static class EmptyTrustManager extends X509ExtendedTrustManager {
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
         }
-        return new SslHandler(engine);
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) {
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) {
+        }
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) {
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) {
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
     }
 }

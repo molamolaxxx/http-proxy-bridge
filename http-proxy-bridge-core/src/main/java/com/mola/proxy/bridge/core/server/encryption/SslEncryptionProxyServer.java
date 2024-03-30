@@ -1,8 +1,9 @@
 package com.mola.proxy.bridge.core.server.encryption;
 
-import com.mola.proxy.bridge.core.ext.def.DefaultClientSslAuthExt;
-import com.mola.proxy.bridge.core.handlers.ssl.SslRequestHandler;
 import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.def.DefaultClientSslAuthExt;
+import com.mola.proxy.bridge.core.handlers.ssl.SslClientHandler;
+import com.mola.proxy.bridge.core.handlers.ssl.SslRequestHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -12,7 +13,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,8 +122,7 @@ public class SslEncryptionProxyServer {
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) {
-                            SslHandler sslHandler = SslContextFactory.createSslHandler(true);
-                            ch.pipeline().addLast(sslHandler);
+                            ch.pipeline().addLast(SslClientHandler.create());
                         }
                     });
             return encryptionClientBootstrap;

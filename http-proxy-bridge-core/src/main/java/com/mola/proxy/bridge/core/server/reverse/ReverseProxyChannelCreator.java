@@ -1,15 +1,15 @@
 package com.mola.proxy.bridge.core.server.reverse;
 
+import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
+import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
+import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
+import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
-import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
-import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
-import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
-import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
+import com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
-import com.mola.proxy.bridge.core.server.encryption.SslContextFactory;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -23,7 +23,6 @@ import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +88,7 @@ public class ReverseProxyChannelCreator {
                                     60, 60, 60));
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);
                             if (type.requireEncryption()) {
-                                SslHandler sslHandler = SslContextFactory.createSslHandler(false);
-                                ch.pipeline().addLast(sslHandler);
+                                ch.pipeline().addLast(SslServerHandler.create());
                             }
 
                             if (type.isHttpProxy()) {
