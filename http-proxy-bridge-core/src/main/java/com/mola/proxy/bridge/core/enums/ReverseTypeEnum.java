@@ -12,7 +12,9 @@ public enum ReverseTypeEnum {
 
     SSL_HTTP("ssl加密http(s)代理"),
 
-    SOCKS5("socks5代理"),;
+    SOCKS5("socks5代理"),
+
+    SSL_SOCKS5("ssl加密socks5代理"),;
 
     private String msg;
 
@@ -28,7 +30,11 @@ public enum ReverseTypeEnum {
         return this == HTTP || this == SSL_HTTP;
     }
 
+    public boolean isSocks5Proxy() {
+        return this == SOCKS5 || this == SSL_SOCKS5;
+    }
+
     public boolean requireEncryption() {
-        return this == SSL_HTTP;
+        return this == SSL_HTTP || this == SSL_SOCKS5;
     }
 }

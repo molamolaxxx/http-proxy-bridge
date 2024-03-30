@@ -93,7 +93,7 @@ public class ReverseProxyChannelCreator {
 
                             if (type.isHttpProxy()) {
                                 ch.pipeline().addLast(httpRequestHandler);
-                            } else if (type == ReverseTypeEnum.SOCKS5) {
+                            } else if (type.isSocks5Proxy()) {
                                 //socks5响应最后一个encode
                                 ch.pipeline().addLast(Socks5ServerEncoder.DEFAULT);
 
