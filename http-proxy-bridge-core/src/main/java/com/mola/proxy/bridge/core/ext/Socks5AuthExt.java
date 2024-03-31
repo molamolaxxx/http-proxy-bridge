@@ -9,4 +9,6 @@ package com.mola.proxy.bridge.core.ext;
 public interface Socks5AuthExt {
 
     boolean auth(String username, String password);
+
+    boolean requireAuth();
 }

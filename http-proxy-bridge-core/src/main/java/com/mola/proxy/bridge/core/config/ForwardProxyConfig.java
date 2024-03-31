@@ -18,6 +18,8 @@ public class ForwardProxyConfig {
 
     private String ipInterceptNotifyUrl;
 
+    private Socks5Config socks5;
+
     public List<ForwardServerItemConfig> getServers() {
         return servers;
     }
@@ -49,5 +51,13 @@ public class ForwardProxyConfig {
             AssertUtil.notNull(server, "encryption.server must has value");
             server.validate();
         }
+    }
+
+    public Socks5Config getSocks5() {
+        return socks5;
+    }
+
+    public void setSocks5(Socks5Config socks5) {
+        this.socks5 = socks5;
     }
 }

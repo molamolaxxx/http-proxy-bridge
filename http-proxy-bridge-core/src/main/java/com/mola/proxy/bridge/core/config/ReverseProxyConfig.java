@@ -15,6 +15,8 @@ public class ReverseProxyConfig {
 
     private List<ReverseServerItemConfig> servers;
 
+    private Socks5Config socks5;
+
     public void validate() {
         AssertUtil.notNull(servers, "reverse.servers must has value");
         AssertUtil.isTrue(servers.size() > 0, "reverse.servers must has value");
@@ -40,5 +42,13 @@ public class ReverseProxyConfig {
 
     public void setHostMapping(Map<String, String> hostMapping) {
         this.hostMapping = hostMapping;
+    }
+
+    public Socks5Config getSocks5() {
+        return socks5;
+    }
+
+    public void setSocks5(Socks5Config socks5) {
+        this.socks5 = socks5;
     }
 }

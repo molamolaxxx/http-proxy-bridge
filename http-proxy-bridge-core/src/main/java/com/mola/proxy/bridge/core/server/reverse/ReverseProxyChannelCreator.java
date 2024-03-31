@@ -3,11 +3,13 @@ package com.mola.proxy.bridge.core.server.reverse;
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.proxy.bridge.core.handlers.socks5.Socks5PasswordAuthRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
@@ -20,6 +22,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -100,6 +103,13 @@ public class ReverseProxyChannelCreator {
                                 //处理socks5初始化请求
                                 ch.pipeline().addLast(new Socks5InitialRequestDecoder());
                                 ch.pipeline().addLast(new Socks5InitialRequestInboundHandler());
+
+                                // 处理认证请求
+                                Socks5AuthExt socks5AuthExt = ExtManager.getSocks5AuthExt();
+                                if (socks5AuthExt != null && socks5AuthExt.requireAuth()) {
+                                    ch.pipeline().addLast(new Socks5PasswordAuthRequestDecoder());
+                                    ch.pipeline().addLast(new Socks5PasswordAuthRequestInboundHandler());
+                                }
 
                                 //处理connection请求
                                 ch.pipeline().addLast(new Socks5CommandRequestDecoder());

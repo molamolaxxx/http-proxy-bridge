@@ -3,6 +3,7 @@ package com.mola.proxy.bridge.core.server.forward;
 import com.mola.proxy.bridge.core.entity.ProxyBridge;
 import com.mola.proxy.bridge.core.enums.ServerTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.access.WhiteListAccessHandler;
 import com.mola.proxy.bridge.core.handlers.connect.ForwardProxyChannelManageHandler;
@@ -10,6 +11,7 @@ import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHand
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
+import com.mola.proxy.bridge.core.handlers.socks5.Socks5PasswordAuthRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler;
 import com.mola.proxy.bridge.core.handlers.transfer.DataReceiveHandler;
 import com.mola.proxy.bridge.core.handlers.transfer.DataTransferHandler;
@@ -23,6 +25,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
+import io.netty.handler.codec.socksx.v5.Socks5PasswordAuthRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5ServerEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
@@ -217,6 +220,13 @@ public class ForwardProxyServer {
                             //处理socks5初始化请求
                             pipeline.addLast(new Socks5InitialRequestDecoder());
                             pipeline.addLast(new Socks5InitialRequestInboundHandler());
+
+                            // 处理认证请求
+                            Socks5AuthExt socks5AuthExt = ExtManager.getSocks5AuthExt();
+                            if (socks5AuthExt != null && socks5AuthExt.requireAuth()) {
+                                pipeline.addLast(new Socks5PasswordAuthRequestDecoder());
+                                pipeline.addLast(new Socks5PasswordAuthRequestInboundHandler());
+                            }
 
                             //处理connection请求
                             pipeline.addLast(new Socks5CommandRequestDecoder());

@@ -1,5 +1,7 @@
 package com.mola.proxy.bridge.core.handlers.socks5;
 
+import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socksx.v5.*;
@@ -27,9 +29,16 @@ public class Socks5InitialRequestInboundHandler extends SimpleChannelInboundHand
             return;
         }
 
-        // 鉴权
-        Socks5InitialResponse socks5InitialResponse = new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH);
-        ctx.writeAndFlush(socks5InitialResponse);
+        Socks5AuthExt socks5AuthExt = ExtManager.getSocks5AuthExt();
+        if (socks5AuthExt == null || !socks5AuthExt.requireAuth()) {
+            // 无需鉴权
+            Socks5InitialResponse socks5InitialResponse = new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH);
+            ctx.writeAndFlush(socks5InitialResponse);
+        } else {
+            Socks5InitialResponse socks5InitialResponse = new DefaultSocks5InitialResponse(Socks5AuthMethod.PASSWORD);
+            ctx.writeAndFlush(socks5InitialResponse);
+        }
+
         ctx.pipeline().remove(this);
         ctx.pipeline().remove(Socks5InitialRequestDecoder.class);
     }
