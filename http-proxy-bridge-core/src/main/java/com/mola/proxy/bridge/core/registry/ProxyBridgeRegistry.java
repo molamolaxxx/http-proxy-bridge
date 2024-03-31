@@ -18,7 +18,7 @@ public class ProxyBridgeRegistry {
     /**
      * 底层存储，使用线程安全的set
      */
-    private Set<ProxyBridge> bridges = new CopyOnWriteArraySet<>();
+    private final Set<ProxyBridge> bridges = new CopyOnWriteArraySet<>();
 
     private ProxyBridgeRegistry(){}
 

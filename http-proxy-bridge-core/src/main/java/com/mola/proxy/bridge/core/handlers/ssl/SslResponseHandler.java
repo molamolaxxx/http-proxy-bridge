@@ -1,9 +1,10 @@
 package com.mola.proxy.bridge.core.handlers.ssl;
 
-import com.mola.proxy.bridge.core.pool.SslEncryptionChannelPool;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author : molamola
@@ -13,7 +14,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
  **/
 public class SslResponseHandler extends ChannelInboundHandlerAdapter {
 
-    private Channel encryptionServerChannel;
+    private static final Logger log = LoggerFactory.getLogger(SslResponseHandler.class);
+
+    private final Channel encryptionServerChannel;
 
     public SslResponseHandler(Channel encryptionServerChannel) {
         this.encryptionServerChannel = encryptionServerChannel;
@@ -21,8 +24,7 @@ public class SslResponseHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
+        log.error("SslResponseHandler error, channel = {}", ctx.channel(), cause);
     }
 
     @Override
@@ -33,6 +35,5 @@ public class SslResponseHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         encryptionServerChannel.close();
-        SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
     }
 }

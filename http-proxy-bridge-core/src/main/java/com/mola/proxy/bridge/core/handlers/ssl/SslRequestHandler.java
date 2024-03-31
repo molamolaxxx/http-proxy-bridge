@@ -1,6 +1,5 @@
 package com.mola.proxy.bridge.core.handlers.ssl;
 
-import com.mola.proxy.bridge.core.pool.SslEncryptionChannelPool;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -44,14 +43,12 @@ public class SslRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
-        SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
+        log.error("SslRequestHandler error, channel = {}", ctx.channel(), cause);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         channel.close();
-        SslEncryptionChannelPool.instance().removeBothEnd(ctx.channel());
     }
 
     @Override
