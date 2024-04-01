@@ -23,7 +23,7 @@ public class Socks5InitialRequestInboundHandler extends SimpleChannelInboundHand
     protected void channelRead0(ChannelHandlerContext ctx, DefaultSocks5InitialRequest msg) {
         boolean failure = msg.decoderResult().isFailure();
         if (failure) {
-            log.error("init socks5 failed，please check!");
+            log.error("init socks5 failed，please check!", msg.decoderResult().cause());
             ReferenceCountUtil.retain(msg);
             ctx.fireChannelRead(msg);
             return;
