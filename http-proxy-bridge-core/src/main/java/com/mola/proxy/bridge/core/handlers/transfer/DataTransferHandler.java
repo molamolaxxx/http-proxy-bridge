@@ -3,6 +3,7 @@ package com.mola.proxy.bridge.core.handlers.transfer;
 import com.mola.proxy.bridge.core.entity.ProxyBridge;
 import com.mola.proxy.bridge.core.registry.ProxyBridgeRegistry;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
+import com.mola.proxy.bridge.core.utils.AssertUtil;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.*;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error("DataTransferHandler error, channel = {}", ctx.channel(), cause);
     }
 
     @Override
@@ -36,10 +37,12 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
                 RemotingHelper.fetchChannelLocalPort(ctx.channel())
         );
 
+        AssertUtil.notNull(proxyBridge, "proxyBridge won't be null");
         if (connectPool.getReverseProxyChannels(proxyBridge.getReversePort()).size() == 0) {
             ctx.fireChannelRead(msg);
             return;
         }
+
         Channel reverseChannel = connectPool.allocate(ctx.channel(), proxyBridge.getReversePort());
         if (Objects.isNull(reverseChannel)) {
             connectPool.clearChannels(proxyBridge.getReversePort());
