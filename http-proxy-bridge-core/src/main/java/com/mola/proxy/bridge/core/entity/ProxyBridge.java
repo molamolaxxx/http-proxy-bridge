@@ -14,28 +14,28 @@ public class ProxyBridge {
     /**
      * 正向代理端口
      */
-    private int port;
+    private int forwardPort;
 
     /**
      * 反向代理端口
      */
     private int reversePort;
 
-    private ProxyBridge(int port, int reversePort) {
-        this.port = port;
+    private ProxyBridge(int forwardPort, int reversePort) {
+        this.forwardPort = forwardPort;
         this.reversePort = reversePort;
     }
 
-    public static ProxyBridge build(int port, int reversePort) {
-        return new ProxyBridge(port, reversePort);
+    public static ProxyBridge build(int forwardPort, int reversePort) {
+        return new ProxyBridge(forwardPort, reversePort);
     }
 
-    public int getPort() {
-        return port;
+    public int getForwardPort() {
+        return forwardPort;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setForwardPort(int forwardPort) {
+        this.forwardPort = forwardPort;
     }
 
     public int getReversePort() {
@@ -51,11 +51,11 @@ public class ProxyBridge {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProxyBridge that = (ProxyBridge) o;
-        return port == that.port && reversePort == that.reversePort;
+        return forwardPort == that.forwardPort && reversePort == that.reversePort;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(port, reversePort);
+        return Objects.hash(forwardPort, reversePort);
     }
 }

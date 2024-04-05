@@ -24,7 +24,7 @@ public class DataReceiveHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error("DataReceiveHandler error, channel = {}", ctx.channel(), cause);
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

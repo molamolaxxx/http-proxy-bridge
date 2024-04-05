@@ -16,7 +16,6 @@ public class ExtManager {
 
     private static SslAuthExt sslAuthExt;
 
-
     public static void setUserIpWhiteListExt(UserIpWhiteListExt userIpWhiteListExt) {
         ExtManager.userIpWhiteListExt = userIpWhiteListExt;
     }

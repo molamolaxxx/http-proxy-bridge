@@ -23,7 +23,7 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error("WhiteListAccessHandler error, channel = {}", ctx.channel(), cause);
     }
 
     @Override

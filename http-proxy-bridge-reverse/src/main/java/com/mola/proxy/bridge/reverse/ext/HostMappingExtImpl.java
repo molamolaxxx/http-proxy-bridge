@@ -23,6 +23,22 @@ public class HostMappingExtImpl implements HostMappingExt {
         if (hostMapping == null || hostMapping.size() == 0) {
             return null;
         }
-        return hostMapping.get(host + ":" + port);
+        String mappedValue = null;
+        String mappedKey = host + ":" + port;
+        if (hostMapping.containsKey(mappedKey)) {
+            mappedValue = hostMapping.get(mappedKey);
+        } else {
+            mappedValue = hostMapping.get(host);
+        }
+
+        if (mappedValue == null || mappedValue.length() == 0) {
+            return null;
+        }
+
+        String[] mappedHostAndPort = mappedValue.split(":");
+        if (mappedHostAndPort.length == 2) {
+            return mappedValue;
+        }
+        return mappedValue + ":" + port;
     }
 }

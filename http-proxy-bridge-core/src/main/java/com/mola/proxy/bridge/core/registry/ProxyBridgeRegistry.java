@@ -42,8 +42,8 @@ public class ProxyBridgeRegistry {
         bridges.add(proxyBridge);
     }
 
-    public ProxyBridge fetchBridgeByForwardPort(int port) {
-        return bridges.stream().filter(bridge -> bridge.getPort() == port)
+    public ProxyBridge fetchBridgeByForwardPort(int forwardPort) {
+        return bridges.stream().filter(bridge -> bridge.getForwardPort() == forwardPort)
                 .findAny().orElse(null);
     }
 }
