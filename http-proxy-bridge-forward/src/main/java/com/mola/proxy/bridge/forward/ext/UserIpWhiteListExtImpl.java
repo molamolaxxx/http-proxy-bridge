@@ -28,7 +28,7 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
 
     private final Set<String> notAccessIps = new CopyOnWriteArraySet<>();
 
-    private final Set<String> ipWhiteList = new CopyOnWriteArraySet<>();
+    private volatile Set<String> ipWhiteList = new HashSet<>();
 
     private final Map<Integer, Boolean> localPortRequireVerify = new HashMap<>();
 
@@ -48,8 +48,7 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
                 logger.info("finish clear notAccessIps");
             }
             if (tick * REFRESH_DURING % REFRESH_WHITE_LIST_DURING == 0) {
-                ipWhiteList.clear();
-                ipWhiteList.addAll(fetchIpWhiteList());
+                ipWhiteList = fetchIpWhiteList();
                 logger.info("finish refresh ipWhiteList");
             }
 
