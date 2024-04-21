@@ -76,6 +76,19 @@ public class RemotingHelper {
         return new HostAndPort(remoteHost, remotePort);
     }
 
+    public static HostAndPort parseHostAndPort(String hostAndPort) {
+        if (hostAndPort == null) {
+            return null;
+        }
+        String[] split = hostAndPort.split(":");
+        if (split.length < 2) {
+            return null;
+        }
+        String remoteHost = split[0];
+        int remotePort = Integer.parseInt(split[1]);
+        return new HostAndPort(remoteHost, remotePort);
+    }
+
     public static String parseChannelLocalAddress(final Channel channel) {
         if (channel == null) {
             return "";

@@ -19,7 +19,8 @@ public class ReverseStarter {
         ReverseProxyConfig config = ProxyConfig.fetchReverseProxyConfig();
 
         // 设置代理域名映射
-        ExtManager.setHostMappingExt(new HostMappingExtImpl(config.getHostMapping()));
+        HostMappingExtImpl hostMappingExt = new HostMappingExtImpl(config.getHostMapping());
+        ExtManager.setHostMappingExt(hostMappingExt);
 
         // 设置socks5配置
         ExtManager.setSocks5AuthExt(new DefaultSocks5AuthExt(config.getSocks5()));
@@ -27,6 +28,10 @@ public class ReverseStarter {
         // 异步启动服务
         Thread serverThread = null;
         for (ReverseServerItemConfig server : config.getServers()) {
+            hostMappingExt.registerAppointHosts(
+                    String.format("%s:%s", server.getRemoteHost(), server.getRemotePort()),
+                    server.getAppointHosts()
+                    );
             serverThread = new Thread(() -> {
                 ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
                 reverseProxyServer.start(server.getRemoteHost(), server.getRemotePort(),

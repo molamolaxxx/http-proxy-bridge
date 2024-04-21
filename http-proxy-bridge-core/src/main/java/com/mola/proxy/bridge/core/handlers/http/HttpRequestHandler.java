@@ -10,11 +10,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,7 +94,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         RemotingHelper.releaseBuf(clientRequestBuf);
 
         // 解析proxy头信息
-        ProxyHttpHeader header = HeaderParser.parse(new String(clientRequestBytes));
+        ProxyHttpHeader header = parseProxyHeader(new String(clientRequestBytes), client2proxyChannel);
 
         // 内网穿透 映射
         transferHost(header);
@@ -138,6 +136,10 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
                 proxy2ServerChannel.writeAndFlush(buffer);
             }
         });
+    }
+
+    protected ProxyHttpHeader parseProxyHeader(String header, Channel client2proxyChannel) {
+        return HeaderParser.parse(header);
     }
 
     public void shutdown() {
