@@ -91,7 +91,7 @@ public class ReverseProxyChannelCreator {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
                             ch.pipeline().addLast(new IdleStateHandler(
-                                    60, 60, 60));
+                                    120, 120, 120));
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);
                             if (type.requireEncryption()) {
                                 ch.pipeline().addLast(SslServerHandler.create());

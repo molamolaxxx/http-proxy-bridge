@@ -152,7 +152,7 @@ public class ForwardProxyServer {
 
                         // 白名单验证
                         ch.pipeline().addLast(whiteListAccessHandler);
-                        ch.pipeline().addLast(new IdleStateHandler(60, 60, 60));
+                        ch.pipeline().addLast(new IdleStateHandler(120, 120, 120));
                         ch.pipeline().addLast(forwardProxyChannelManageHandler);
                         ch.pipeline().addLast(dataTransferHandler);
 
@@ -264,7 +264,7 @@ public class ForwardProxyServer {
                     public void initChannel(SocketChannel ch)
                             throws Exception {
                         ch.pipeline().addLast(new IdleStateHandler(
-                                30, 30, 30));
+                                120, 120, 120));
                         ch.pipeline().addLast(reverseProxyChannelManageHandler);
                         ch.pipeline().addLast(dataReceiveHandler);
                     }
