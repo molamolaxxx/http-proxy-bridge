@@ -4,7 +4,6 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.HostMappingExt;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
-import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
@@ -14,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: http处理器，负责连接站点&发送数据
  * @date : 2020-09-04 10:50
  **/
-public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
+public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     private static final Logger log = LoggerFactory.getLogger(HttpRequestHandler.class);
 
@@ -32,11 +30,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     private static final String CONNECTION_ESTABLISHED_RESP = "HTTP/1.1 200 Connection Established\r\n\r\n";
 
     private final Map<Channel, Channel> channelMap = new ConcurrentHashMap<>(32);
-
-    /**
-     * 第一次建立链接，需要缓存数据报，防止数据丢失
-     */
-    private final Map<Channel, ByteBuf> msgMap = new ConcurrentHashMap<>(32);
 
     private final Bootstrap httpInvokeBootstrap = new Bootstrap();
 
@@ -54,54 +47,26 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        log.error("HttpRequestHandler exceptionCaught, channel = {}", ctx.channel(), cause);
         channelMap.remove(ctx.channel());
     }
+
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Channel channel = ctx.channel();
-        if(channelMap.containsKey(channel) && channelMap.get(channel) != null) {
-            Channel proxy2ServerChannel = channelMap.get(channel);
-            proxy2ServerChannel.writeAndFlush(msg);
-        } else {
-            ByteBuf buffer = null;
-            if(msgMap.containsKey(channel) && msgMap.get(channel)!=null) {
-                buffer = msgMap.get(channel);
-            }else {
-                buffer = ctx.alloc().buffer(1024 * 2);
-            }
-            buffer.writeBytes((ByteBuf) msg);
-            msgMap.put(channel, buffer);
-        }
+    protected void channelReadWithHeader(ChannelHandlerContext ctx, Object msg, ProxyHttpHeader header) {
+        Channel proxy2ServerChannel = channelMap.get(ctx.channel());
+        proxy2ServerChannel.writeAndFlush(msg);
     }
+
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        final Channel client2proxyChannel = ctx.channel();
-        Channel existProxy2ServerChannel = channelMap.get(client2proxyChannel);
-        if (Objects.nonNull(existProxy2ServerChannel)) {
-            return;
-        }
-
-        ByteBuf clientRequestBuf = msgMap.get(client2proxyChannel);
-        if (Objects.isNull(clientRequestBuf)) {
-            return;
-        }
-
-        byte[] clientRequestBytes = new byte[clientRequestBuf.readableBytes()];
-        clientRequestBuf.getBytes(0, clientRequestBytes);
-        // 清除buf
-        msgMap.remove(client2proxyChannel);
-        RemotingHelper.releaseBuf(clientRequestBuf);
-
-        // 解析proxy头信息
-        ProxyHttpHeader header = parseProxyHeader(new String(clientRequestBytes), client2proxyChannel);
-
+    protected void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
+                                                 byte[] clientRequestBytes) {
         // 内网穿透 映射
         transferHost(header);
 
         // 连接目标host，异步回调
         ChannelFuture future = httpInvokeBootstrap.connect(header.getHost(), header.getPort());
         future.addListener((ChannelFutureListener) completedFuture -> {
+            final Channel client2proxyChannel = ctx.channel();
             if (!completedFuture.isSuccess()) {
                 log.error("connect failing " + header.getTargetAddress());
                 return;
@@ -138,21 +103,18 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         });
     }
 
+
     protected ProxyHttpHeader parseProxyHeader(String header, Channel client2proxyChannel) {
         return HeaderParser.parse(header);
     }
 
     public void shutdown() {
+        super.shutdown();
         for (Map.Entry<Channel, Channel> entry : channelMap.entrySet()) {
             entry.getKey().close();
             entry.getValue().close();
         }
-        for (Map.Entry<Channel, ByteBuf> entry : msgMap.entrySet()) {
-            entry.getKey().close();
-            RemotingHelper.releaseBuf(entry.getValue());
-        }
         channelMap.clear();
-        msgMap.clear();
     }
 
     private void transferHost(ProxyHttpHeader header) {

@@ -85,13 +85,16 @@ public class SslEncryptionProxyServer {
                     public void initChannel(SocketChannel ch)
                             throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast(
-                                new SslRequestHandler(
-                                        ch,
-                                        encryptionClientBootstrap,
-                                        remoteHost,
-                                        remotePort)
-                        );
+                        SslRequestHandler sslRequestHandler = new SslRequestHandler(
+                                ch,
+                                encryptionClientBootstrap,
+                                remoteHost,
+                                remotePort);
+                        pipeline.addLast(sslRequestHandler);
+                        // 释放堆外内存
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
+                            sslRequestHandler.shutdown();
+                        });
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);

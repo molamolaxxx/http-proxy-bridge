@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.spi.FilterReply;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
@@ -17,6 +16,10 @@ import org.slf4j.Marker;
  **/
 public class LogUtil {
     public static void debugReject() {
+        boolean debugEnable = Boolean.getBoolean("debug.enable");
+        if (debugEnable) {
+            return;
+        }
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         loggerContext.getTurboFilterList().add(new TurboFilter() {
             @Override
