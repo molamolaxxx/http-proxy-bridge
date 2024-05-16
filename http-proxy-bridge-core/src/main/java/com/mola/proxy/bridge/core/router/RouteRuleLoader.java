@@ -28,7 +28,7 @@ public class RouteRuleLoader {
 
     private static List<ConnectionRouteRule> fetchConnectionRouteRules(String routeRulePath) {
         if (routeRulePath == null || routeRulePath.length() == 0) {
-            throw new RuntimeException("routeRulePath is null");
+            return Collections.emptyList();
         }
         if (routeRulePath.startsWith(HTTP_PREFIX)) {
             return fetchRemoteRouteRules(routeRulePath);
@@ -64,9 +64,7 @@ public class RouteRuleLoader {
         LOGGER.info("fetch rule start");
         List<ConnectionRouteRule> connectionRouteRules = fetchConnectionRouteRules(filePath);
         LOGGER.info("load rule start");
-        if (connectionRouteRules != null) {
-            ConnectionRouter.instance().buildRouteRules(connectionRouteRules);
-        }
+        ConnectionRouter.instance().buildRouteRules(connectionRouteRules);
         LOGGER.info("load rule end");
     }
 }

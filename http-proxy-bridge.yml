@@ -3,7 +3,7 @@ encrypt:
     - remoteHost: 127.0.0.1
       remotePort: 20434
       port: 32222
-  routeRule: encryption_route.json
+#  routeRule: encryption_route.json
 
 forward:
   servers:
