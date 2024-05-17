@@ -25,7 +25,6 @@ public class RouteRuleLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteRuleLoader.class);
 
-
     private static List<ConnectionRouteRule> fetchConnectionRouteRules(String routeRulePath) {
         if (routeRulePath == null || routeRulePath.length() == 0) {
             return Collections.emptyList();
