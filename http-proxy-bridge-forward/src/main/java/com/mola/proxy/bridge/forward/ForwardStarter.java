@@ -29,8 +29,8 @@ public class ForwardStarter {
         Thread serverThread = null;
         for (ForwardServerItemConfig server : config.getServers()) {
             serverThread = new Thread(() -> {
-                ForwardProxyServer encryptionProxyServer = new ForwardProxyServer();
-                encryptionProxyServer.start(server.getPort(), server.getReversePort(),
+                ForwardProxyServer forwardProxyServer = new ForwardProxyServer();
+                forwardProxyServer.start(server.getPort(), server.getReversePort(),
                         ServerTypeEnum.valueOf(server.getType()));
             });
             serverThread.start();
