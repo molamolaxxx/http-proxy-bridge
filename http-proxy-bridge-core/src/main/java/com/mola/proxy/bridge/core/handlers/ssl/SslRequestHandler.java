@@ -50,7 +50,9 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        encryption2ServerChannel.close();
+        if (encryption2ServerChannel != null) {
+            encryption2ServerChannel.close();
+        }
     }
 
     @Override
