@@ -2,11 +2,7 @@ package com.mola.proxy.bridge.core.router;
 
 import com.mola.proxy.bridge.core.entity.ConnectionRouteRule;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 
 /**
  * @author : molamola
@@ -16,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public class ConnectionRouter {
 
-    private Map<HostTrieTree, ConnectionRouteRule> connectionRouteRuleMap = new ConcurrentHashMap<>();
+    private volatile Map<ConnectionRouteRule, HostTrieTree> hostTrieTreeMap = new LinkedHashMap<>();
 
     private static ConnectionRouter instance;
 
@@ -44,9 +40,9 @@ public class ConnectionRouter {
         if (host == null) {
             return null;
         }
-        for (HostTrieTree hostTrieTree : connectionRouteRuleMap.keySet()) {
-            if (hostTrieTree.match(host)) {
-                return connectionRouteRuleMap.get(hostTrieTree);
+        for (ConnectionRouteRule routeRule : hostTrieTreeMap.keySet()) {
+            if (hostTrieTreeMap.get(routeRule).match(host)) {
+                return routeRule;
             }
         }
         return null;
@@ -60,6 +56,7 @@ public class ConnectionRouter {
         if (routeRuleList == null || routeRuleList.size() == 0) {
             return;
         }
+        Map<ConnectionRouteRule, HostTrieTree> hostTrieTreeMap = new LinkedHashMap<>();
         for (ConnectionRouteRule connectionRouteRule : routeRuleList) {
             if (connectionRouteRule.getHostRules() == null) {
                 continue;
@@ -68,8 +65,9 @@ public class ConnectionRouter {
             for (String hostRule : connectionRouteRule.getHostRules()) {
                 root.consume(hostRule);
             }
-            connectionRouteRuleMap.put(root, connectionRouteRule);
+            hostTrieTreeMap.put(connectionRouteRule, root);
         }
+        this.hostTrieTreeMap = hostTrieTreeMap;
     }
 
     /**
@@ -82,7 +80,7 @@ public class ConnectionRouter {
         Map<String, HostTrieTree> childNodeMap = new HashMap<>();
 
         /**
-         *
+         * 为这颗字典树吸收规则
          * @param hostRule
          */
         public void consume(String hostRule) {
@@ -128,7 +126,7 @@ public class ConnectionRouter {
             if (hostParts.length == 1) {
                 return END == childNodeMap.get(hostParts[0]);
             }
-            // 如果当前包含*规则，则可以匹配1个 到 hostParts.length - 1个
+            // 如果当前包含*规则，则可以匹配一个或多个part
             if (childNodeMap.containsKey("*")) {
                 for (int i = 1 ;; i++) {
                     String childHost = String.join(".",
@@ -141,7 +139,7 @@ public class ConnectionRouter {
                     }
                 }
             }
-            // 如果当前不包含*规则，只能匹配一个
+            // 如果当前不包含*规则，或*规则匹配失败，只匹配当前part
             String lastPart = hostParts[hostParts.length - 1];
             if (childNodeMap.containsKey(lastPart)) {
                 String childHost = String.join(".",

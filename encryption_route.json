@@ -2,12 +2,10 @@
   {
     "remoteHost": "127.0.0.1",
     "remotePort": 20434,
-    "hostRules": []
-  },
-  {
-    "remoteHost": "127.0.0.1",
-    "remotePort": 20434,
-    "hostRules": []
+    "hostRules": [
+      "google.com",
+      "*.google.com"
+    ]
   },
   {
     "remoteHost": "127.0.0.1",
@@ -73209,5 +73207,10 @@
       "*.zzzzaaaa.com",
       "*.zzzzzz.me"
     ]
+  },
+  {
+    "remoteHost": "127.0.0.1",
+    "remotePort": 20434,
+    "hostRules": ["*"]
   }
 ]
