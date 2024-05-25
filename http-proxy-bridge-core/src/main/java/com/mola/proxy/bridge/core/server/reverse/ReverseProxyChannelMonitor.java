@@ -25,9 +25,9 @@ public class ReverseProxyChannelMonitor extends Thread {
 
     private boolean shutdown;
 
-    private int maxChannelNum;
+    private final int maxChannelNum;
 
-    private ReverseProxyChannelCreator channelCreator;
+    private final ReverseProxyChannelCreator channelCreator;
 
     public ReverseProxyChannelMonitor(int maxChannelNum, ReverseProxyChannelCreator channelCreator) {
         this.maxChannelNum = maxChannelNum;
@@ -56,8 +56,17 @@ public class ReverseProxyChannelMonitor extends Thread {
                 log.info("[ReverseProxyChannelMonitor] activate reverse channel :" + reverseProxyChannels.size());
 
                 if (reverseProxyChannels.size() < maxChannelNum) {
+                    // 待创建的channel数量 >= 1
+                    int channelToCreateNum = maxChannelNum - reverseProxyChannels.size();
+                    // 先同步创建一个连接
+                    Channel channel = channelCreator.createChannel();
+                    if (channel == null) {
+                        log.info("[ReverseProxyChannelMonitor] try create one channel failed, will not create others");
+                        waitForNextBatch();
+                        continue;
+                    }
                     List<Future<Channel>> futureList = new ArrayList<>();
-                    for (int i = 0; i < maxChannelNum - reverseProxyChannels.size(); i++) {
+                    for (int i = 0; i < channelToCreateNum - 1; i++) {
                         Future<Channel> future = channelCreator.createChannelAsync();
                         futureList.add(future);
                     }
@@ -67,11 +76,17 @@ public class ReverseProxyChannelMonitor extends Thread {
                     log.info("[ReverseProxyChannelMonitor] create channel num :" + (maxChannelNum - reverseProxyChannels.size()));
                 }
 
-                Thread.sleep(5000);
+                waitForNextBatch();
             } catch (Exception e) {
                 log.error("createChannel exception", e);
             }
+        }
+    }
 
+    private static void waitForNextBatch() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException ignore) {
         }
     }
 
