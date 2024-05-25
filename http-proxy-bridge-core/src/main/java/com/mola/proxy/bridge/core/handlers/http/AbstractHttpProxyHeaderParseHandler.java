@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInboundHandlerAdapter {
 
+    private static final int HEADER_ALLOC_BUFFER_SIZE = 1024 * 2;
+
     private static final Logger log = LoggerFactory.getLogger(AbstractHttpProxyHeaderParseHandler.class);
 
     /**
@@ -45,11 +47,11 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
         if(proxyHttpHeader != null) {
             channelReadWithHeader(ctx, msg, proxyHttpHeader);
         } else {
-            ByteBuf buffer = null;
+            ByteBuf buffer;
             if(msgMap.containsKey(channel) && msgMap.get(channel)!=null) {
                 buffer = msgMap.get(channel);
             }else {
-                buffer = ctx.alloc().buffer(1024 * 2);
+                buffer = ctx.alloc().buffer(HEADER_ALLOC_BUFFER_SIZE);
             }
             buffer.writeBytes((ByteBuf) msg);
             msgMap.put(channel, buffer);
@@ -57,7 +59,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         if (Objects.nonNull(proxyHttpHeader)) {
             return;
         }
@@ -85,6 +87,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
      * 解析完header后channelReadComplete回调
      * @param ctx
      * @param header
+     * @param clientRequestBytes
      */
     protected abstract void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
                                                           byte[] clientRequestBytes);
@@ -92,6 +95,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     /**
      * 解析完header后channelRead回调
      * @param ctx
+     * @param msg
      * @param header
      */
     protected abstract void channelReadWithHeader(ChannelHandlerContext ctx, Object msg,
