@@ -14,6 +14,11 @@ forward:
       reversePort: 10435
       type: HTTP
       openWhiteListsVerify: false
+  ipWhiteListQueryUrl: https://127.0.0.1:8550/chat/kv/proxyWhiteList
+  ipInterceptNotifyUrl: https://127.0.0.1:8550/chat/robot/push/toolRobot?toChatterId=1680059511788nQPEX&content=%s
+  socks5:
+    username: mola
+    passwd: mola
 
 reverse:
   servers:
@@ -24,4 +29,7 @@ reverse:
   hostMapping:
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080
+  socks5:
+    username: mola
+    passwd: mola
 
