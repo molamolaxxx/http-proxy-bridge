@@ -1,6 +1,8 @@
 package com.mola.proxy.bridge.core.utils;
 
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author : molamola
@@ -10,6 +12,8 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
  **/
 
 public class HeaderParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(HeaderParser.class);
 
     private static final String CONNECT_METHOD_NAME = "CONNECT";
 
@@ -34,13 +38,24 @@ public class HeaderParser {
 
         String host = "";
         int port = 80;
-        if(hostTemp.split(":").length>1) {
-            host = hostTemp.split(":")[0];
-            port = Integer.valueOf(hostTemp.split(":")[1].split("\\r")[0]);
+        String[] hostAndPortArr = hostTemp.split(":");
+        if(hostAndPortArr.length > 1) {
+            host = hostAndPortArr[0];
+            port = tryParsePort(hostAndPortArr);
         }else {
-            host = hostTemp.split(":")[0].split("\\r")[0];
+            host = hostAndPortArr[0].split("\\r")[0];
         }
 
         return new ProxyHttpHeader(host, port, isConnectMethod);
+    }
+
+    private static int tryParsePort(String[] hostAndPortArr) {
+        try {
+            return Integer.parseInt(hostAndPortArr[1].split("\\r")[0]);
+        } catch (NumberFormatException nfe) {
+            logger.error("HeaderParser tryParsePort error, use default, hostAndPortArr = [{}][{}]",
+                    hostAndPortArr[0], hostAndPortArr[1], nfe);
+        }
+        return -1;
     }
 }
