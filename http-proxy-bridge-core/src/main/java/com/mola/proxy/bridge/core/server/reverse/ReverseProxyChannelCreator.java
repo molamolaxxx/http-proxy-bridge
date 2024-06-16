@@ -83,6 +83,8 @@ public class ReverseProxyChannelCreator {
     public Channel createChannel() {
         Bootstrap proxyClientBootstrap = new Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup(1);
+        // 选择对应的http handler
+        HttpRequestHandler httpRequestHandler = fetchHttpRequestHandler();
         try {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
@@ -98,20 +100,7 @@ public class ReverseProxyChannelCreator {
                             }
 
                             if (type.isHttpProxy()) {
-                                // 优先连接指定的host
-                                List<String> appointHosts = fetchAppointHosts();
-                                HttpRequestHandler httpRequestHandler;
-                                if (appointHosts != null && appointHosts.size() > 0) {
-                                    httpRequestHandler = new ReverseAppointHostRequestHandler(appointHosts);
-                                } else {
-                                    httpRequestHandler = new HttpRequestHandler();
-                                }
-
                                 ch.pipeline().addLast(httpRequestHandler);
-                                ReverseProxyConnectPool.instance()
-                                        .addReverseChannelHandle(ch, new ReverseChannelHandle(
-                                                group, httpRequestHandler
-                                        ));
                             } else if (type.isSocks5Proxy()) {
                                 //socks5响应最后一个encode
                                 ch.pipeline().addLast(Socks5ServerEncoder.DEFAULT);
@@ -138,12 +127,29 @@ public class ReverseProxyChannelCreator {
             if (!future.isSuccess()) {
                 throw new RuntimeException("ReverseProxyServer start failed!");
             }
+            ReverseProxyConnectPool.instance()
+                    .addReverseChannelHandle(future.channel(), new ReverseChannelHandle(
+                            group, httpRequestHandler
+                    ));
             return future.channel();
         } catch (Exception e) {
             log.error("ReverseProxyServer start failed!", e);
             group.shutdownGracefully();
+            httpRequestHandler.shutdown();
         }
         return null;
+    }
+
+    private HttpRequestHandler fetchHttpRequestHandler() {
+        HttpRequestHandler httpRequestHandler;
+        // 优先连接指定的host
+        List<String> appointHosts = fetchAppointHosts();
+        if (appointHosts != null && appointHosts.size() > 0) {
+            httpRequestHandler = new ReverseAppointHostRequestHandler(appointHosts);
+        } else {
+            httpRequestHandler = new HttpRequestHandler();
+        }
+        return httpRequestHandler;
     }
 
     public String getHost() {
