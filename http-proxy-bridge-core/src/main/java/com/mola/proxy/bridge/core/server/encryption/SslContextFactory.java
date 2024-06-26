@@ -19,12 +19,24 @@ import java.security.cert.X509Certificate;
  **/
 public class SslContextFactory {
 
-    public static SSLContext createSSLContext()  {
+    private static SSLContext sslContext;
+
+    public static SSLContext fetchSSLContext() {
+        if (sslContext == null) {
+            sslContext = createSSLContext();
+        }
+        return sslContext;
+    }
+
+    private static synchronized SSLContext createSSLContext() {
+        if (sslContext != null) {
+            return sslContext;
+        }
         SslAuthExt sslAuthExt = ExtManager.getSslAuthExt();
         if (sslAuthExt == null) {
             throw new RuntimeException("sslAuthExt can not be null");
         }
-        SSLContext sslContext = null;
+        SSLContext sslContext;
         try{
             KeyStore keyStore = KeyStore.getInstance("JKS");
             try (InputStream keyStoreInput = Files.newInputStream(Paths.get(sslAuthExt.keyStorePath()))) {
@@ -45,7 +57,8 @@ public class SslContextFactory {
             sslContext = SSLContext.getInstance("TLS");
             sslContext.init(keyManagerFactory.getKeyManagers(),
                     new TrustManager[]{new EmptyTrustManager()}, null);
-        }catch (Exception e){
+            SslContextFactory.sslContext = sslContext;
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
         return sslContext;

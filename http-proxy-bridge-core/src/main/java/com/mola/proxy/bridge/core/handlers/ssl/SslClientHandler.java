@@ -37,7 +37,7 @@ public class SslClientHandler extends SslHandler {
     }
 
     public static SslClientHandler create() {
-        SSLContext sslContext = SslContextFactory.createSSLContext();
+        SSLContext sslContext = SslContextFactory.fetchSSLContext();
         SSLEngine engine = sslContext.createSSLEngine();
         engine.setUseClientMode(true);
         return new SslClientHandler(engine);
@@ -52,7 +52,7 @@ public class SslClientHandler extends SslHandler {
                     || rootCause.getMessage().contains("Received fatal alert")
                     || rootCause.getMessage().contains("Insufficient buffer")
             ) {
-                logger.warn("SslServerHandler exception happen, channel = {}, message = {}",
+                logger.warn("SslClientHandler exception happen, channel = {}, message = {}",
                         channel, rootCause.getMessage());
                 return true;
             }

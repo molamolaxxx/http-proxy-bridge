@@ -35,7 +35,7 @@ public class SslServerHandler extends SslHandler {
     }
 
     public static SslServerHandler create() {
-        SSLContext sslContext = SslContextFactory.createSSLContext();
+        SSLContext sslContext = SslContextFactory.fetchSSLContext();
         SSLEngine engine = sslContext.createSSLEngine();
         engine.setUseClientMode(false);
         engine.setNeedClientAuth(true);
