@@ -30,6 +30,7 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         RemotingHelper.HostAndPort hostAndPort = RemotingHelper.fetchChannelIpAndPort(ctx.channel());
         if (hostAndPort == null || !hostAndPort.isEffective()) {
+            RemotingHelper.releaseBuf(msg);
             return;
         }
         UserIpWhiteListExt userIpWhiteListExt = ExtManager.getUserIpWhiteListExt();
@@ -50,5 +51,8 @@ public class WhiteListAccessHandler extends ChannelInboundHandlerAdapter {
         }
         log.info("http proxy request has been intercept! address = " + hostAndPort.host);
         userIpWhiteListExt.interceptNotify(hostAndPort.host);
+
+        // 当前handler处理了msg，手动释放buf
+        RemotingHelper.releaseBuf(msg);
     }
 }

@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.handlers.http;
 
+import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -37,6 +38,7 @@ public class HttpResponseHandler extends ChannelInboundHandlerAdapter {
         Channel client2ProxyChannel = map.get(proxy2ServerChannel);
         if (client2ProxyChannel == null) {
             log.warn("client2ProxyChannel has been removed, proxy2ServerChannel = " + proxy2ServerChannel);
+            RemotingHelper.releaseBuf(msg);
             return;
         }
         client2ProxyChannel.writeAndFlush(msg);

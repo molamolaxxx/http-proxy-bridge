@@ -124,6 +124,12 @@ public class RemotingHelper {
         }
     }
 
+    public static void releaseBuf(Object message) {
+        if (message instanceof ByteBuf) {
+            releaseBuf((ByteBuf) message);
+        }
+    }
+
     public static class HostAndPort {
         public String host;
         public int port;

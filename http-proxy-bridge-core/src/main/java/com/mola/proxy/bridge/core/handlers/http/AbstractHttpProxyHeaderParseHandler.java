@@ -55,6 +55,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
             }
             buffer.writeBytes((ByteBuf) msg);
             msgMap.put(channel, buffer);
+            RemotingHelper.releaseBuf(msg);
         }
     }
 
