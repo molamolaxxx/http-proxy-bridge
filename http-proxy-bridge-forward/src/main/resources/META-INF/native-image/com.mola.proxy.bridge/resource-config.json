@@ -1,13 +1,15 @@
 {
   "resources":{
-  "includes":[{
-    "pattern":"\\Qmozilla/public-suffix-list.txt\\E"
-  }, {
-    "pattern":"\\Qorg/apache/http/client/version.properties\\E"
-  }, {
-    "pattern":"\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
-  }, {
-    "pattern":"java.base:\\Qjdk/internal/icu/impl/data/icudt67b/nfkc.nrm\\E"
-  }]},
+  "includes":[
+    {
+      "pattern":"\\Qmozilla/public-suffix-list.txt\\E"
+    }, 
+    {
+      "pattern":"\\Qorg/apache/http/client/version.properties\\E"
+    }, 
+    {
+      "pattern":"\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
+    }
+  ]},
   "bundles":[]
 }
