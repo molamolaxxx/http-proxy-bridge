@@ -39,6 +39,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("BaseHttpProxyRouteHandler exceptionCaught, channel = {}", ctx.channel(), cause);
+        this.shutdown();
     }
 
     @Override

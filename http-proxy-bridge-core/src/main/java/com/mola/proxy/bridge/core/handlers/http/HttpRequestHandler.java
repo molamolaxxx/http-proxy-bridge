@@ -48,7 +48,6 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("HttpRequestHandler exceptionCaught, channel = {}", ctx.channel(), cause);
-        channelMap.remove(ctx.channel());
     }
 
     @Override
@@ -103,11 +102,12 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
         });
     }
 
-
+    @Override
     protected ProxyHttpHeader parseProxyHeader(String header, Channel client2proxyChannel) {
         return HeaderParser.parse(header);
     }
 
+    @Override
     public void shutdown() {
         super.shutdown();
         for (Map.Entry<Channel, Channel> entry : channelMap.entrySet()) {
