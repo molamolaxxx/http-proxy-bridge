@@ -510,6 +510,9 @@
 ,
 {
   "name":"sun.security.x509.SubjectKeyIdentifierExtension",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
-
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]},
+  {
+    "name":"io.netty.buffer.AdvancedLeakAwareByteBuf",
+    "queryAllDeclaredMethods":true
+  }
 ]
