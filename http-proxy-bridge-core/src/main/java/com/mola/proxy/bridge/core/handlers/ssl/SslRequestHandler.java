@@ -11,6 +11,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +87,7 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
             encryption2ServerChannel = future.channel();
             SslHandler sslHandler = encryption2ServerChannel.pipeline().get(SslHandler.class);
             // 握手完成回调
-            sslHandler.handshakeFuture().addListener(handShakeFuture -> {
+            Future<Channel> sslHandShakeFuture = sslHandler.handshakeFuture().addListener(handShakeFuture -> {
                 // SslHandler后增加响应handler，|SslResponseHandler|SslHandler| -----> (forward)
                 encryption2ServerChannel.pipeline().addLast(new SslResponseHandler(client2EncryptionChannel));
 
@@ -96,7 +97,11 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                         .buffer(clientRequestBytes.length);
                 buffer.writeBytes(clientRequestBytes);
                 encryption2ServerChannel.writeAndFlush(buffer);
-            }).sync();
+            });
+            // 指定头场景下，如果不同步等待ssl握手，可能存在握手完成前就接受client发送的数据，而这部分数据无法被处理
+            if (header.isAppoint()) {
+                sslHandShakeFuture.sync();
+            }
         } catch (Exception e) {
             if (ctx != null) {
                 log.error("channelReadCompleteWithHeader exception, channel = {}", ctx.channel(), e);
