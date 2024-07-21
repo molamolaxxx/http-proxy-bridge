@@ -61,7 +61,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(ChannelHandlerContext ctx) {
         if (Objects.nonNull(proxyHttpHeader)) {
             return;
         }
@@ -92,7 +92,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
      * @param clientRequestBytes
      */
     protected abstract void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
-                                                          byte[] clientRequestBytes) throws Exception ;
+                                                          byte[] clientRequestBytes);
 
     /**
      * 解析完header后channelRead回调

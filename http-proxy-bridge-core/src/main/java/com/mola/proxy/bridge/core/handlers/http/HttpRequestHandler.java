@@ -68,7 +68,7 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     @Override
     protected void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
-                                                 byte[] clientRequestBytes) throws Exception {
+                                                 byte[] clientRequestBytes) {
         // 内网穿透 映射
         transferHost(header);
 
