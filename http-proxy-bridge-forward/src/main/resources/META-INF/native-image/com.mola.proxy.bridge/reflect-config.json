@@ -26,7 +26,8 @@
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRemoteHost","parameterTypes":["java.lang.String"] }, 
-    {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] }
+    {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] },
+    {"name":"setAppointProxyHeader","parameterTypes":["java.lang.String"] }
   ]}
 ,
 {

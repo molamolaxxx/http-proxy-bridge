@@ -22,7 +22,7 @@ public class EncryptionStarter {
         for (EncryptionServerItemConfig config : encryptionProxyConfig.getServers()) {
             serverThread = new Thread(() -> {
                 SslEncryptionProxyServer proxyServer = new SslEncryptionProxyServer();
-                proxyServer.start(config.getPort(), config.getRemoteHost(), config.getRemotePort());
+                proxyServer.start(config);
             });
             serverThread.start();
         }

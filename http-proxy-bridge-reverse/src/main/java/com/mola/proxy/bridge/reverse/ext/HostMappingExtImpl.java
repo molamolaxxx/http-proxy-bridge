@@ -2,9 +2,6 @@ package com.mola.proxy.bridge.reverse.ext;
 
 import com.mola.proxy.bridge.core.ext.HostMappingExt;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,8 +13,6 @@ import java.util.Map;
 public class HostMappingExtImpl implements HostMappingExt {
 
     private final Map<String, String> hostMapping;
-
-    private final Map<String, List<String>> appointHostsByProxyHost = new HashMap<>();
 
     public HostMappingExtImpl(Map<String, String> hostMapping) {
         this.hostMapping = hostMapping;
@@ -45,14 +40,5 @@ public class HostMappingExtImpl implements HostMappingExt {
             return mappedValue;
         }
         return mappedValue + ":" + port;
-    }
-
-    @Override
-    public List<String> fetchAppointHostByLocalPort(String proxyHost) {
-        return appointHostsByProxyHost.getOrDefault(proxyHost, Collections.emptyList());
-    }
-
-    public void registerAppointHosts(String proxyHost, List<String> appointHosts) {
-        appointHostsByProxyHost.put(proxyHost, appointHosts);
     }
 }

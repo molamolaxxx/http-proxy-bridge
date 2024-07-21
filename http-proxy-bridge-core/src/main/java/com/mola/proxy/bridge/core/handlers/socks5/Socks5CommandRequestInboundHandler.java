@@ -51,7 +51,7 @@ public class Socks5CommandRequestInboundHandler extends SimpleChannelInboundHand
             }
             if (hostAndPort.length == 2) {
                 host = hostAndPort[0];
-                port = Integer.valueOf(hostAndPort[1]);
+                port = Integer.parseInt(hostAndPort[1]);
             }
         }
         log.debug("prepare connect 2 server，ip={},port={}", host, port);

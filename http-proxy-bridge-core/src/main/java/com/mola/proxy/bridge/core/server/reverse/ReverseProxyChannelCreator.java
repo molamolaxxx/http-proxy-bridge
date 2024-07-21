@@ -8,7 +8,6 @@ import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
-import com.mola.proxy.bridge.core.handlers.http.ReverseAppointHostRequestHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5PasswordAuthRequestInboundHandler;
@@ -32,8 +31,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,7 +81,7 @@ public class ReverseProxyChannelCreator {
         Bootstrap proxyClientBootstrap = new Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         // 选择对应的http handler
-        HttpRequestHandler httpRequestHandler = fetchHttpRequestHandler();
+        HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
         try {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
@@ -140,32 +137,11 @@ public class ReverseProxyChannelCreator {
         return null;
     }
 
-    private HttpRequestHandler fetchHttpRequestHandler() {
-        HttpRequestHandler httpRequestHandler;
-        // 优先连接指定的host
-        List<String> appointHosts = fetchAppointHosts();
-        if (appointHosts != null && appointHosts.size() > 0) {
-            httpRequestHandler = new ReverseAppointHostRequestHandler(appointHosts);
-        } else {
-            httpRequestHandler = new HttpRequestHandler();
-        }
-        return httpRequestHandler;
-    }
-
     public String getHost() {
         return host;
     }
 
     public int getPort() {
         return port;
-    }
-
-    private List<String> fetchAppointHosts() {
-        // 配置中获取代连接的host和端口
-        HostMappingExt hostMappingExt = ExtManager.getHostMappingExt();
-        if (hostMappingExt == null) {
-            return Collections.emptyList();
-        }
-        return hostMappingExt.fetchAppointHostByLocalPort(String.format("%s:%s", getHost(), getPort()));
     }
 }

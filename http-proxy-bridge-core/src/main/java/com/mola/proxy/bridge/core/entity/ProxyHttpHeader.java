@@ -8,10 +8,19 @@ public class ProxyHttpHeader {
 
     private boolean isConnectMethod;
 
+    private boolean appoint;
+
     public ProxyHttpHeader(String host, int port, boolean isConnectMethod) {
         this.host = host;
         this.port = port;
         this.isConnectMethod = isConnectMethod;
+    }
+
+    public ProxyHttpHeader(String host, int port, boolean isConnectMethod, boolean appoint) {
+        this.host = host;
+        this.port = port;
+        this.isConnectMethod = isConnectMethod;
+        this.appoint = appoint;
     }
 
     public String getTargetAddress() {
@@ -40,6 +49,14 @@ public class ProxyHttpHeader {
 
     public void setConnectMethod(boolean connectMethod) {
         isConnectMethod = connectMethod;
+    }
+
+    public boolean isAppoint() {
+        return appoint;
+    }
+
+    public void setAppoint(boolean appoint) {
+        this.appoint = appoint;
     }
 
     @Override

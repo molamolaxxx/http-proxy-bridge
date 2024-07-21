@@ -1,8 +1,16 @@
 encrypt:
   servers:
-    - remoteHost: 127.0.0.1
-      remotePort: 20434
+    - remoteHost: 0.0.0.0
+      remotePort: 0
       port: 22222
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 22223
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 22224
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
   routeRule: encryption_route.json
 
 forward:
@@ -24,11 +32,13 @@ reverse:
   servers:
     - remoteHost: 120.27.230.24
       remotePort: 10435
-      channelNum: 256
+      channelNum: 8
       type: SSL_HTTP
   hostMapping:
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080
+    redis.local:6379: localhost:6379
+    mysql.local:3306: localhost:3306
   socks5:
     username: mola
     passwd: mola

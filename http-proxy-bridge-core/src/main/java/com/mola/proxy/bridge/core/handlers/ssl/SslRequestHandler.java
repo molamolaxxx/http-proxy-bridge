@@ -4,6 +4,7 @@ import com.mola.proxy.bridge.core.entity.ConnectionRouteRule;
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.handlers.http.AbstractHttpProxyHeaderParseHandler;
 import com.mola.proxy.bridge.core.router.ConnectionRouter;
+import com.mola.proxy.bridge.core.utils.HeaderParser;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -12,6 +13,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : molamola
@@ -35,11 +40,16 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
     private Channel encryption2ServerChannel;
 
     public SslRequestHandler(Channel client2EncryptionChannel, Bootstrap encryption2ServerBootstrap,
-                             String host, int port) {
+                             String host, int port, String appointProxyHeader) {
         this.defaultHost = host;
         this.defaultPort = port;
         this.client2EncryptionChannel = client2EncryptionChannel;
         this.encryption2ServerBootstrap = encryption2ServerBootstrap;
+        if (appointProxyHeader != null) {
+            this.proxyHttpHeader = HeaderParser.parse(appointProxyHeader);
+            channelReadCompleteWithHeader(null, proxyHttpHeader,
+                    appointProxyHeader.getBytes(StandardCharsets.UTF_8));
+        }
     }
 
 
@@ -76,7 +86,7 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
             encryption2ServerChannel = future.channel();
             SslHandler sslHandler = encryption2ServerChannel.pipeline().get(SslHandler.class);
             // 握手完成回调
-            sslHandler.handshakeFuture().addListener(future1 -> {
+            sslHandler.handshakeFuture().addListener(handShakeFuture -> {
                 // SslHandler后增加响应handler，|SslResponseHandler|SslHandler| -----> (forward)
                 encryption2ServerChannel.pipeline().addLast(new SslResponseHandler(client2EncryptionChannel));
 
@@ -86,15 +96,21 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                         .buffer(clientRequestBytes.length);
                 buffer.writeBytes(clientRequestBytes);
                 encryption2ServerChannel.writeAndFlush(buffer);
-            });
+            }).sync();
         } catch (Exception e) {
-            log.error("channelReadCompleteWithHeader exception, channel = {}", ctx.channel(), e);
+            if (ctx != null) {
+                log.error("channelReadCompleteWithHeader exception, channel = {}", ctx.channel(), e);
+            } else {
+                log.error("channelReadCompleteWithHeader exception", e);
+            }
             throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void channelReadWithHeader(ChannelHandlerContext ctx, Object msg, ProxyHttpHeader header) {
-        encryption2ServerChannel.writeAndFlush(msg);
+        if (encryption2ServerChannel != null) {
+            encryption2ServerChannel.writeAndFlush(msg);
+        }
     }
 }

@@ -3,9 +3,6 @@ package com.mola.proxy.bridge.core.config;
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author : molamola
  * @Project: http-proxy-bridge
@@ -21,8 +18,6 @@ public class ReverseServerItemConfig {
     private Integer channelNum = 128;
 
     private String type = ReverseTypeEnum.HTTP.name();
-
-    private List<String> appointHosts = new ArrayList<>();
 
     public void validate() {
         AssertUtil.notNull(remoteHost, "reverse.remoteHost must has value");
@@ -60,13 +55,5 @@ public class ReverseServerItemConfig {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public List<String> getAppointHosts() {
-        return appointHosts;
-    }
-
-    public void setAppointHosts(List<String> appointHosts) {
-        this.appointHosts = appointHosts;
     }
 }

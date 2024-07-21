@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : molamola
@@ -33,6 +35,8 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     private final Bootstrap httpInvokeBootstrap = new Bootstrap();
 
+    private final CountDownLatch waitForChannelConnect = new CountDownLatch(1);
+
     @SuppressWarnings("rawtypes")
     public HttpRequestHandler() {
         httpInvokeBootstrap.group(HTTP_REQUEST_GROUP).channel(NioSocketChannel.class)
@@ -51,14 +55,20 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
     }
 
     @Override
-    protected void channelReadWithHeader(ChannelHandlerContext ctx, Object msg, ProxyHttpHeader header) {
+    protected void channelReadWithHeader(ChannelHandlerContext ctx, Object msg, ProxyHttpHeader header) throws Exception{
         Channel proxy2ServerChannel = channelMap.get(ctx.channel());
-        proxy2ServerChannel.writeAndFlush(msg);
+        if (proxy2ServerChannel == null
+                && waitForChannelConnect.await(5000, TimeUnit.MILLISECONDS)) {
+            proxy2ServerChannel = channelMap.get(ctx.channel());
+        }
+        if (proxy2ServerChannel != null) {
+            proxy2ServerChannel.writeAndFlush(msg);
+        }
     }
 
     @Override
     protected void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
-                                                 byte[] clientRequestBytes) {
+                                                 byte[] clientRequestBytes) throws Exception {
         // 内网穿透 映射
         transferHost(header);
 
@@ -80,6 +90,7 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
             });
 
             log.info("connect success！address = " + header.getTargetAddress());
+            waitForChannelConnect.countDown();
 
             // 双端映射
             channelMap.put(client2proxyChannel, proxy2ServerChannel);
@@ -87,6 +98,10 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
             // connect方法，直接返回
             if(header.isConnectMethod()) {
+                // 指定的header（非标准http代理头）不需要返回响应
+                if (header.isAppoint()) {
+                    return;
+                }
                 ByteBuf buffer = client2proxyChannel
                         .alloc()
                         .buffer(CONNECTION_ESTABLISHED_RESP.getBytes().length);

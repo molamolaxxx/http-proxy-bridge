@@ -17,9 +17,18 @@ public class HeaderParser {
 
     private static final String CONNECT_METHOD_NAME = "CONNECT";
 
+    private static final String APPOINT_CONNECT_METHOD_NAME = "CONNECT-HTTP-PROXY-BRIDGE";
+
     private static final String HOST = "host";
 
     public static ProxyHttpHeader parse(String header) {
+        // 自定义代理路由header，如 CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
+        if (header.startsWith(APPOINT_CONNECT_METHOD_NAME)) {
+            String[] appointHeader = header.split(" ");
+            return new ProxyHttpHeader(appointHeader[1],
+                    Integer.parseInt(appointHeader[2].split("\\r")[0]),
+                    true, true);
+        }
         String[] lines = header.split("\\n");
         String hostTemp = "";
         boolean isConnectMethod = false;

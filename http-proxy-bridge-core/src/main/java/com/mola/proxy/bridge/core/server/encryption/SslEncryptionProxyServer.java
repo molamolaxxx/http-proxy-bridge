@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.server.encryption;
 
+import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultClientSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.ssl.SslClientHandler;
@@ -40,7 +41,7 @@ public class SslEncryptionProxyServer {
 
     private final AtomicBoolean start = new AtomicBoolean(false);
 
-    public synchronized void start(int port, String remoteHost, int remotePort) {
+    public synchronized void start(EncryptionServerItemConfig itemConfig) {
         if (start.get()) {
             return;
         }
@@ -54,11 +55,12 @@ public class SslEncryptionProxyServer {
 
             // 连接到远程ssl加密服务器的netty客户端
             encryptionClientBootstrap = createEncryptionClient();
-            this.remoteHost = remoteHost;
-            this.remotePort = remotePort;
+            this.remoteHost = itemConfig.getRemoteHost();
+            this.remotePort = itemConfig.getRemotePort();
 
             // 浏览器直接连接的代理服务器
-            ChannelFuture channelFuture = startEncryptionProxyServer(port);
+            ChannelFuture channelFuture = startEncryptionProxyServer(itemConfig.getPort(),
+                    itemConfig.getAppointProxyHeader());
             channelFuture.await();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
@@ -76,7 +78,7 @@ public class SslEncryptionProxyServer {
      * @return
      * @throws InterruptedException
      */
-    private ChannelFuture startEncryptionProxyServer(int port) {
+    private ChannelFuture startEncryptionProxyServer(int port, String appointProxyHeader) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
@@ -89,7 +91,8 @@ public class SslEncryptionProxyServer {
                                 ch,
                                 encryptionClientBootstrap,
                                 remoteHost,
-                                remotePort);
+                                remotePort,
+                                appointProxyHeader);
                         pipeline.addLast(sslRequestHandler);
                         // 释放堆外内存
                         ch.closeFuture().addListener((ChannelFutureListener) future -> {

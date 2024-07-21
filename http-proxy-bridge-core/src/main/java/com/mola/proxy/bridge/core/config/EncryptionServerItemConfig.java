@@ -16,6 +16,8 @@ public class EncryptionServerItemConfig {
 
     private Integer port = 22222;
 
+    private String appointProxyHeader;
+
     public void validate() {
         AssertUtil.notNull(remoteHost, "encryption.remoteHost must has value");
         AssertUtil.notNull(remotePort, "encryption.remotePort must has value");
@@ -43,5 +45,13 @@ public class EncryptionServerItemConfig {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public String getAppointProxyHeader() {
+        return appointProxyHeader;
+    }
+
+    public void setAppointProxyHeader(String appointProxyHeader) {
+        this.appointProxyHeader = appointProxyHeader;
     }
 }

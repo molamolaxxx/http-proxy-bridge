@@ -29,7 +29,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     /**
      * 是否已经解析过
      */
-    private volatile ProxyHttpHeader proxyHttpHeader;
+    protected volatile ProxyHttpHeader proxyHttpHeader;
 
     /**
      * 第一次建立链接，需要缓存数据报，防止数据丢失
@@ -61,7 +61,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) {
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         if (Objects.nonNull(proxyHttpHeader)) {
             return;
         }
@@ -92,7 +92,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
      * @param clientRequestBytes
      */
     protected abstract void channelReadCompleteWithHeader(ChannelHandlerContext ctx, ProxyHttpHeader header,
-                                                          byte[] clientRequestBytes);
+                                                          byte[] clientRequestBytes) throws Exception ;
 
     /**
      * 解析完header后channelRead回调
@@ -101,7 +101,7 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
      * @param header
      */
     protected abstract void channelReadWithHeader(ChannelHandlerContext ctx, Object msg,
-                                                  ProxyHttpHeader header);
+                                                  ProxyHttpHeader header) throws Exception;
 
 
     protected ProxyHttpHeader parseProxyHeader(String header, Channel client2proxyChannel) {

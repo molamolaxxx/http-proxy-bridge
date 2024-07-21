@@ -28,10 +28,6 @@ public class ReverseStarter {
         // 异步启动服务
         Thread serverThread = null;
         for (ReverseServerItemConfig server : config.getServers()) {
-            hostMappingExt.registerAppointHosts(
-                    String.format("%s:%s", server.getRemoteHost(), server.getRemotePort()),
-                    server.getAppointHosts()
-                    );
             serverThread = new Thread(() -> {
                 ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
                 reverseProxyServer.start(server.getRemoteHost(), server.getRemotePort(),
