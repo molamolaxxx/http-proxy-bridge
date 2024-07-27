@@ -1,0 +1,20 @@
+# 客户端（浏览器） ---http--->  加密机 -----ssl加密---->  正向代理 <------(不加密 or 加密)------反向代理
+encrypt:
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 20434
+      port: 22222
+
+forward:
+  servers:
+    - port: 20434
+      reversePort: 10434
+      type: SSL_HTTP # 如果不需要正向代理可配置 SSL_TRANSFER
+
+reverse:
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 10434
+      channelNum: 256
+      type: HTTP # 如果需要加密，type = SSL_HTTP
+

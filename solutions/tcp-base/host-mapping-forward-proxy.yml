@@ -1,0 +1,16 @@
+# 可以代理任何基于tcp连接的请求，需要自己映射代理
+encrypt:
+  servers:
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 22224
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.proxy 6379 # 指定自定义的redis命名
+  routeRule: encryption_route.json # 使用代理路由访问指定的forward
+
+forward:
+  servers:
+    - port: 20434
+      reversePort: 10434
+      type: SSL_HTTP
+  hostMapping:
+    redis.proxy:6379: localhost:6379 # 映射到目标主机的localhost

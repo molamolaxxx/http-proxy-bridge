@@ -1,10 +1,11 @@
 package com.mola.proxy.bridge.reverse.ext
 
+import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl
 import spock.lang.Specification
 
-class HostMappingExtImplTest extends Specification {
+class DefaultHostMappingExtImplTest extends Specification {
 
-    def hostMappingTest = new HostMappingExtImpl([
+    def hostMappingTest = new DefaultHostMappingExtImpl([
             "molalocal2" : "127.0.0.1:80",
             "molalocal:8080" : "localhost:6080",
             "molalocal" : "localhost"

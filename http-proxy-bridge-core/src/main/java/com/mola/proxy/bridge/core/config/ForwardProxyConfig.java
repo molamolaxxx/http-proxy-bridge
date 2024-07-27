@@ -3,6 +3,7 @@ package com.mola.proxy.bridge.core.config;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author : molamola
@@ -19,6 +20,8 @@ public class ForwardProxyConfig {
     private String ipInterceptNotifyUrl;
 
     private Socks5Config socks5;
+
+    private Map<String, String> hostMapping;
 
     public List<ForwardServerItemConfig> getServers() {
         return servers;
@@ -59,5 +62,13 @@ public class ForwardProxyConfig {
 
     public void setSocks5(Socks5Config socks5) {
         this.socks5 = socks5;
+    }
+
+    public Map<String, String> getHostMapping() {
+        return hostMapping;
+    }
+
+    public void setHostMapping(Map<String, String> hostMapping) {
+        this.hostMapping = hostMapping;
     }
 }

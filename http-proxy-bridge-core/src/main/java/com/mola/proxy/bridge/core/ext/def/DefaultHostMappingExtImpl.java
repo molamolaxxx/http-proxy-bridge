@@ -1,4 +1,4 @@
-package com.mola.proxy.bridge.reverse.ext;
+package com.mola.proxy.bridge.core.ext.def;
 
 import com.mola.proxy.bridge.core.ext.HostMappingExt;
 
@@ -10,11 +10,11 @@ import java.util.Map;
  * @Description:
  * @date : 2023-10-05 02:12
  **/
-public class HostMappingExtImpl implements HostMappingExt {
+public class DefaultHostMappingExtImpl implements HostMappingExt {
 
     private final Map<String, String> hostMapping;
 
-    public HostMappingExtImpl(Map<String, String> hostMapping) {
+    public DefaultHostMappingExtImpl(Map<String, String> hostMapping) {
         this.hostMapping = hostMapping;
     }
 

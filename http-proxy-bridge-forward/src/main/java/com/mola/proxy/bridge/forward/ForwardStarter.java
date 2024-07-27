@@ -5,6 +5,7 @@ import com.mola.proxy.bridge.core.config.ForwardServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.enums.ServerTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl;
 import com.mola.proxy.bridge.core.ext.def.DefaultSocks5AuthExt;
 import com.mola.proxy.bridge.core.server.forward.ForwardProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
@@ -24,6 +25,8 @@ public class ForwardStarter {
 
         // 设置socks5配置
         ExtManager.setSocks5AuthExt(new DefaultSocks5AuthExt(config.getSocks5()));
+        // 设置代理域名映射
+        ExtManager.setHostMappingExt(new DefaultHostMappingExtImpl(config.getHostMapping()));
 
         // 异步启动服务
         Thread serverThread = null;

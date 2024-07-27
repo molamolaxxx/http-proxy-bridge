@@ -11,7 +11,7 @@ encrypt:
       remotePort: 0
       port: 22224
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
-  routeRule: encryption_route.json
+  routeRule: http://120.27.230.24/encryption_route.json
 
 forward:
   servers:

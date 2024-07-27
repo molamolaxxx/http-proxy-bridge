@@ -9,7 +9,7 @@ forward:
   servers:
     - port: 20434
       reversePort: 10434
-      type: DIRECT_TRANSFER
+      type: DIRECT_TRANSFER # forward只做中转
 
 reverse:
   servers:

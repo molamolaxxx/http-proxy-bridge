@@ -9,6 +9,14 @@
   "name":"[Lsun.security.pkcs.SignerInfo;"}
 ,
 {
+  "name":"com.fasterxml.jackson.databind.ext.Java7HandlersImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
+  "name":"com.fasterxml.jackson.databind.ext.Java7SupportImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
   "name":"com.mola.proxy.bridge.core.config.EncryptionProxyConfig",
   "allDeclaredFields":true,
   "queryAllPublicMethods":true,
@@ -24,10 +32,10 @@
   "queryAllPublicMethods":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setAppointProxyHeader","parameterTypes":["java.lang.String"] }, 
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRemoteHost","parameterTypes":["java.lang.String"] }, 
-    {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] },
-    {"name":"setAppointProxyHeader","parameterTypes":["java.lang.String"] }
+    {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] }
   ]}
 ,
 {
@@ -38,8 +46,7 @@
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setIpInterceptNotifyUrl","parameterTypes":["java.lang.String"] }, 
     {"name":"setIpWhiteListQueryUrl","parameterTypes":["java.lang.String"] }, 
-    {"name":"setServers","parameterTypes":["java.util.List"] },
-    {"name":"setHostMapping","parameterTypes":["java.util.Map"] },
+    {"name":"setServers","parameterTypes":["java.util.List"] }, 
     {"name":"setSocks5","parameterTypes":["com.mola.proxy.bridge.core.config.Socks5Config"] }
   ]}
 ,
@@ -100,12 +107,15 @@
   ]}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler",
-  "queriedMethods":[
-    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
-    {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
+  "name":"com.mola.proxy.bridge.core.entity.ConnectionRouteRule",
+  "allDeclaredFields":true,
+  "queryAllDeclaredMethods":true,
+  "queryAllDeclaredConstructors":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] }, 
+    {"name":"setHostRules","parameterTypes":["java.util.List"] }, 
+    {"name":"setRemoteHost","parameterTypes":["java.lang.String"] }, 
+    {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] }
   ]}
 ,
 {
@@ -116,32 +126,32 @@
   ]}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler",
+  "name":"com.mola.proxy.bridge.core.handlers.ssl.SslClientHandler",
   "queriedMethods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler$1"}
+  "name":"com.mola.proxy.bridge.core.handlers.ssl.SslRequestHandler",
+  "queriedMethods":[
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.handlers.http.HttpResponseHandler",
+  "name":"com.mola.proxy.bridge.core.handlers.ssl.SslResponseHandler",
   "queriedMethods":[
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
   ]}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler",
-  "queriedMethods":[{"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }]}
+  "name":"com.mola.proxy.bridge.core.server.encryption.SslEncryptionProxyServer$1"}
 ,
 {
-  "name":"com.mola.proxy.bridge.core.server.reverse.ReverseProxyChannelCreator$2"}
+  "name":"com.mola.proxy.bridge.core.server.encryption.SslEncryptionProxyServer$2"}
 ,
 {
   "name":"com.sun.crypto.provider.AESCipher$General",
-  "methods":[{"name":"<init>","parameterTypes":[] }]}
-,
-{
-  "name":"com.sun.crypto.provider.AESKeyGenerator",
   "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
 {
@@ -177,25 +187,22 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
 {
+  "name":"io.netty.bootstrap.ServerBootstrap$1"}
+,
+{
+  "name":"io.netty.bootstrap.ServerBootstrap$ServerBootstrapAcceptor",
+  "queriedMethods":[
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+  ]}
+,
+{
   "name":"io.netty.buffer.AbstractByteBufAllocator",
   "queryAllDeclaredMethods":true}
 ,
 {
   "name":"io.netty.buffer.AbstractReferenceCountedByteBuf",
   "fields":[{"name":"refCnt"}]}
-,
-{
-  "name":"io.netty.channel.ChannelDuplexHandler",
-  "queriedMethods":[
-    {"name":"bind","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
-    {"name":"close","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
-    {"name":"connect","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.net.SocketAddress","java.net.SocketAddress","io.netty.channel.ChannelPromise"] }, 
-    {"name":"deregister","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
-    {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
-    {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
-  ]}
 ,
 {
   "name":"io.netty.channel.ChannelInboundHandlerAdapter",
@@ -207,7 +214,6 @@
     {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelUnregistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"channelWritabilityChanged","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }, 
     {"name":"userEventTriggered","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }
   ]}
 ,
@@ -255,6 +261,10 @@
   ]}
 ,
 {
+  "name":"io.netty.channel.socket.nio.NioServerSocketChannel",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
   "name":"io.netty.channel.socket.nio.NioSocketChannel",
   "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
@@ -278,17 +288,6 @@
     {"name":"disconnect","parameterTypes":["io.netty.channel.ChannelHandlerContext","io.netty.channel.ChannelPromise"] }, 
     {"name":"flush","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"read","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
-  ]}
-,
-{
-  "name":"io.netty.handler.timeout.IdleStateHandler",
-  "queriedMethods":[
-    {"name":"channelActive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
-    {"name":"channelReadComplete","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"channelRegistered","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
     {"name":"write","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object","io.netty.channel.ChannelPromise"] }
   ]}
 ,
@@ -417,6 +416,24 @@
   "methods":[{"name":"getUnsafe","parameterTypes":[] }]}
 ,
 {
+  "name":"org.apache.commons.logging.LogFactory"}
+,
+{
+  "name":"org.apache.commons.logging.impl.Jdk14Logger",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]}
+,
+{
+  "name":"org.apache.commons.logging.impl.Log4JLogger"}
+,
+{
+  "name":"org.apache.commons.logging.impl.LogFactoryImpl",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
+  "name":"org.apache.commons.logging.impl.WeakHashtable",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
   "name":"sun.misc.Unsafe",
   "fields":[{"name":"theUnsafe"}],
   "methods":[{"name":"invokeCleaner","parameterTypes":["java.nio.ByteBuffer"] }],
@@ -431,6 +448,14 @@
     {"name":"publicSelectedKeys"}, 
     {"name":"selectedKeys"}
   ]}
+,
+{
+  "name":"sun.security.pkcs12.PKCS12KeyStore",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
+  "name":"sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
 {
   "name":"sun.security.provider.DSA$SHA224withDSA",
@@ -508,13 +533,54 @@
   "name":"sun.security.util.ObjectIdentifier"}
 ,
 {
+  "name":"sun.security.x509.AuthorityInfoAccessExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.AuthorityKeyIdentifierExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.BasicConstraintsExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.CRLDistributionPointsExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
   "name":"sun.security.x509.CertificateExtensions"}
 ,
 {
+  "name":"sun.security.x509.CertificatePoliciesExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.ExtendedKeyUsageExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.IssuerAlternativeNameExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.KeyUsageExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.NetscapeCertTypeExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.PrivateKeyUsageExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
+  "name":"sun.security.x509.SubjectAlternativeNameExtension",
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+,
+{
   "name":"sun.security.x509.SubjectKeyIdentifierExtension",
-  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]},
-  {
-    "name":"io.netty.buffer.AdvancedLeakAwareByteBuf",
-    "queryAllDeclaredMethods":true
-  }
+  "methods":[{"name":"<init>","parameterTypes":["java.lang.Boolean","java.lang.Object"] }]}
+
 ]

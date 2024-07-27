@@ -5,6 +5,10 @@
 - It is a foundational framework model that can implement virtual network proxies, enabling a range of applications such as bypassing internet censorship and achieving network tunneling.
 -  It combines reverse proxy and forward proxy techniques, along with SSL encryption technology, to make the access path more secure.
 
+## Usage
+
+Please check the YAML configuration content in the folder "solution".
+
 ## Try It Simply
 
 I have packaged a Docker image that includes the functionality to access private server ports, enabling scientific internet access.
@@ -24,6 +28,35 @@ sh build.sh
 ```
 
 To build this system, you will need two servers. One server should be located on a network that you can access (with a public IP), and the other server should be on the network you want to access (can be either a public or private IP, but IPv6 is not supported at the moment).
+
+If we want to build a local image, we can achieve this using GraalVM then we can reduce memory usage and improve startup speed.
+
+- use graalvm version: graalvm-ee-java17-21.3.10
+
+```bash
+# use version : graalvm-ee-java17-21.3.10
+cd build
+native-image \
+  --no-fallback \
+  --gc=G1 \
+  --allow-incomplete-classpath \
+  --initialize-at-build-time=sun.instrument.InstrumentationImpl \
+  -jar ./http-proxy-encryption.jar http-proxy-encryption
+  
+native-image \
+  --no-fallback \
+  --gc=G1 \
+  --allow-incomplete-classpath \
+  --initialize-at-build-time=sun.instrument.InstrumentationImpl \
+  -jar ./http-proxy-reverse.jar http-proxy-reverse
+
+native-image \
+  --no-fallback \
+  --gc=G1 \
+  --allow-incomplete-classpath \
+  --initialize-at-build-time=sun.instrument.InstrumentationImpl \
+  -jar ./http-proxy-forward.jar http-proxy-forward
+```
 
 - **forward server**
 

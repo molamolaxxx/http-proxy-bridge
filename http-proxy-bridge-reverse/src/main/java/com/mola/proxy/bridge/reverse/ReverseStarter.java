@@ -8,7 +8,7 @@ import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultSocks5AuthExt;
 import com.mola.proxy.bridge.core.server.reverse.ReverseProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
-import com.mola.proxy.bridge.reverse.ext.HostMappingExtImpl;
+import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl;
 
 public class ReverseStarter {
 
@@ -19,8 +19,7 @@ public class ReverseStarter {
         ReverseProxyConfig config = ProxyConfig.fetchReverseProxyConfig();
 
         // 设置代理域名映射
-        HostMappingExtImpl hostMappingExt = new HostMappingExtImpl(config.getHostMapping());
-        ExtManager.setHostMappingExt(hostMappingExt);
+        ExtManager.setHostMappingExt(new DefaultHostMappingExtImpl(config.getHostMapping()));
 
         // 设置socks5配置
         ExtManager.setSocks5AuthExt(new DefaultSocks5AuthExt(config.getSocks5()));

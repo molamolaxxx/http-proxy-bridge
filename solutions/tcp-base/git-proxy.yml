@@ -1,0 +1,9 @@
+# 可以代理基于ssl的git
+# 使用命令：git clone ssh://git@localhost:22224/path/project.git
+encrypt:
+  servers:
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 22224
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE github.com 22
+  routeRule: encryption_route.json # 使用代理路由访问指定的forward
