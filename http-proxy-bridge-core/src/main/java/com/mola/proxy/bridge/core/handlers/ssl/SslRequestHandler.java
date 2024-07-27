@@ -47,7 +47,7 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
         if (appointProxyHeader != null) {
             this.proxyHttpHeader = HeaderParser.parse(appointProxyHeader);
             channelReadCompleteWithHeader(null, proxyHttpHeader,
-                    appointProxyHeader.getBytes(StandardCharsets.UTF_8));
+                    String.format("%s\r", appointProxyHeader).getBytes(StandardCharsets.UTF_8));
         }
     }
 
