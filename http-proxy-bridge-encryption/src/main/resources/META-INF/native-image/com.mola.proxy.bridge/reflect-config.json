@@ -46,7 +46,8 @@
     {"name":"<init>","parameterTypes":[] }, 
     {"name":"setIpInterceptNotifyUrl","parameterTypes":["java.lang.String"] }, 
     {"name":"setIpWhiteListQueryUrl","parameterTypes":["java.lang.String"] }, 
-    {"name":"setServers","parameterTypes":["java.util.List"] }, 
+    {"name":"setServers","parameterTypes":["java.util.List"] },
+    {"name":"setHostMapping","parameterTypes":["java.util.Map"] },
     {"name":"setSocks5","parameterTypes":["com.mola.proxy.bridge.core.config.Socks5Config"] }
   ]}
 ,
