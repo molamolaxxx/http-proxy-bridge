@@ -4,6 +4,7 @@ import com.mola.proxy.bridge.core.config.ForwardProxyConfig;
 import com.mola.proxy.bridge.core.config.ForwardServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.ext.UserIpWhiteListExt;
+import com.mola.proxy.bridge.core.schedule.EventScheduler;
 import com.mola.proxy.bridge.core.utils.HttpCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @Description:
  * @date : 2023-09-30 20:22
  **/
-public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt {
-
-    private static final int REFRESH_DURING = 1000;
-    private static final int REFRESH_NOT_ACCESS_IP_DURING = 5 * 60 * 1000;
-    private static final int REFRESH_WHITE_LIST_DURING = 10 * 1000;
+public class UserIpWhiteListExtImpl implements UserIpWhiteListExt {
 
     private final Logger logger = LoggerFactory.getLogger(UserIpWhiteListExtImpl.class);
 
@@ -37,33 +34,8 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
         for (ForwardServerItemConfig server : config.getServers()) {
             localPortRequireVerify.put(server.getPort(), server.isOpenWhiteListsVerify());
         }
-    }
-
-    @Override
-    public void run() {
-        int tick = 0;
-        while (!this.isInterrupted()) {
-            if (tick * REFRESH_DURING % REFRESH_NOT_ACCESS_IP_DURING == 0) {
-                notAccessIps.clear();
-                logger.info("finish clear notAccessIps");
-            }
-            if (tick * REFRESH_DURING % REFRESH_WHITE_LIST_DURING == 0) {
-                ipWhiteList = fetchIpWhiteList();
-                logger.info("finish refresh ipWhiteList");
-            }
-
-            try {
-                Thread.sleep(REFRESH_DURING);
-            } catch (InterruptedException e) {
-            }
-
-            tick ++;
-            if (tick >= 3600) {
-                tick = 0;
-            }
-        }
-
-        logger.warn("notAccessIps task exist");
+        EventScheduler.addEvent("clearNotAccessIps", 300, notAccessIps::clear);
+        EventScheduler.addEvent("fetchIpWhiteList", 10, this::fetchIpWhiteList);
     }
 
     @Override
@@ -80,17 +52,19 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
      * 获取ip白名单
      * @return
      */
-    private Set<String> fetchIpWhiteList() {
+    private void fetchIpWhiteList() {
         ForwardProxyConfig config = ProxyConfig.fetchForwardProxyConfig();
         if (config.getIpWhiteListQueryUrl() == null) {
-            return new HashSet<>();
+            ipWhiteList = new HashSet<>();
+            return;
         }
         Set<String> ips = new HashSet<>();
         try {
             String res = HttpCommonService.INSTANCE
                     .get(config.getIpWhiteListQueryUrl(), 1000);
             if (res == null || res.length() == 0) {
-                return ips;
+                ipWhiteList = ips;
+                return;
             }
             String[] split = res.split(";");
             ips.addAll(Arrays.asList(split));
@@ -98,7 +72,7 @@ public class UserIpWhiteListExtImpl extends Thread implements UserIpWhiteListExt
         } catch (Exception e) {
             logger.error("ipWhiteListQueryUrl call error!", e);
         }
-        return ips;
+        ipWhiteList = ips;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.core.pool;
 
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
+import com.mola.proxy.bridge.core.schedule.EventScheduler;
 import com.mola.proxy.bridge.core.utils.ConcurrentHashSetBuilder;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.Channel;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
  * @Description:
  * @date : 2023-09-30 08:51
  **/
-public class ReverseProxyConnectPool extends Thread {
+public class ReverseProxyConnectPool {
 
     private final Set<Channel> reverseProxyChannelSet = ConcurrentHashSetBuilder.build(128);
 
@@ -36,7 +37,9 @@ public class ReverseProxyConnectPool extends Thread {
 
     private static ReverseProxyConnectPool instance;
 
-    private ReverseProxyConnectPool(){}
+    private ReverseProxyConnectPool() {
+        EventScheduler.addEvent("clearReverseProxyConnectPool", 10, this::clearPool);
+    }
 
     public static ReverseProxyConnectPool instance() {
         if (instance != null) {
@@ -47,28 +50,20 @@ public class ReverseProxyConnectPool extends Thread {
                 return instance;
             }
             instance = new ReverseProxyConnectPool();
-            instance.start();
             return instance;
         }
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
+    private void clearPool() {
+        Set<Channel> channelToRemove = new HashSet<>();
+        for (Channel channel : reverseProxyChannelSet) {
+            if (!channel.isOpen() || !channel.isActive()) {
+                channel.close();
+                channelToRemove.add(channel);
             }
-            Set<Channel> channelToRemove = new HashSet<>();
-            for (Channel channel : reverseProxyChannelSet) {
-                if (!channel.isOpen() || !channel.isActive()) {
-                    channel.close();
-                    channelToRemove.add(channel);
-                }
-            }
-            channelToRemove.forEach(this::removeChannel);
-            log.info("scheduled remove channel, size = " + channelToRemove.size());
         }
+        channelToRemove.forEach(this::removeChannel);
+        log.info("scheduled remove channel, size = " + channelToRemove.size());
     }
 
     public void addChannel(Channel channel) {

@@ -60,6 +60,9 @@ public class RouteRuleLoader {
     }
 
     public static void loadRule(String filePath) {
+        if (filePath == null || filePath.length() == 0) {
+            return;
+        }
         LOGGER.info("fetch rule start");
         List<ConnectionRouteRule> connectionRouteRules = fetchConnectionRouteRules(filePath);
         LOGGER.info("load rule start");

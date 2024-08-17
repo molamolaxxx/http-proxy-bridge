@@ -4,6 +4,7 @@ import com.mola.proxy.bridge.core.config.EncryptionProxyConfig;
 import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.router.RouteRuleLoader;
+import com.mola.proxy.bridge.core.schedule.EventScheduler;
 import com.mola.proxy.bridge.core.server.encryption.SslEncryptionProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
 
@@ -15,7 +16,8 @@ public class EncryptionStarter {
         EncryptionProxyConfig encryptionProxyConfig = ProxyConfig.fetchEncryptionProxyConfig();
 
         // 启动规则加载器
-        RouteRuleLoader.loadRule(encryptionProxyConfig.getRouteRule());
+        EventScheduler.addEvent("loadRouteRule", 30, () ->
+                RouteRuleLoader.loadRule(encryptionProxyConfig.getRouteRule()));
 
         // 启动服务
         Thread serverThread = null;

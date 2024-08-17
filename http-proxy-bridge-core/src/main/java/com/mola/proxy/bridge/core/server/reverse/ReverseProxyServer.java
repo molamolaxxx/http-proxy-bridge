@@ -16,7 +16,7 @@ public class ReverseProxyServer {
 
     private ReverseProxyChannelMonitor reverseProxyChannelMonitor;
 
-    private AtomicBoolean start = new AtomicBoolean(false);
+    private final AtomicBoolean start = new AtomicBoolean(false);
 
     public synchronized void start(String remoteHost, int remotePort, int maxChannelNum, ReverseTypeEnum type) {
         if (start.get()) {
@@ -30,7 +30,6 @@ public class ReverseProxyServer {
             }
             reverseProxyChannelMonitor = new ReverseProxyChannelMonitor(
                     maxChannelNum, reverseProxyChannelCreator);
-            reverseProxyChannelMonitor.start();
             log.info("ReverseProxyServer start success! remoteHost = {}, remotePort = {}", remoteHost, remotePort);
         }
         catch (Exception e) {

@@ -18,7 +18,6 @@ public class ForwardStarter {
 
         UserIpWhiteListExtImpl userIpWhiteListExt = new UserIpWhiteListExtImpl();
         ExtManager.setUserIpWhiteListExt(userIpWhiteListExt);
-        userIpWhiteListExt.start();
 
         // 加载配置
         ForwardProxyConfig config = ProxyConfig.fetchForwardProxyConfig();
