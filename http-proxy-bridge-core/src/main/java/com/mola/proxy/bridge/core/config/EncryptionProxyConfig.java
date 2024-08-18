@@ -16,6 +16,8 @@ public class EncryptionProxyConfig {
 
     private String routeRule;
 
+    private boolean autoRefreshLoadRule;
+
     public void validate() {
         AssertUtil.notNull(servers, "encryption.servers must has value");
         AssertUtil.isTrue(servers.size() > 0, "encryption.servers must has value");
@@ -39,5 +41,13 @@ public class EncryptionProxyConfig {
 
     public void setRouteRule(String routeRule) {
         this.routeRule = routeRule;
+    }
+
+    public boolean isAutoRefreshLoadRule() {
+        return autoRefreshLoadRule;
+    }
+
+    public void setAutoRefreshLoadRule(boolean autoRefreshLoadRule) {
+        this.autoRefreshLoadRule = autoRefreshLoadRule;
     }
 }

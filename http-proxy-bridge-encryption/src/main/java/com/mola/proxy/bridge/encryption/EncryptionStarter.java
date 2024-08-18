@@ -16,8 +16,12 @@ public class EncryptionStarter {
         EncryptionProxyConfig encryptionProxyConfig = ProxyConfig.fetchEncryptionProxyConfig();
 
         // 启动规则加载器
-        EventScheduler.addEvent("loadRouteRule", 30, () ->
-                RouteRuleLoader.loadRule(encryptionProxyConfig.getRouteRule()));
+        if (encryptionProxyConfig.isAutoRefreshLoadRule()) {
+            EventScheduler.addEvent("loadRouteRule", 30, () ->
+                    RouteRuleLoader.loadRule(encryptionProxyConfig.getRouteRule()));
+        } else {
+            RouteRuleLoader.loadRule(encryptionProxyConfig.getRouteRule());
+        }
 
         // 启动服务
         Thread serverThread = null;

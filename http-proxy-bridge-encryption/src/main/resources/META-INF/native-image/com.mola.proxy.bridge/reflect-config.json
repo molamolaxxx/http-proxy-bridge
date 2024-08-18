@@ -22,7 +22,8 @@
   "queryAllPublicMethods":true,
   "methods":[
     {"name":"<init>","parameterTypes":[] }, 
-    {"name":"setRouteRule","parameterTypes":["java.lang.String"] }, 
+    {"name":"setRouteRule","parameterTypes":["java.lang.String"] },
+    {"name":"setAutoRefreshLoadRule","parameterTypes":["boolean"] },
     {"name":"setServers","parameterTypes":["java.util.List"] }
   ]}
 ,
