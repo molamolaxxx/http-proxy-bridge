@@ -5,10 +5,12 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.handlers.http.AbstractHttpProxyHeaderParseHandler;
 import com.mola.proxy.bridge.core.router.ConnectionRouter;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
+import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
@@ -96,6 +98,10 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 buffer.writeBytes(clientRequestBytes);
                 encryption2ServerChannel.writeAndFlush(buffer);
             });
+            // 与forward的连接断开后(forward主动断开)，同步断开与client的连接，并回收资源
+            encryption2ServerChannel.closeFuture()
+                    .addListener((ChannelFutureListener) closeFuture -> shutdown());
+
             // 指定头场景下，如果不同步等待ssl握手，可能存在握手完成前就接受client发送的数据，而这部分数据无法被处理
             if (header.isAppoint()) {
                 sslHandShakeFuture.sync();
@@ -114,6 +120,17 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
     protected void channelReadWithHeader(ChannelHandlerContext ctx, Object msg, ProxyHttpHeader header) {
         if (encryption2ServerChannel != null) {
             encryption2ServerChannel.writeAndFlush(msg);
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        if (encryption2ServerChannel != null && encryption2ServerChannel.isOpen()) {
+            RemotingHelper.closeChannel(encryption2ServerChannel);
+        }
+        if (client2EncryptionChannel != null && client2EncryptionChannel.isOpen()) {
+            RemotingHelper.closeChannel(client2EncryptionChannel);
         }
     }
 }

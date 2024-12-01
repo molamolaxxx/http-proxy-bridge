@@ -111,7 +111,7 @@ public class RemotingHelper {
 
     public static void closeChannel(Channel channel) {
         channel.close().addListener((ChannelFutureListener) future ->
-                logger.info("closeChannel: close the connection to channel[" + channel + "] result: {" + future.isSuccess() + "}"));
+                logger.debug("closeChannel: close the connection to channel[" + channel + "] result: {" + future.isSuccess() + "}"));
     }
 
     public static void releaseBuf(ByteBuf byteBuf) {
