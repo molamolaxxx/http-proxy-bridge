@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.core.pool;
 
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
+import com.mola.proxy.bridge.core.utils.LoadBalanceSelector;
 import com.mola.proxy.bridge.core.schedule.EventScheduler;
 import com.mola.proxy.bridge.core.utils.ConcurrentHashSetBuilder;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
@@ -122,8 +123,7 @@ public class ReverseProxyConnectPool {
             if (channels.size() == 0) {
                 return null;
             }
-            Random random = new Random();
-            Channel reverseChannel =  channels.get(random.nextInt(channels.size()));
+            Channel reverseChannel =  LoadBalanceSelector.instance().select(channels);
             if (reverseChannel == null) {
                 log.info("reverseChannel allocate failed, channel is null" +
                         "forward = " + forwardProxyChannel);

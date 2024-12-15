@@ -11,35 +11,14 @@ import java.util.List;
 public class ConnectionRouteRule {
 
     /**
-     * 目标host
+     * 目标地址 host:port
      */
-    private String remoteHost;
-
-    /**
-     * 目标port
-     */
-    private Integer remotePort;
+    private List<String> remoteAddressList;
 
     /**
      * host通配符规则
      */
     private List<String> hostRules;
-
-    public String getRemoteHost() {
-        return remoteHost;
-    }
-
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public Integer getRemotePort() {
-        return remotePort;
-    }
-
-    public void setRemotePort(Integer remotePort) {
-        this.remotePort = remotePort;
-    }
 
     public List<String> getHostRules() {
         return hostRules;
@@ -47,5 +26,13 @@ public class ConnectionRouteRule {
 
     public void setHostRules(List<String> hostRules) {
         this.hostRules = hostRules;
+    }
+
+    public List<String> getRemoteAddressList() {
+        return remoteAddressList;
+    }
+
+    public void setRemoteAddressList(List<String> remoteAddressList) {
+        this.remoteAddressList = remoteAddressList;
     }
 }

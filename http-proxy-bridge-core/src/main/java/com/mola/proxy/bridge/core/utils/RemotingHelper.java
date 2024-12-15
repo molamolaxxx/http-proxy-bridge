@@ -139,6 +139,14 @@ public class RemotingHelper {
             this.port = port;
         }
 
+        public HostAndPort(String address) {
+            assert address != null;
+            String[] split = address.split(":");
+            assert address.length() == 2;
+            this.host = split[0];
+            this.port = Integer.parseInt(split[1]);
+        }
+
         public boolean isEffective() {
             return host != null && host.length() > 0 && port > 0;
         }

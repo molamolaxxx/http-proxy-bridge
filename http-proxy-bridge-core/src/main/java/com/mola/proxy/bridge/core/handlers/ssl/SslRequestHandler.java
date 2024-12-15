@@ -5,6 +5,7 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.handlers.http.AbstractHttpProxyHeaderParseHandler;
 import com.mola.proxy.bridge.core.router.ConnectionRouter;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
+import com.mola.proxy.bridge.core.utils.LoadBalanceSelector;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -74,10 +75,12 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
             ConnectionRouteRule routeRule = ConnectionRouter.instance().match(header.getHost());
             ChannelFuture future = null;
             if (routeRule != null) {
-                future = encryption2ServerBootstrap.connect(routeRule.getRemoteHost(),
-                        routeRule.getRemotePort()).sync();
-                log.debug("hit host rule, host = {}, remote = {}", header.getHost(),
-                        String.format("%s:%s", routeRule.getRemoteHost(), routeRule.getRemotePort()));
+                RemotingHelper.HostAndPort hp = new RemotingHelper.HostAndPort(
+                        LoadBalanceSelector.instance().select(routeRule.getRemoteAddressList())
+                );
+                future = encryption2ServerBootstrap.connect(hp.host, hp.port).sync();
+                log.debug("hit host rule, host = {}, remote = {}",
+                        header.getHost(), String.format("%s:%s", hp.host, hp.port));
             } else {
                 future = encryption2ServerBootstrap.connect(defaultHost, defaultPort).sync();
             }
