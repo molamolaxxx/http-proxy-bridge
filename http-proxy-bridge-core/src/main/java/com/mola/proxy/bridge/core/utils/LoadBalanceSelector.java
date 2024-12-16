@@ -39,6 +39,9 @@ public class LoadBalanceSelector {
         if (sourceList == null || sourceList.size() == 0) {
             return null;
         }
+        if (sourceList.size() == 1) {
+            return sourceList.get(0);
+        }
         int idx;
         switch (mode) {
             case RANDOM: {
