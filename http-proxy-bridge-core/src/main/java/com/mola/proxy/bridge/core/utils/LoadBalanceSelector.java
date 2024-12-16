@@ -28,7 +28,7 @@ public class LoadBalanceSelector {
                 return instance;
             }
             instance = new LoadBalanceSelector();
-            instance.mode = ROUND_ROBBING;
+            instance.mode = RANDOM;
             return instance;
         }
     }
