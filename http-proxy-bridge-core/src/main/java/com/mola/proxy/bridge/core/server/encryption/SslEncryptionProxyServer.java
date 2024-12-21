@@ -133,7 +133,7 @@ public class SslEncryptionProxyServer {
                     });
             return encryptionClientBootstrap;
         } catch (Exception e) {
-            log.error("ReverseProxyServer start failed!", e);
+            log.error("EncryptionClient start failed!", e);
             group.shutdownGracefully();
         }
         return null;

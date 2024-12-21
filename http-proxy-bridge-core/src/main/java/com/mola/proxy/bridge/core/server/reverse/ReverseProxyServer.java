@@ -22,7 +22,7 @@ public class ReverseProxyServer {
         if (start.get()) {
             return;
         }
-        reverseProxyChannelCreator = new ReverseProxyChannelCreator(remoteHost, remotePort, type);
+        reverseProxyChannelCreator = new ReverseProxyChannelCreator(remoteHost, remotePort, maxChannelNum, type);
 
         try {
             for (int i = 0; i < maxChannelNum; i++) {

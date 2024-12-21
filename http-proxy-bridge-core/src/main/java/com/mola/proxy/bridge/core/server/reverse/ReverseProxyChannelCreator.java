@@ -48,23 +48,26 @@ public class ReverseProxyChannelCreator {
 
     private final int port;
 
+    private final int maxChannelNum;
+
     private final ReverseTypeEnum type;
 
     private final ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
 
     private final ThreadPoolExecutor channelCreateExecutor;
 
-    public ReverseProxyChannelCreator(String host, int port, ReverseTypeEnum type) {
+    public ReverseProxyChannelCreator(String host, int port, int maxChannelNum, ReverseTypeEnum type) {
         this.host = host;
         this.port = port;
+        this.maxChannelNum = maxChannelNum;
         this.reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
         AssertUtil.notNull(type, "reverse type required");
         if (type.requireEncryption()) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
         this.type = type;
-        this.channelCreateExecutor = new ThreadPoolExecutor(10, 10
-                ,200, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
+        this.channelCreateExecutor = new ThreadPoolExecutor(10, maxChannelNum / 5
+                ,5000, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
             private final AtomicInteger threadIndex = new AtomicInteger(0);
             @Override
             public Thread newThread(Runnable r) {
@@ -86,6 +89,7 @@ public class ReverseProxyChannelCreator {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5 * 1000)
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) throws Exception {
