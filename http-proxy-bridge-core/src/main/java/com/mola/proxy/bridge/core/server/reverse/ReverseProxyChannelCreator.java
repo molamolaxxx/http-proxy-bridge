@@ -42,6 +42,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public class ReverseProxyChannelCreator {
 
+    private static final int CORE_POOL_SIZE = 10;
+
     private static final Logger log = LoggerFactory.getLogger(ReverseProxyChannelCreator.class);
 
     private final String host;
@@ -66,14 +68,18 @@ public class ReverseProxyChannelCreator {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
         this.type = type;
-        this.channelCreateExecutor = new ThreadPoolExecutor(10, maxChannelNum / 5
-                ,5000, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024), new ThreadFactory() {
-            private final AtomicInteger threadIndex = new AtomicInteger(0);
-            @Override
-            public Thread newThread(Runnable r) {
-                return new Thread(r, String.format("channel-create-thread-%d", this.threadIndex.incrementAndGet()));
-            }
-        }, new ThreadPoolExecutor.CallerRunsPolicy());
+        this.channelCreateExecutor = new ThreadPoolExecutor(
+                CORE_POOL_SIZE, Math.max(maxChannelNum / 5, CORE_POOL_SIZE),
+                5000, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024),
+                new ThreadFactory() {
+                    private final AtomicInteger threadIndex = new AtomicInteger(0);
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        return new Thread(r, String.format("channel-create-thread-%d", this.threadIndex.incrementAndGet()));
+                    }
+                },
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
     }
 
     public Future<Channel> createChannelAsync() {
