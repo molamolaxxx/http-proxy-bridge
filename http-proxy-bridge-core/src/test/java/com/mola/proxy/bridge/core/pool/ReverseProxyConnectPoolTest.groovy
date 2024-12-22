@@ -15,6 +15,7 @@ class ReverseProxyConnectPoolTest extends Specification {
         Channel forwardProxyChannel = Mock(Channel)
         Channel reverseProxyChannel = Mock(Channel)
         reverseProxyChannel.isOpen() >> isOpen
+        reverseProxyChannel.isWritable() >> isWritable
         reverseProxyChannel.close() >> Mock(ChannelFuture)
 
         // mock channel 地址
@@ -37,12 +38,13 @@ class ReverseProxyConnectPoolTest extends Specification {
         pool.shutdown()
 
         where:
-        isOpen | removeChannel | address | result
-        true | false |"127.0.0.1:12345" | true
-        false|  false |"127.0.0.1:12346" | false
-        true | false |"127.0.0.1:12346" | false
-        false | false |"127.0.0.1:12345" | false
-        true | true |"127.0.0.1:12345" | false
+        isOpen | isWritable | removeChannel | address | result
+        true | false | false |"127.0.0.1:12345" | false
+        true | true | false |"127.0.0.1:12345" | true
+        false| true | false |"127.0.0.1:12346" | false
+        true | true | false |"127.0.0.1:12346" | false
+        false| true | false |"127.0.0.1:12345" | false
+        true | true | true  |"127.0.0.1:12345" | false
     }
 
 

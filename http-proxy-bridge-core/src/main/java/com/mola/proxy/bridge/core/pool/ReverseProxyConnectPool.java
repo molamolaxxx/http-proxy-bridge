@@ -118,6 +118,7 @@ public class ReverseProxyConnectPool {
             List<Channel> channels = reverseProxyChannelSet
                     .stream().filter(ch -> !allocatedReverseChannel.contains(ch) && ch.isOpen())
                     .filter(ch -> RemotingHelper.fetchChannelLocalPort(ch) == reversePort)
+                    .filter(Channel::isWritable)
                     .collect(Collectors.toList());
 
             if (channels.size() == 0) {
