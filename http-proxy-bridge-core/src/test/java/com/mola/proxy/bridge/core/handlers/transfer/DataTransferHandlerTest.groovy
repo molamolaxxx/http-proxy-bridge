@@ -21,6 +21,8 @@ class DataTransferHandlerTest extends Specification {
         Channel forwardProxyChannel = Mock(Channel)
         Channel reverseProxyChannel = Mock(Channel)
         reverseProxyChannel.isOpen() >> true
+        reverseProxyChannel.isWritable() >> true
+        reverseProxyChannel.isActive() >> true
         reverseProxyChannel.close() >> Mock(ChannelFuture)
 
         ProxyBridgeRegistry.instance().register(ProxyBridge.build(23232, 12345))

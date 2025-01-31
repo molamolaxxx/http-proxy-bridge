@@ -1,0 +1,24 @@
+encrypt:
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 5553
+      port: 5333
+      type: UDP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE dns.proxy 5333
+  routeRule: http://120.27.230.24/encryption_route.json
+
+forward:
+  servers:
+    - port: 5553
+      reversePort: 5554
+      type: DIRECT_TRANSFER
+
+reverse:
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 5554
+      channelNum: 8
+      type: SSL_UDP
+  hostMapping:
+    dns.proxy:5333: 8.8.8.8:53
+

@@ -1,7 +1,6 @@
 package com.mola.proxy.bridge.core.server.reverse;
 
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
-import com.mola.proxy.bridge.core.server.forward.ForwardProxyServer;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReverseProxyServer {
 
-    private static final Logger log = LoggerFactory.getLogger(ForwardProxyServer.class);
+    private static final Logger log = LoggerFactory.getLogger(ReverseProxyServer.class);
 
     private ReverseProxyChannelCreator reverseProxyChannelCreator;
 

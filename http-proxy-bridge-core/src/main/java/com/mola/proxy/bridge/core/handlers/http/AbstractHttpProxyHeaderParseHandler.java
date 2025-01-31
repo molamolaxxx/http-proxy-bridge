@@ -1,6 +1,8 @@
 package com.mola.proxy.bridge.core.handlers.http;
 
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
+import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.HostMappingExt;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.buffer.ByteBuf;
@@ -114,5 +116,27 @@ public abstract class AbstractHttpProxyHeaderParseHandler extends ChannelInbound
             RemotingHelper.releaseBuf(entry.getValue());
         }
         msgMap.clear();
+    }
+
+    protected void transferHost(ProxyHttpHeader header) {
+        HostMappingExt hostMappingExt = ExtManager.getHostMappingExt();
+        if (hostMappingExt == null) {
+            return;
+        }
+        String mappedAddress = hostMappingExt.fetchMappedAddress(header.getHost(), header.getPort());
+        if (mappedAddress == null) {
+            return;
+        }
+        String[] hostAndPort = mappedAddress.split(":");
+        if (hostAndPort.length == 0) {
+            return;
+        }
+        if (hostAndPort.length == 1) {
+            header.setHost(hostAndPort[0]);
+        }
+        if (hostAndPort.length == 2) {
+            header.setHost(hostAndPort[0]);
+            header.setPort(Integer.parseInt(hostAndPort[1]));
+        }
     }
 }

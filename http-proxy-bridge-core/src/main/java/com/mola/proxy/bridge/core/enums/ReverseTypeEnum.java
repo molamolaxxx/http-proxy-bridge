@@ -14,7 +14,10 @@ public enum ReverseTypeEnum {
 
     SOCKS5("socks5代理"),
 
-    SSL_SOCKS5("ssl加密socks5代理"),;
+    SSL_SOCKS5("ssl加密socks5代理"),
+
+    SSL_UDP("ssl加密udp代理"),
+    ;
 
     private String msg;
 
@@ -36,5 +39,9 @@ public enum ReverseTypeEnum {
 
     public boolean requireEncryption() {
         return this == SSL_HTTP || this == SSL_SOCKS5;
+    }
+
+    public boolean isUdp() {
+        return this == SSL_UDP;
     }
 }

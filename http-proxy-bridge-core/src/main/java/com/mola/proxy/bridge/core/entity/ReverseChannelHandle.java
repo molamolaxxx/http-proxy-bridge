@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.core.entity;
 
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
+import com.mola.proxy.bridge.core.handlers.udp.UdpServerHandler;
 import io.netty.channel.EventLoopGroup;
 
 /**
@@ -15,13 +16,17 @@ public class ReverseChannelHandle {
 
     private HttpRequestHandler httpRequestHandler;
 
-    public ReverseChannelHandle(EventLoopGroup group, HttpRequestHandler httpRequestHandler) {
+    private UdpServerHandler udpServerHandler;
+
+    public ReverseChannelHandle(EventLoopGroup group, HttpRequestHandler httpRequestHandler, UdpServerHandler udpServerHandler) {
         this.group = group;
         this.httpRequestHandler = httpRequestHandler;
+        this.udpServerHandler = udpServerHandler;
     }
 
     public void shutdown() {
         group.shutdownGracefully();
-        httpRequestHandler.shutdown();;
+        httpRequestHandler.shutdown();
+        udpServerHandler.shutdown();
     }
 }

@@ -48,10 +48,8 @@ public class EventScheduler {
                     if (event.lastScheduleTime < 0
                             || System.currentTimeMillis() - event.lastScheduleTime >
                             event.intervalSeconds * 1000L - 50) {
-                        logger.debug("start event = {}", event.eventName);
                         executeEvent(event);
                         event.lastScheduleTime = System.currentTimeMillis();
-                        logger.debug("finish event = {}", event.eventName);
                     }
                 }
 

@@ -12,6 +12,7 @@ import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHan
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5InitialRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5PasswordAuthRequestInboundHandler;
 import com.mola.proxy.bridge.core.handlers.ssl.SslServerHandler;
+import com.mola.proxy.bridge.core.handlers.udp.UdpServerHandler;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -91,6 +92,7 @@ public class ReverseProxyChannelCreator {
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         // 选择对应的http handler
         HttpRequestHandler httpRequestHandler = new HttpRequestHandler();
+        UdpServerHandler udpServerHandler = new UdpServerHandler();
         try {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
@@ -108,6 +110,8 @@ public class ReverseProxyChannelCreator {
 
                             if (type.isHttpProxy()) {
                                 ch.pipeline().addLast(httpRequestHandler);
+                            } else if (type.isUdp()) {
+                                ch.pipeline().addLast(udpServerHandler);
                             } else if (type.isSocks5Proxy()) {
                                 //socks5响应最后一个encode
                                 ch.pipeline().addLast(Socks5ServerEncoder.DEFAULT);
@@ -136,13 +140,14 @@ public class ReverseProxyChannelCreator {
             }
             ReverseProxyConnectPool.instance()
                     .addReverseChannelHandle(future.channel(), new ReverseChannelHandle(
-                            group, httpRequestHandler
+                            group, httpRequestHandler, udpServerHandler
                     ));
             return future.channel();
         } catch (Exception e) {
             log.error("ReverseProxyServer start failed!", e);
             group.shutdownGracefully();
             httpRequestHandler.shutdown();
+            udpServerHandler.shutdown();
         }
         return null;
     }

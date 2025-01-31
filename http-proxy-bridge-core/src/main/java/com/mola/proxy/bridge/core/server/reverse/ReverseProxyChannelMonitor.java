@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -30,10 +31,13 @@ public class ReverseProxyChannelMonitor {
 
     private final ReverseProxyChannelCreator channelCreator;
 
+    private static final AtomicInteger EVENT_IDX = new AtomicInteger();
+
     public ReverseProxyChannelMonitor(int maxChannelNum, ReverseProxyChannelCreator channelCreator) {
         this.maxChannelNum = maxChannelNum;
         this.channelCreator = channelCreator;
-        EventScheduler.addEvent("createReverseChannel", 5, this::createReverseChannel);
+        EventScheduler.addEvent("createReverseChannel" + EVENT_IDX.incrementAndGet()
+                , 5, this::createReverseChannel);
     }
 
     private void createReverseChannel() {

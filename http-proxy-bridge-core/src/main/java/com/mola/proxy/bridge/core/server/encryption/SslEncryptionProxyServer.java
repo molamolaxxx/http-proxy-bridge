@@ -1,15 +1,18 @@
 package com.mola.proxy.bridge.core.server.encryption;
 
 import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
+import com.mola.proxy.bridge.core.enums.EncryptionTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultClientSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.ssl.SslClientHandler;
 import com.mola.proxy.bridge.core.handlers.ssl.SslRequestHandler;
+import com.mola.proxy.bridge.core.handlers.udp.UdpEncryptionHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
@@ -50,17 +53,26 @@ public class SslEncryptionProxyServer {
                 ExtManager.setSslAuthExt(new DefaultClientSslAuthExt());
             }
 
-            bossGroup = new NioEventLoopGroup(1);
-            workerGroup = new NioEventLoopGroup(8);
-
-            // 连接到远程ssl加密服务器的netty客户端
-            encryptionClientBootstrap = createEncryptionClient();
+            this.bossGroup = new NioEventLoopGroup(1);
+            this.workerGroup = new NioEventLoopGroup(8);
             this.remoteHost = itemConfig.getRemoteHost();
             this.remotePort = itemConfig.getRemotePort();
 
-            // 浏览器直接连接的代理服务器
-            ChannelFuture channelFuture = startEncryptionProxyServer(itemConfig.getPort(),
-                    itemConfig.getAppointProxyHeader());
+            EncryptionTypeEnum encryptionTypeEnum = EncryptionTypeEnum.valueOf(itemConfig.getType());
+
+            // 连接到远程ssl加密服务器的netty客户端
+            encryptionClientBootstrap = createEncryptionClient(encryptionTypeEnum);
+
+            ChannelFuture channelFuture = null;
+            if (EncryptionTypeEnum.TCP == encryptionTypeEnum) {
+                // 浏览器直接连接的代理服务器
+                channelFuture = startEncryptionProxyServer(itemConfig.getPort(),
+                        itemConfig.getAppointProxyHeader());
+            } else if (EncryptionTypeEnum.UDP == encryptionTypeEnum) {
+                channelFuture = startEncryptionUdpServer(itemConfig.getPort(),
+                        itemConfig.getAppointProxyHeader());
+            }
+
             channelFuture.await();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
@@ -106,19 +118,63 @@ public class SslEncryptionProxyServer {
         // 给future添加监听器，监听关心的事件
         future.addListener((ChannelFutureListener) future1 -> {
             if (future.isSuccess()) {
-                log.info("listening port " + port + " success");
+                log.info("[TcpServer] listening port " + port + " success");
             } else {
-                log.info("listening port " + port + " failed");
+                log.info("[TcpServer] listening port " + port + " failed");
             }
         });
         return future;
     }
 
     /**
+     * 加密机udp代理server
+     * @param port
+     * @return
+     * @throws InterruptedException
+     */
+    private ChannelFuture startEncryptionUdpServer(int port, String appointProxyHeader) {
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(workerGroup)
+                .channel(NioDatagramChannel.class)
+                .option(ChannelOption.SO_BROADCAST, true)
+                .option(ChannelOption.SO_RCVBUF, 2048 * 1024)
+                .option(ChannelOption.SO_SNDBUF, 1024 * 1024)
+                .handler(new ChannelInitializer<NioDatagramChannel>() {
+                    @Override
+                    public void initChannel(NioDatagramChannel ch)
+                            throws Exception {
+                        ChannelPipeline pipeline = ch.pipeline();
+                        UdpEncryptionHandler udpEncryptionHandler = new UdpEncryptionHandler(
+                                ch,
+                                encryptionClientBootstrap,
+                                remoteHost,
+                                remotePort,
+                                appointProxyHeader
+                        );
+                        pipeline.addLast(udpEncryptionHandler);
+                        // 释放堆外内存
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
+                            udpEncryptionHandler.shutdown();
+                        });
+                    }
+                });
+
+        ChannelFuture future = bootstrap.bind(port);
+        // 给future添加监听器，监听关心的事件
+        future.addListener((ChannelFutureListener) future1 -> {
+            if (future.isSuccess()) {
+                log.info("[UdpServer] listening port " + port + " success");
+            } else {
+                log.info("[UdpServer] listening port " + port + " failed");
+            }
+        });
+        return future;
+    }
+    /**
      * 加密机client
      * @return
      */
-    public Bootstrap createEncryptionClient() {
+    public Bootstrap createEncryptionClient(EncryptionTypeEnum encryptionTypeEnum) {
         Bootstrap encryptionClientBootstrap = new Bootstrap();
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         try {
@@ -128,7 +184,9 @@ public class SslEncryptionProxyServer {
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) {
-                            ch.pipeline().addLast(SslClientHandler.create());
+                            if (EncryptionTypeEnum.TCP == encryptionTypeEnum) {
+                                ch.pipeline().addLast(SslClientHandler.create());
+                            }
                         }
                     });
             return encryptionClientBootstrap;
