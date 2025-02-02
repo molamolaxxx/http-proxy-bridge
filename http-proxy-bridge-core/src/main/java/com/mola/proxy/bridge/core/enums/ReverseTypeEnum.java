@@ -16,7 +16,7 @@ public enum ReverseTypeEnum {
 
     SSL_SOCKS5("ssl加密socks5代理"),
 
-    SSL_UDP("ssl加密udp代理"),
+    UDP("ssl加密udp代理"),
     ;
 
     private String msg;
@@ -42,6 +42,6 @@ public enum ReverseTypeEnum {
     }
 
     public boolean isUdp() {
-        return this == SSL_UDP;
+        return this == UDP;
     }
 }

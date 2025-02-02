@@ -1,0 +1,56 @@
+encrypt:
+  servers:
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 9295
+      type: UDP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9295
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 9302
+      type: UDP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9302
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 9296
+      type: UDP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9296
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 9297
+      type: UDP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9297
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 9295
+      type: TCP
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.tcp 9295
+  routeRule: http://120.27.230.24/encryption_route.json
+
+forward:
+  servers:
+    #    tcp
+    - port: 33335
+      reversePort: 33334
+      type: DIRECT_TRANSFER
+    #    udp
+    - port: 43335
+      reversePort: 43336
+      type: DIRECT_TRANSFER
+
+reverse:
+  servers:
+    - remoteHost: 127.0.0.1
+      remotePort: 33334
+      channelNum: 8
+      type: SSL_HTTP
+    - remoteHost: 127.0.0.1
+      remotePort: 43336
+      channelNum: 8
+      type: UDP
+  hostMapping:
+    ps5.udp:9302: 192.168.0.106:9302
+    ps5.udp:9295: 192.168.0.106:9295
+    ps5.udp:9296: 192.168.0.106:9296
+    ps5.udp:9297: 192.168.0.106:9297
+    ps5.tcp:9295: 192.168.0.106:9295

@@ -18,7 +18,7 @@ reverse:
     - remoteHost: 127.0.0.1
       remotePort: 5554
       channelNum: 8
-      type: SSL_UDP
+      type: UDP
   hostMapping:
     dns.proxy:5333: 8.8.8.8:53
 

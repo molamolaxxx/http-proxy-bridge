@@ -261,6 +261,10 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
 {
+    "name":"io.netty.channel.socket.nio.NioDatagramChannel",
+    "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
   "name":"io.netty.handler.codec.ByteToMessageDecoder",
   "queriedMethods":[
     {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
