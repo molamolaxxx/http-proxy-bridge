@@ -26,6 +26,7 @@ public class DataReceiveHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         log.error("DataReceiveHandler error, channel = {}", ctx.channel(), cause);
     }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ReverseProxyConnectPool connectPool = ReverseProxyConnectPool.instance();
