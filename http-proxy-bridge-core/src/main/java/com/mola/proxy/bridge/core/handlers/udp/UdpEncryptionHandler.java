@@ -120,15 +120,13 @@ public class UdpEncryptionHandler extends SimpleChannelInboundHandler<DatagramPa
     protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) throws Exception {
         udpEncryptionResponseHandler.setSender(packet.sender());
         UdpPacket udpPacket = UdpPacket.buildFrom(packet);
-        String packetContent = udpPacket.getBodyStr();
-        log.debug("[UdpEncryptionHandler] 接收到消息，开始发送forward：" + packetContent + "channel = " + ctx.channel());
-
         if (encryption2ServerChannel != null) {
             encryption2ServerChannel.writeAndFlush(udpPacket);
         }
     }
 
     public void shutdown() {
+        log.info("[UdpEncryptionHandler] shutdown, client2EncryptionChannel = {}", client2EncryptionChannel);
         if (encryption2ServerChannel != null && encryption2ServerChannel.isOpen()) {
             RemotingHelper.closeChannel(encryption2ServerChannel);
         }
@@ -159,7 +157,6 @@ public class UdpEncryptionHandler extends SimpleChannelInboundHandler<DatagramPa
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, UdpPacket msg) throws Exception {
-            log.debug("[UdpEncryptionResponseHandler] 接收到消息，开始返回client：" + msg.getBodyStr());
             client2EncryptionChannel.writeAndFlush(msg.buildDatagramPacket(ctx, sender));
         }
 

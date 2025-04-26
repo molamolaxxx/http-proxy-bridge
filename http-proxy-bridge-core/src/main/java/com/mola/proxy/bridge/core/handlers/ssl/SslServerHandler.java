@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : molamola
@@ -39,7 +40,9 @@ public class SslServerHandler extends SslHandler {
         SSLEngine engine = sslContext.createSSLEngine();
         engine.setUseClientMode(false);
         engine.setNeedClientAuth(true);
-        return new SslServerHandler(engine);
+        SslServerHandler sslServerHandler = new SslServerHandler(engine);
+        sslServerHandler.setHandshakeTimeout(120, TimeUnit.SECONDS);
+        return sslServerHandler;
     }
 
     private boolean ignoreException(Channel channel, Throwable cause) {

@@ -96,7 +96,6 @@ public class UdpServerHandler extends AbstractHttpProxyHeaderParseHandler {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, UdpPacket msg) throws Exception {
-            log.debug("[UdpRequestHandler] 接收到消息，开始发送到target：" + msg.getBodyStr(), "channel = "+ ctx.channel());
             DatagramPacket datagramPacket = msg.buildDatagramPacket(ctx,
                     new InetSocketAddress(header.getHost(), header.getPort()));
             targetConnectChannel.writeAndFlush(datagramPacket);
@@ -128,7 +127,6 @@ public class UdpServerHandler extends AbstractHttpProxyHeaderParseHandler {
                 return;
             }
             UdpPacket udpPacket = UdpPacket.buildFrom(msg);
-            log.debug("[UdpResponseHandler] 接收到target消息，开始返回：" + udpPacket.getBodyStr());
             client2ProxyChannel.writeAndFlush(udpPacket);
         }
     }

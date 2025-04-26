@@ -1,31 +1,30 @@
 encrypt:
   servers:
-    - remoteHost: 0.0.0.0
-      remotePort: 0
+    - remoteHost: 127.0.0.1
+      remotePort: 43335
       port: 9295
       type: UDP
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9295
-    - remoteHost: 0.0.0.0
-      remotePort: 0
+    - remoteHost: 127.0.0.1
+      remotePort: 43335
       port: 9302
       type: UDP
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9302
-    - remoteHost: 0.0.0.0
-      remotePort: 0
+    - remoteHost: 127.0.0.1
+      remotePort: 43335
       port: 9296
       type: UDP
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9296
-    - remoteHost: 0.0.0.0
-      remotePort: 0
+    - remoteHost: 127.0.0.1
+      remotePort: 43335
       port: 9297
       type: UDP
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.udp 9297
-    - remoteHost: 0.0.0.0
-      remotePort: 0
+    - remoteHost: 127.0.0.1
+      remotePort: 33335
       port: 9295
       type: TCP
       appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE ps5.tcp 9295
-  routeRule: http://120.27.230.24/encryption_route.json
 
 forward:
   servers:

@@ -141,10 +141,17 @@
 {
   "name":"com.mola.proxy.bridge.core.handlers.ssl.SslResponseHandler",
   "queriedMethods":[
-    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] }, 
-    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] }, 
+    {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },
+    {"name":"channelRead","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Object"] },
     {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
   ]}
+,
+  {
+    "name":"com.mola.proxy.bridge.core.handlers.udp.UdpEncryptionHandler$UdpEncryptionResponseHandler",
+    "queriedMethods":[
+      {"name":"channelInactive","parameterTypes":["io.netty.channel.ChannelHandlerContext"] },
+      {"name":"exceptionCaught","parameterTypes":["io.netty.channel.ChannelHandlerContext","java.lang.Throwable"] }
+    ]}
 ,
 {
   "name":"com.mola.proxy.bridge.core.server.encryption.SslEncryptionProxyServer$1"}
