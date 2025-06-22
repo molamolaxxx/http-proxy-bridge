@@ -9,6 +9,7 @@ import com.mola.proxy.bridge.core.handlers.ssl.SslRequestHandler;
 import com.mola.proxy.bridge.core.handlers.udp.UdpEncryptionHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -112,7 +113,9 @@ public class SslEncryptionProxyServer {
                         });
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
         ChannelFuture future = serverBootstrap.bind(port);
         // 给future添加监听器，监听关心的事件
@@ -181,6 +184,8 @@ public class SslEncryptionProxyServer {
             encryptionClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .handler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel ch) {

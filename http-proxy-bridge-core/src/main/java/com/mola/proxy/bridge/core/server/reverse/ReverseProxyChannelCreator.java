@@ -16,6 +16,7 @@ import com.mola.proxy.bridge.core.handlers.udp.UdpServerHandler;
 import com.mola.proxy.bridge.core.pool.ReverseProxyConnectPool;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -97,6 +98,8 @@ public class ReverseProxyChannelCreator {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5 * 1000)
                     .handler(new ChannelInitializer() {
                         @Override

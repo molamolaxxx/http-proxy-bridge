@@ -4,6 +4,7 @@ import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.utils.HeaderParser;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -39,6 +40,8 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
     public HttpRequestHandler() {
         httpInvokeBootstrap.group(HTTP_REQUEST_GROUP).channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.TCP_NODELAY, true)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .handler(new ChannelInitializer() {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
