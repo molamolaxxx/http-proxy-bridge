@@ -7,6 +7,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,9 +43,9 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                .handler(new ChannelInitializer() {
+                .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(Channel ch) throws Exception {
+                    protected void initChannel(SocketChannel ch) {
                         ch.pipeline().addLast(new HttpResponseHandler(channelMap));
                     }
                 });
@@ -116,11 +117,6 @@ public class HttpRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 proxy2ServerChannel.writeAndFlush(buffer);
             }
         });
-    }
-
-    @Override
-    protected ProxyHttpHeader parseProxyHeader(String header, Channel client2proxyChannel) {
-        return HeaderParser.parse(header);
     }
 
     @Override

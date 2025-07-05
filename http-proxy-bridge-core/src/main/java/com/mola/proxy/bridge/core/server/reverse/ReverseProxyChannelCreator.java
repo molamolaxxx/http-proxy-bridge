@@ -3,7 +3,6 @@ package com.mola.proxy.bridge.core.server.reverse;
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
-import com.mola.proxy.bridge.core.ext.HostMappingExt;
 import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
@@ -22,6 +21,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.socksx.v5.Socks5CommandRequestDecoder;
 import io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoder;
@@ -52,8 +52,6 @@ public class ReverseProxyChannelCreator {
 
     private final int port;
 
-    private final int maxChannelNum;
-
     private final ReverseTypeEnum type;
 
     private final ReverseProxyChannelManageHandler reverseProxyChannelManageHandler;
@@ -63,7 +61,6 @@ public class ReverseProxyChannelCreator {
     public ReverseProxyChannelCreator(String host, int port, int maxChannelNum, ReverseTypeEnum type) {
         this.host = host;
         this.port = port;
-        this.maxChannelNum = maxChannelNum;
         this.reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
         AssertUtil.notNull(type, "reverse type required");
         if (type.requireEncryption()) {
@@ -98,12 +95,12 @@ public class ReverseProxyChannelCreator {
             proxyClientBootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new LoggingHandler(LogLevel.INFO))
                     .option(ChannelOption.SO_KEEPALIVE, true)
-                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.TCP_NODELAY, false)
                     .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5 * 1000)
-                    .handler(new ChannelInitializer() {
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(Channel ch) throws Exception {
+                        protected void initChannel(SocketChannel ch) {
                             ch.pipeline().addLast(new IdleStateHandler(
                                     120, 120, 120));
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);

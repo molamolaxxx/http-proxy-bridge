@@ -89,7 +89,6 @@ public class SslEncryptionProxyServer {
      * 加密机http代理server
      * @param port
      * @return
-     * @throws InterruptedException
      */
     private ChannelFuture startEncryptionProxyServer(int port, String appointProxyHeader) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -97,8 +96,7 @@ public class SslEncryptionProxyServer {
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel ch)
-                            throws Exception {
+                    public void initChannel(SocketChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
                         SslRequestHandler sslRequestHandler = new SslRequestHandler(
                                 ch,
@@ -108,9 +106,7 @@ public class SslEncryptionProxyServer {
                                 appointProxyHeader);
                         pipeline.addLast(sslRequestHandler);
                         // 释放堆外内存
-                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
-                            sslRequestHandler.shutdown();
-                        });
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> sslRequestHandler.shutdown());
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
@@ -133,7 +129,6 @@ public class SslEncryptionProxyServer {
      * 加密机udp代理server
      * @param port
      * @return
-     * @throws InterruptedException
      */
     private ChannelFuture startEncryptionUdpServer(int port, String appointProxyHeader) {
         Bootstrap bootstrap = new Bootstrap();
@@ -144,8 +139,7 @@ public class SslEncryptionProxyServer {
                 .option(ChannelOption.SO_SNDBUF, 1024 * 1024)
                 .handler(new ChannelInitializer<NioDatagramChannel>() {
                     @Override
-                    public void initChannel(NioDatagramChannel ch)
-                            throws Exception {
+                    public void initChannel(NioDatagramChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
                         UdpEncryptionHandler udpEncryptionHandler = new UdpEncryptionHandler(
                                 ch,
@@ -156,9 +150,7 @@ public class SslEncryptionProxyServer {
                         );
                         pipeline.addLast(udpEncryptionHandler);
                         // 释放堆外内存
-                        ch.closeFuture().addListener((ChannelFutureListener) future -> {
-                            udpEncryptionHandler.shutdown();
-                        });
+                        ch.closeFuture().addListener((ChannelFutureListener) future -> udpEncryptionHandler.shutdown());
                     }
                 });
 
@@ -186,9 +178,9 @@ public class SslEncryptionProxyServer {
                     .option(ChannelOption.SO_KEEPALIVE, true)
                     .option(ChannelOption.TCP_NODELAY, true)
                     .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-                    .handler(new ChannelInitializer() {
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        protected void initChannel(Channel ch) {
+                        protected void initChannel(SocketChannel ch) {
                             if (EncryptionTypeEnum.TCP == encryptionTypeEnum) {
                                 ch.pipeline().addLast(SslClientHandler.create());
                             }
