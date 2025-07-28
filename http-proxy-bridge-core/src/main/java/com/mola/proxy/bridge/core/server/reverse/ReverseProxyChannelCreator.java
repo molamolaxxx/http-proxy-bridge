@@ -5,6 +5,8 @@ import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
+import com.mola.proxy.bridge.core.handlers.access.EncryptionAuthDecoder;
+import com.mola.proxy.bridge.core.handlers.access.EncryptionAuthInboundHandler;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.http.HttpRequestHandler;
 import com.mola.proxy.bridge.core.handlers.socks5.Socks5CommandRequestInboundHandler;
@@ -106,6 +108,8 @@ public class ReverseProxyChannelCreator {
                             ch.pipeline().addLast(reverseProxyChannelManageHandler);
                             if (type.requireEncryption()) {
                                 ch.pipeline().addLast(SslServerHandler.create());
+                                ch.pipeline().addLast(new EncryptionAuthDecoder());
+                                ch.pipeline().addLast(new EncryptionAuthInboundHandler());
                             }
 
                             if (type.isHttpProxy()) {

@@ -32,8 +32,7 @@ public class ForwardStarter {
         for (ForwardServerItemConfig server : config.getServers()) {
             serverThread = new Thread(() -> {
                 ForwardProxyServer forwardProxyServer = new ForwardProxyServer();
-                forwardProxyServer.start(server.getPort(), server.getReversePort(),
-                        ServerTypeEnum.valueOf(server.getType()));
+                forwardProxyServer.start(server);
             });
             serverThread.start();
         }

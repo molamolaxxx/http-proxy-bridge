@@ -1,7 +1,6 @@
 package com.mola.proxy.bridge.core.handlers.http;
 
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
-import com.mola.proxy.bridge.core.utils.HeaderParser;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;

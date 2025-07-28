@@ -1,29 +1,29 @@
 encrypt:
   servers:
-    - remoteHost: 0.0.0.0
-      remotePort: 0
-      port: 22222
-    - remoteHost: 0.0.0.0
-      remotePort: 0
-      port: 22223
-      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
-    - remoteHost: 0.0.0.0
-      remotePort: 0
-      port: 22224
-      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
-  routeRule: http://120.27.230.24/encryption_route.json
+    - remoteHost: 127.0.0.1
+      remotePort: 20435
+      port: 26666
+#    - remoteHost: 0.0.0.0
+#      remotePort: 0
+#      port: 22223
+#      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
+#    - remoteHost: 0.0.0.0
+#      remotePort: 0
+#      port: 22224
+#      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
+#  routeRule: http://120.27.230.24/encryption_route.json
 
 forward:
   servers:
-    - port: 20434
-      reversePort: 10434
-      type: SSL_HTTP
     - port: 20435
       reversePort: 10435
-      type: HTTP
-      openWhiteListsVerify: false
-  ipWhiteListQueryUrl: https://127.0.0.1:8550/chat/kv/proxyWhiteList
-  ipInterceptNotifyUrl: https://127.0.0.1:8550/chat/robot/push/toolRobot?toChatterId=1680059511788nQPEX&content=%s
+      type: SSL_HTTP
+#    - port: 20435
+#      reversePort: 10435
+#      type: HTTP
+#      openWhiteListsVerify: false
+#  ipWhiteListQueryUrl: https://127.0.0.1:8550/chat/kv/proxyWhiteList
+#  ipInterceptNotifyUrl: https://127.0.0.1:8550/chat/robot/push/toolRobot?toChatterId=1680059511788nQPEX&content=%s
   socks5:
     username: mola
     passwd: mola

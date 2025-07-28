@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.handlers.udp;
 
+import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.entity.ConnectionRouteRule;
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.entity.UdpPacket;
@@ -46,15 +47,18 @@ public class UdpEncryptionHandler extends SimpleChannelInboundHandler<DatagramPa
     private UdpEncryptionResponseHandler udpEncryptionResponseHandler;
 
     public UdpEncryptionHandler(Channel client2EncryptionChannel, Bootstrap encryption2ServerBootstrap,
-                                String host, int port, String appointProxyHeader) {
-        if (appointProxyHeader == null) {
+                                String host, int port, EncryptionServerItemConfig itemConfig) {
+        if (itemConfig == null || itemConfig.getAppointProxyHeader() == null) {
             throw new RuntimeException("appointProxyHeader can not be null in udp mode!");
         }
         this.defaultHost = host;
         this.defaultPort = port;
         this.client2EncryptionChannel = client2EncryptionChannel;
         this.encryption2ServerBootstrap = encryption2ServerBootstrap;
-        this.proxyHttpHeader = HeaderParser.parse(appointProxyHeader);
+        this.proxyHttpHeader = HeaderParser.parse(itemConfig.getAppointProxyHeader());
+
+        // 指定头，在udp场景下用于确认目标ip和端口
+        String appointProxyHeader = itemConfig.getAppointProxyHeader();
 
         EventScheduler.addEvent("prepareTcpConnect" + EVENT_IDX.incrementAndGet()
                 , 1, () -> {

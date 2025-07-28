@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.handlers.ssl;
 
+import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.entity.ConnectionRouteRule;
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.handlers.http.AbstractHttpProxyHeaderParseHandler;
@@ -39,14 +40,18 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     private final int defaultPort;
 
+    private final EncryptionServerItemConfig itemConfig;
+
     private Channel encryption2ServerChannel;
 
     public SslRequestHandler(Channel client2EncryptionChannel, Bootstrap encryption2ServerBootstrap,
-                             String host, int port, String appointProxyHeader) {
+                             String host, int port, EncryptionServerItemConfig itemConfig) {
         this.defaultHost = host;
         this.defaultPort = port;
         this.client2EncryptionChannel = client2EncryptionChannel;
         this.encryption2ServerBootstrap = encryption2ServerBootstrap;
+        this.itemConfig = itemConfig;
+        String appointProxyHeader = itemConfig.getAppointProxyHeader();
         if (appointProxyHeader != null) {
             this.proxyHttpHeader = HeaderParser.parse(appointProxyHeader);
             channelReadCompleteWithHeader(null, proxyHttpHeader,
@@ -94,10 +99,17 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 // SslHandler后增加响应handler，|SslResponseHandler|SslHandler| -----> (forward)
                 encryption2ServerChannel.pipeline().addLast(new SslResponseHandler(client2EncryptionChannel));
 
-                // 发送header
+                // 发送初始报文
                 ByteBuf buffer = encryption2ServerChannel
                         .alloc()
                         .buffer(clientRequestBytes.length);
+
+                // 发送鉴权信息
+                byte[] authInfo = itemConfig.getAuth().generateAuthKeyArr();
+                buffer.writeInt(authInfo.length);
+                buffer.writeBytes(authInfo);
+
+                // 发送header
                 buffer.writeBytes(clientRequestBytes);
                 encryption2ServerChannel.writeAndFlush(buffer);
             });

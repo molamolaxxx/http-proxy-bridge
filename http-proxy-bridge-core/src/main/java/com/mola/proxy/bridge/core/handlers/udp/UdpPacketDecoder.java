@@ -34,6 +34,5 @@ public class UdpPacketDecoder extends LengthFieldBasedFrameDecoder {
                 frame.release();
             }
         }
-
     }
 }

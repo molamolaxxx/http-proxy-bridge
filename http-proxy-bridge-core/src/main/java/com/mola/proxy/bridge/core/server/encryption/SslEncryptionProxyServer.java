@@ -67,11 +67,9 @@ public class SslEncryptionProxyServer {
             ChannelFuture channelFuture = null;
             if (EncryptionTypeEnum.TCP == encryptionTypeEnum) {
                 // 浏览器直接连接的代理服务器
-                channelFuture = startEncryptionProxyServer(itemConfig.getPort(),
-                        itemConfig.getAppointProxyHeader());
+                channelFuture = startEncryptionProxyServer(itemConfig.getPort(), itemConfig);
             } else if (EncryptionTypeEnum.UDP == encryptionTypeEnum) {
-                channelFuture = startEncryptionUdpServer(itemConfig.getPort(),
-                        itemConfig.getAppointProxyHeader());
+                channelFuture = startEncryptionUdpServer(itemConfig.getPort(), itemConfig);
             }
 
             channelFuture.await();
@@ -90,7 +88,7 @@ public class SslEncryptionProxyServer {
      * @param port
      * @return
      */
-    private ChannelFuture startEncryptionProxyServer(int port, String appointProxyHeader) {
+    private ChannelFuture startEncryptionProxyServer(int port, EncryptionServerItemConfig itemConfig) {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
@@ -103,7 +101,7 @@ public class SslEncryptionProxyServer {
                                 encryptionClientBootstrap,
                                 remoteHost,
                                 remotePort,
-                                appointProxyHeader);
+                                itemConfig);
                         pipeline.addLast(sslRequestHandler);
                         // 释放堆外内存
                         ch.closeFuture().addListener((ChannelFutureListener) future -> sslRequestHandler.shutdown());
@@ -130,7 +128,7 @@ public class SslEncryptionProxyServer {
      * @param port
      * @return
      */
-    private ChannelFuture startEncryptionUdpServer(int port, String appointProxyHeader) {
+    private ChannelFuture startEncryptionUdpServer(int port, EncryptionServerItemConfig itemConfig) {
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(workerGroup)
                 .channel(NioDatagramChannel.class)
@@ -146,7 +144,7 @@ public class SslEncryptionProxyServer {
                                 encryptionClientBootstrap,
                                 remoteHost,
                                 remotePort,
-                                appointProxyHeader
+                                itemConfig
                         );
                         pipeline.addLast(udpEncryptionHandler);
                         // 释放堆外内存

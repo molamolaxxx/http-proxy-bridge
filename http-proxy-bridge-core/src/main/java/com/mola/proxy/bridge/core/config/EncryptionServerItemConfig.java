@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.config;
 
+import com.mola.proxy.bridge.core.entity.EncryptionAuth;
 import com.mola.proxy.bridge.core.enums.EncryptionTypeEnum;
 import com.mola.proxy.bridge.core.utils.AssertUtil;
 
@@ -20,6 +21,8 @@ public class EncryptionServerItemConfig {
     private String appointProxyHeader;
 
     private String type = EncryptionTypeEnum.TCP.name();
+
+    private EncryptionAuth auth = EncryptionAuth.DEFAULT;
 
     public void validate() {
         AssertUtil.notNull(remoteHost, "encryption.remoteHost must has value");
@@ -64,5 +67,13 @@ public class EncryptionServerItemConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public EncryptionAuth getAuth() {
+        return auth;
+    }
+
+    public void setAuth(EncryptionAuth auth) {
+        this.auth = auth;
     }
 }

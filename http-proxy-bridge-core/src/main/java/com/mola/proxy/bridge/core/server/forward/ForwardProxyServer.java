@@ -1,10 +1,13 @@
 package com.mola.proxy.bridge.core.server.forward;
 
+import com.mola.proxy.bridge.core.config.ForwardServerItemConfig;
 import com.mola.proxy.bridge.core.entity.ProxyBridge;
 import com.mola.proxy.bridge.core.enums.ServerTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.Socks5AuthExt;
 import com.mola.proxy.bridge.core.ext.def.DefaultServerSslAuthExt;
+import com.mola.proxy.bridge.core.handlers.access.EncryptionAuthDecoder;
+import com.mola.proxy.bridge.core.handlers.access.EncryptionAuthInboundHandler;
 import com.mola.proxy.bridge.core.handlers.access.WhiteListAccessHandler;
 import com.mola.proxy.bridge.core.handlers.connect.ForwardProxyChannelManageHandler;
 import com.mola.proxy.bridge.core.handlers.connect.ReverseProxyChannelManageHandler;
@@ -60,14 +63,16 @@ public class ForwardProxyServer {
 
     /**
      * 启动代理服务器，包括正向代理，反向接收服务
-     * @param port
-     * @param reversePort
-     * @param type
+     * @param server
      */
-    public synchronized void start(int port, int reversePort, ServerTypeEnum type) {
+    public synchronized void start(ForwardServerItemConfig server) {
         if (start.get()) {
             return;
         }
+        Integer port = server.getPort();
+        Integer reversePort = server.getReversePort();
+        ServerTypeEnum type = ServerTypeEnum.valueOf(server.getType());
+
         ProxyBridgeRegistry.instance().register(ProxyBridge.build(port, reversePort));
         try {
             bossGroup = new NioEventLoopGroup(1);
@@ -149,6 +154,8 @@ public class ForwardProxyServer {
                         // ssl加解密
                         if (useSsl) {
                             ch.pipeline().addLast(SslServerHandler.create());
+                            ch.pipeline().addLast(new EncryptionAuthDecoder());
+                            ch.pipeline().addLast(new EncryptionAuthInboundHandler());
                         }
 
                         // 白名单验证
@@ -209,6 +216,8 @@ public class ForwardProxyServer {
                         // 白名单，ssl连接不需要白名单校验
                         if (useSsl) {
                             ch.pipeline().addLast(SslServerHandler.create());
+                            ch.pipeline().addLast(new EncryptionAuthDecoder());
+                            ch.pipeline().addLast(new EncryptionAuthInboundHandler());
                         } else { // 客户端使用加密机不需要白名单验证
                             ch.pipeline().addLast(whiteListAccessHandler);
                         }
