@@ -19,6 +19,8 @@ public class ReverseServerItemConfig {
 
     private String type = ReverseTypeEnum.HTTP.name();
 
+    private String authFilePath;
+
     public void validate() {
         AssertUtil.notNull(remoteHost, "reverse.remoteHost must has value");
         AssertUtil.notNull(remotePort, "reverse.remotePort must has value");
@@ -55,5 +57,13 @@ public class ReverseServerItemConfig {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getAuthFilePath() {
+        return authFilePath;
+    }
+
+    public void setAuthFilePath(String authFilePath) {
+        this.authFilePath = authFilePath;
     }
 }

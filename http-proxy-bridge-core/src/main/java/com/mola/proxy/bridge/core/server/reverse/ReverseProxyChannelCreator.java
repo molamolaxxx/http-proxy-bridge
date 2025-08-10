@@ -1,5 +1,6 @@
 package com.mola.proxy.bridge.core.server.reverse;
 
+import com.mola.proxy.bridge.core.config.ReverseServerItemConfig;
 import com.mola.proxy.bridge.core.entity.ReverseChannelHandle;
 import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
@@ -60,17 +61,22 @@ public class ReverseProxyChannelCreator {
 
     private final ThreadPoolExecutor channelCreateExecutor;
 
-    public ReverseProxyChannelCreator(String host, int port, int maxChannelNum, ReverseTypeEnum type) {
-        this.host = host;
-        this.port = port;
+    private final String serverId;
+
+    public ReverseProxyChannelCreator(String serverId, ReverseServerItemConfig config) {
+        this.serverId = serverId;
+        this.host = config.getRemoteHost();
+        this.port = config.getRemotePort();
         this.reverseProxyChannelManageHandler = new ReverseProxyChannelManageHandler();
+
+        ReverseTypeEnum type = ReverseTypeEnum.valueOf(config.getType());
         AssertUtil.notNull(type, "reverse type required");
         if (type.requireEncryption()) {
             ExtManager.setSslAuthExt(new DefaultServerSslAuthExt());
         }
         this.type = type;
         this.channelCreateExecutor = new ThreadPoolExecutor(
-                CORE_POOL_SIZE, Math.max(maxChannelNum / 5, CORE_POOL_SIZE),
+                CORE_POOL_SIZE, Math.max(config.getChannelNum() / 5, CORE_POOL_SIZE),
                 5000, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024),
                 new ThreadFactory() {
                     private final AtomicInteger threadIndex = new AtomicInteger(0);
@@ -109,7 +115,7 @@ public class ReverseProxyChannelCreator {
                             if (type.requireEncryption()) {
                                 ch.pipeline().addLast(SslServerHandler.create());
                                 ch.pipeline().addLast(new EncryptionAuthDecoder());
-                                ch.pipeline().addLast(new EncryptionAuthInboundHandler());
+                                ch.pipeline().addLast(new EncryptionAuthInboundHandler(serverId));
                             }
 
                             if (type.isHttpProxy()) {

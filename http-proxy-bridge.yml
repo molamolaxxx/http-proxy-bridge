@@ -1,27 +1,37 @@
 encrypt:
   servers:
     - remoteHost: 127.0.0.1
-      remotePort: 20435
+      remotePort: 26435
       port: 26666
-#    - remoteHost: 0.0.0.0
-#      remotePort: 0
-#      port: 22223
-#      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
-#    - remoteHost: 0.0.0.0
-#      remotePort: 0
-#      port: 22224
-#      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
-#  routeRule: http://120.27.230.24/encryption_route.json
+      auth:
+        username: mola
+        password: mola
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 26664
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE redis.local 6379
+      auth:
+        username: redis
+        password: redis
+    - remoteHost: 0.0.0.0
+      remotePort: 0
+      port: 26668
+      appointProxyHeader: CONNECT-HTTP-PROXY-BRIDGE mysql.local 3306
+      auth:
+        username: mysql
+        password: mysql
+  routeRule: encryption_route.json
 
 forward:
   servers:
-    - port: 20435
-      reversePort: 10435
+    - port: 26435
+      reversePort: 16435
       type: SSL_HTTP
-#    - port: 20435
-#      reversePort: 10435
-#      type: HTTP
-#      openWhiteListsVerify: false
+      authFilePath: encryption_user.json
+    - port: 26436
+      reversePort: 16436
+      type: HTTP
+      openWhiteListsVerify: false
 #  ipWhiteListQueryUrl: https://127.0.0.1:8550/chat/kv/proxyWhiteList
 #  ipInterceptNotifyUrl: https://127.0.0.1:8550/chat/robot/push/toolRobot?toChatterId=1680059511788nQPEX&content=%s
   socks5:
@@ -30,10 +40,11 @@ forward:
 
 reverse:
   servers:
-    - remoteHost: 120.27.230.24
+    - remoteHost: 60.204.169.212
       remotePort: 10435
       channelNum: 8
       type: SSL_HTTP
+      authFilePath: encryption_user.json
   hostMapping:
     molalocal.com:80: localhost:80
     molalocal.com:6080: localhost:6080

@@ -3,10 +3,10 @@ package com.mola.proxy.bridge.forward;
 import com.mola.proxy.bridge.core.config.ForwardProxyConfig;
 import com.mola.proxy.bridge.core.config.ForwardServerItemConfig;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
-import com.mola.proxy.bridge.core.enums.ServerTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
 import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl;
 import com.mola.proxy.bridge.core.ext.def.DefaultSocks5AuthExt;
+import com.mola.proxy.bridge.core.registry.EncryptionAuthRegistry;
 import com.mola.proxy.bridge.core.server.forward.ForwardProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
 import com.mola.proxy.bridge.forward.ext.UserIpWhiteListExtImpl;
@@ -32,6 +32,9 @@ public class ForwardStarter {
         for (ForwardServerItemConfig server : config.getServers()) {
             serverThread = new Thread(() -> {
                 ForwardProxyServer forwardProxyServer = new ForwardProxyServer();
+                // 权限注册
+                EncryptionAuthRegistry.instance()
+                        .register(forwardProxyServer.getServerId(), server.getAuthFilePath());
                 forwardProxyServer.start(server);
             });
             serverThread.start();

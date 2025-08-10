@@ -21,15 +21,13 @@ import java.util.List;
  **/
 public class RouteRuleLoader {
 
-    private static final String HTTP_PREFIX = "http";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RouteRuleLoader.class);
 
     private static List<ConnectionRouteRule> fetchConnectionRouteRules(String routeRulePath) {
         if (routeRulePath == null || routeRulePath.length() == 0) {
             return Collections.emptyList();
         }
-        if (routeRulePath.startsWith(HTTP_PREFIX)) {
+        if (routeRulePath.startsWith("http")) {
             return fetchRemoteRouteRules(routeRulePath);
         } else {
             return fetchLocalRouteRules(routeRulePath);

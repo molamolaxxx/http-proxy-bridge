@@ -8,7 +8,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
 
 /**
  * @author : molamola
@@ -20,14 +19,16 @@ public class EncryptionAuthInboundHandler extends SimpleChannelInboundHandler<St
 
     private static final Logger log = LoggerFactory.getLogger(EncryptionAuthInboundHandler.class);
 
+    private final String serverId;
+
+    public EncryptionAuthInboundHandler(String serverId) {
+        this.serverId = serverId;
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String sourceAuthKey) throws Exception {
-        if (EncryptionAuth.OUT_OF_LIMIT.equals(sourceAuthKey)) {
-            RemotingHelper.closeChannel(ctx.channel());
-            return;
-        }
-        EncryptionAuth queryResult = EncryptionAuthRegistry.instance().query(sourceAuthKey);
-        if (queryResult != null && Objects.equals(sourceAuthKey, queryResult.generateAuthKey())) {
+        EncryptionAuth queryResult = EncryptionAuthRegistry.instance().query(serverId, sourceAuthKey);
+        if (queryResult != null && queryResult.match(sourceAuthKey)) {
             authSuccess(ctx);
         } else {
             authFailed(ctx, sourceAuthKey);

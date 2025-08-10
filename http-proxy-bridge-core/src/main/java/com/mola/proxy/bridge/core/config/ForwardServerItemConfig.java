@@ -17,6 +17,8 @@ public class ForwardServerItemConfig {
 
     private String type = ServerTypeEnum.HTTP.name();
 
+    private String authFilePath;
+
     private boolean openWhiteListsVerify;
 
     public void validate() {
@@ -54,5 +56,13 @@ public class ForwardServerItemConfig {
 
     public void setOpenWhiteListsVerify(boolean openWhiteListsVerify) {
         this.openWhiteListsVerify = openWhiteListsVerify;
+    }
+
+    public String getAuthFilePath() {
+        return authFilePath;
+    }
+
+    public void setAuthFilePath(String authFilePath) {
+        this.authFilePath = authFilePath;
     }
 }

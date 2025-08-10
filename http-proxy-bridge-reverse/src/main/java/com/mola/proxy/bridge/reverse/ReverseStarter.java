@@ -3,12 +3,12 @@ package com.mola.proxy.bridge.reverse;
 import com.mola.proxy.bridge.core.config.ProxyConfig;
 import com.mola.proxy.bridge.core.config.ReverseProxyConfig;
 import com.mola.proxy.bridge.core.config.ReverseServerItemConfig;
-import com.mola.proxy.bridge.core.enums.ReverseTypeEnum;
 import com.mola.proxy.bridge.core.ext.ExtManager;
+import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl;
 import com.mola.proxy.bridge.core.ext.def.DefaultSocks5AuthExt;
+import com.mola.proxy.bridge.core.registry.EncryptionAuthRegistry;
 import com.mola.proxy.bridge.core.server.reverse.ReverseProxyServer;
 import com.mola.proxy.bridge.core.utils.LogUtil;
-import com.mola.proxy.bridge.core.ext.def.DefaultHostMappingExtImpl;
 
 public class ReverseStarter {
 
@@ -29,8 +29,10 @@ public class ReverseStarter {
         for (ReverseServerItemConfig server : config.getServers()) {
             serverThread = new Thread(() -> {
                 ReverseProxyServer reverseProxyServer = new ReverseProxyServer();
-                reverseProxyServer.start(server.getRemoteHost(), server.getRemotePort(),
-                        server.getChannelNum(), ReverseTypeEnum.valueOf(server.getType()));
+                // 权限注册
+                EncryptionAuthRegistry.instance()
+                        .register(reverseProxyServer.getServerId(), server.getAuthFilePath());
+                reverseProxyServer.start(server);
             });
             serverThread.start();
         }

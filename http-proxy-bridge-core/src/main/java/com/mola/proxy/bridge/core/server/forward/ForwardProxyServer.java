@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -46,6 +47,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date : 2023-09-30 00:41
  **/
 public class ForwardProxyServer {
+
+    private final String serverId = UUID.randomUUID().toString();
 
     private final AtomicBoolean start = new AtomicBoolean(false);
 
@@ -155,7 +158,7 @@ public class ForwardProxyServer {
                         if (useSsl) {
                             ch.pipeline().addLast(SslServerHandler.create());
                             ch.pipeline().addLast(new EncryptionAuthDecoder());
-                            ch.pipeline().addLast(new EncryptionAuthInboundHandler());
+                            ch.pipeline().addLast(new EncryptionAuthInboundHandler(serverId));
                         }
 
                         // 白名单验证
@@ -217,7 +220,7 @@ public class ForwardProxyServer {
                         if (useSsl) {
                             ch.pipeline().addLast(SslServerHandler.create());
                             ch.pipeline().addLast(new EncryptionAuthDecoder());
-                            ch.pipeline().addLast(new EncryptionAuthInboundHandler());
+                            ch.pipeline().addLast(new EncryptionAuthInboundHandler(serverId));
                         } else { // 客户端使用加密机不需要白名单验证
                             ch.pipeline().addLast(whiteListAccessHandler);
                         }
@@ -306,5 +309,9 @@ public class ForwardProxyServer {
             return false;
         }
         return true;
+    }
+
+    public String getServerId() {
+        return serverId;
     }
 }

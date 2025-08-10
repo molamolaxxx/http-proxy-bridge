@@ -99,13 +99,14 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 // SslHandler后增加响应handler，|SslResponseHandler|SslHandler| -----> (forward)
                 encryption2ServerChannel.pipeline().addLast(new SslResponseHandler(client2EncryptionChannel));
 
+                byte[] authInfo = itemConfig.getAuth().generateAuthKeyArr();
+
                 // 发送初始报文
                 ByteBuf buffer = encryption2ServerChannel
                         .alloc()
-                        .buffer(clientRequestBytes.length);
+                        .buffer(4 + authInfo.length + clientRequestBytes.length);
 
                 // 发送鉴权信息
-                byte[] authInfo = itemConfig.getAuth().generateAuthKeyArr();
                 buffer.writeInt(authInfo.length);
                 buffer.writeBytes(authInfo);
 

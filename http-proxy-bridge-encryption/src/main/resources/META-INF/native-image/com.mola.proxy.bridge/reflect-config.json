@@ -17,6 +17,15 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]}
 ,
 {
+  "name":"com.mola.proxy.bridge.core.entity.EncryptionAuth",
+  "allDeclaredFields":true,
+  "queryAllPublicMethods":true,
+  "methods":[
+    {"name":"<init>","parameterTypes":[] },
+    {"name":"setUsername","parameterTypes":["java.lang.String"] },
+    {"name":"setPassword","parameterTypes":["java.lang.String"] }
+  ]},
+{
   "name":"com.mola.proxy.bridge.core.config.EncryptionProxyConfig",
   "allDeclaredFields":true,
   "queryAllPublicMethods":true,
@@ -37,7 +46,8 @@
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRemoteHost","parameterTypes":["java.lang.String"] }, 
     {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] },
-    {"name":"setType","parameterTypes":["java.lang.String"] }
+    {"name":"setType","parameterTypes":["java.lang.String"] },
+    {"name":"setAuth","parameterTypes":["com.mola.proxy.bridge.core.entity.EncryptionAuth"] }
   ]}
 ,
 {
@@ -62,7 +72,8 @@
     {"name":"setOpenWhiteListsVerify","parameterTypes":["boolean"] }, 
     {"name":"setPort","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setReversePort","parameterTypes":["java.lang.Integer"] }, 
-    {"name":"setType","parameterTypes":["java.lang.String"] }
+    {"name":"setType","parameterTypes":["java.lang.String"] },
+    {"name":"setAuthFilePath","parameterTypes":["java.lang.String"] }
   ]}
 ,
 {
@@ -96,7 +107,8 @@
     {"name":"setChannelNum","parameterTypes":["java.lang.Integer"] }, 
     {"name":"setRemoteHost","parameterTypes":["java.lang.String"] }, 
     {"name":"setRemotePort","parameterTypes":["java.lang.Integer"] }, 
-    {"name":"setType","parameterTypes":["java.lang.String"] }
+    {"name":"setType","parameterTypes":["java.lang.String"] },
+    {"name":"setAuthFilePath","parameterTypes":["java.lang.String"] }
   ]}
 ,
 {

@@ -1,5 +1,7 @@
 package com.mola.proxy.bridge.core.entity;
 
+import com.mola.proxy.bridge.core.utils.HashUtil;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -18,6 +20,9 @@ public class EncryptionAuth {
     private String username;
 
     private String password;
+
+    public EncryptionAuth(){
+    }
 
     public EncryptionAuth(String username, String password) {
         this.username = username;
@@ -45,7 +50,13 @@ public class EncryptionAuth {
     }
 
     public String generateAuthKey() {
-        return String.format("%s:%s", username, password);
+        String pwdEncryption = Integer.toHexString(HashUtil.getHash(password));
+        String allEncryption = Integer.toHexString(HashUtil.getHash(String.format("%s:%s", username, pwdEncryption)));
+        return username.concat(pwdEncryption).concat(allEncryption);
+    }
+
+    public boolean match(String authKey) {
+        return Objects.equals(authKey, generateAuthKey());
     }
 
     @Override

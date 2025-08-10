@@ -1,16 +1,83 @@
 [
   {
-    "remoteHost": "127.0.0.1",
-    "remotePort": 20434,
+    "remoteAddressList": [
+      "192.168.0.103:20434"
+    ],
     "hostRules": [
-      "google.com",
-      "*.google.com"
+      "molalocal.com#"
     ]
   },
   {
-    "remoteHost": "127.0.0.1",
-    "remotePort": 20434,
+    "remoteAddressList": [
+      "127.0.0.1:5553"
+    ],
     "hostRules": [
+      "dns.proxy"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "60.204.169.212:20440"
+    ],
+    "hostRules": [
+      "molalocal.com",
+      "redis.local",
+      "mysql.local",
+      "mola-vnc.com",
+      "ps5.tcp"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "60.204.169.212:20432"
+    ],
+    "hostRules": [
+      "mysql.proxy"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "127.0.0.1:33335"
+    ],
+    "hostRules": [
+      "ps5.tcp.test"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "127.0.0.1:43335"
+    ],
+    "hostRules": [
+      "ps5.udp.test"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "60.204.169.212:20500"
+    ],
+    "hostRules": [
+      "ps5.udp"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "60.204.169.212:20435"
+    ],
+    "hostRules": [
+      "mcdlocal.com",
+      "mcd-vnc.com"
+    ]
+  },
+  {
+    "remoteAddressList": [
+      "127.0.0.1:20434"
+    ],
+    "hostRules": [
+      "v16m-default.akamaized.net",
+      "*.sony.com",
+      "*.clicli.*",
+      "clicli.*",
+      "molaspace.xyz",
       "10.*.*.*",
       "172.16.*.*",
       "172.17.*.*",
@@ -20589,7 +20656,7 @@
       "*.docs.cdnetworks.com",
       "*.docs.djicdn.com",
       "*.docs.microsoft.com",
-      "*.docs.oracle.com",
+      "*.oracle.com",
       "*.docschina.org",
       "*.docsj.com",
       "*.docsou.com",
@@ -73205,12 +73272,16 @@
       "*.zzzyk.com",
       "*.zzzymjg.com",
       "*.zzzzaaaa.com",
-      "*.zzzzzz.me"
+      "*.zzzzzz.me",
+      "unpkg.com"
     ]
   },
   {
-    "remoteHost": "127.0.0.1",
-    "remotePort": 20434,
-    "hostRules": ["*"]
+    "remoteAddressList": [
+      "60.204.169.212:20434"
+    ],
+    "hostRules": [
+      "*"
+    ]
   }
 ]
