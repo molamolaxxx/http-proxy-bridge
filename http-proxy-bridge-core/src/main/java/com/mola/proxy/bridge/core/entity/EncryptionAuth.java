@@ -1,10 +1,8 @@
 package com.mola.proxy.bridge.core.entity;
 
-import com.mola.proxy.bridge.core.utils.ConcurrentHashSetBuilder;
 import com.mola.proxy.bridge.core.utils.HashUtil;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author : molamola
