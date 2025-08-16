@@ -1,9 +1,10 @@
 package com.mola.proxy.bridge.core.entity;
 
+import com.mola.proxy.bridge.core.utils.ConcurrentHashSetBuilder;
 import com.mola.proxy.bridge.core.utils.HashUtil;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author : molamola
@@ -12,8 +13,6 @@ import java.util.Objects;
  * @date : 2025-07-28 22:00
  **/
 public class EncryptionAuth {
-
-    public static final String OUT_OF_LIMIT = "OUT_OF_LIMIT";
 
     public static final EncryptionAuth DEFAULT = new EncryptionAuth("default", "default");
 
@@ -43,10 +42,6 @@ public class EncryptionAuth {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public byte[] generateAuthKeyArr() {
-        return generateAuthKey().getBytes(StandardCharsets.UTF_8);
     }
 
     public String generateAuthKey() {

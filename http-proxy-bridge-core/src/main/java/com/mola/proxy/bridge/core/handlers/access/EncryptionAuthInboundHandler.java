@@ -1,6 +1,7 @@
 package com.mola.proxy.bridge.core.handlers.access;
 
 import com.mola.proxy.bridge.core.entity.EncryptionAuth;
+import com.mola.proxy.bridge.core.entity.EncryptionAuthPacket;
 import com.mola.proxy.bridge.core.registry.EncryptionAuthRegistry;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.channel.ChannelHandlerContext;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @Description:
  * @date : 2025-07-28 21:57
  **/
-public class EncryptionAuthInboundHandler extends SimpleChannelInboundHandler<String> {
+public class EncryptionAuthInboundHandler extends SimpleChannelInboundHandler<EncryptionAuthPacket> {
 
     private static final Logger log = LoggerFactory.getLogger(EncryptionAuthInboundHandler.class);
 
@@ -26,7 +27,13 @@ public class EncryptionAuthInboundHandler extends SimpleChannelInboundHandler<St
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, String sourceAuthKey) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, EncryptionAuthPacket decodeResult) throws Exception {
+        if (decodeResult.getDecodeErrorMessage() != null) {
+            log.warn("EncryptionAuthDecoder authFailed, decode error. decodeErrorMessage = {}", decodeResult.getDecodeErrorMessage());
+            RemotingHelper.closeChannel(ctx.channel());
+            return;
+        }
+        String sourceAuthKey = decodeResult.getAuthKey();
         EncryptionAuth queryResult = EncryptionAuthRegistry.instance().query(serverId, sourceAuthKey);
         if (queryResult != null && queryResult.match(sourceAuthKey)) {
             authSuccess(ctx);

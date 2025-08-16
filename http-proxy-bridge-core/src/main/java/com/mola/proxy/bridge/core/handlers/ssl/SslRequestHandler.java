@@ -2,6 +2,7 @@ package com.mola.proxy.bridge.core.handlers.ssl;
 
 import com.mola.proxy.bridge.core.config.EncryptionServerItemConfig;
 import com.mola.proxy.bridge.core.entity.ConnectionRouteRule;
+import com.mola.proxy.bridge.core.entity.EncryptionAuthPacket;
 import com.mola.proxy.bridge.core.entity.ProxyHttpHeader;
 import com.mola.proxy.bridge.core.handlers.http.AbstractHttpProxyHeaderParseHandler;
 import com.mola.proxy.bridge.core.router.ConnectionRouter;
@@ -32,6 +33,8 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     private static final Logger log = LoggerFactory.getLogger(SslRequestHandler.class);
 
+    private final String serverId;
+
     private final Channel client2EncryptionChannel;
 
     private final Bootstrap encryption2ServerBootstrap;
@@ -44,8 +47,9 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
 
     private Channel encryption2ServerChannel;
 
-    public SslRequestHandler(Channel client2EncryptionChannel, Bootstrap encryption2ServerBootstrap,
+    public SslRequestHandler(String serverId, Channel client2EncryptionChannel, Bootstrap encryption2ServerBootstrap,
                              String host, int port, EncryptionServerItemConfig itemConfig) {
+        this.serverId = serverId;
         this.defaultHost = host;
         this.defaultPort = port;
         this.client2EncryptionChannel = client2EncryptionChannel;
@@ -99,7 +103,12 @@ public class SslRequestHandler extends AbstractHttpProxyHeaderParseHandler {
                 // SslHandler后增加响应handler，|SslResponseHandler|SslHandler| -----> (forward)
                 encryption2ServerChannel.pipeline().addLast(new SslResponseHandler(client2EncryptionChannel));
 
-                byte[] authInfo = itemConfig.getAuth().generateAuthKeyArr();
+                //构建用户权限信息
+                EncryptionAuthPacket decodeResult = new EncryptionAuthPacket(
+                        itemConfig.getAuth().generateAuthKey(),
+                        serverId
+                );
+                byte[] authInfo = decodeResult.buildBody();
 
                 // 发送初始报文
                 ByteBuf buffer = encryption2ServerChannel

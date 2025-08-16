@@ -1,6 +1,6 @@
 package com.mola.proxy.bridge.core.handlers.access;
 
-import com.mola.proxy.bridge.core.entity.EncryptionAuth;
+import com.mola.proxy.bridge.core.entity.EncryptionAuthPacket;
 import com.mola.proxy.bridge.core.utils.RemotingHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,7 +8,6 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -30,18 +29,6 @@ public class EncryptionAuthDecoder extends ByteToMessageDecoder {
             RemotingHelper.closeChannel(ctx.channel());
             return;
         }
-
-        // auth length
-        int packLength = in.readInt();
-        if (packLength > 128) {
-            out.add(EncryptionAuth.OUT_OF_LIMIT);
-            return;
-        }
-
-        // to auth
-        byte[] sourceAuthInfoArr = new byte[packLength];
-        in.readBytes(sourceAuthInfoArr);
-
-        out.add(new String(sourceAuthInfoArr, StandardCharsets.UTF_8));
+        out.add(EncryptionAuthPacket.readFrom(in));
     }
 }

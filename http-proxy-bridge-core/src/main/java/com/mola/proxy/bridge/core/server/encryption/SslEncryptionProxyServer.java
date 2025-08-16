@@ -21,6 +21,7 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,6 +31,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date : 2023-10-22 18:56
  **/
 public class SslEncryptionProxyServer {
+
+    private final String serverId = UUID.randomUUID().toString();
 
     private static final Logger log = LoggerFactory.getLogger(SslEncryptionProxyServer.class);
 
@@ -97,6 +100,7 @@ public class SslEncryptionProxyServer {
                     public void initChannel(SocketChannel ch) {
                         ChannelPipeline pipeline = ch.pipeline();
                         SslRequestHandler sslRequestHandler = new SslRequestHandler(
+                                serverId,
                                 ch,
                                 encryptionClientBootstrap,
                                 remoteHost,
